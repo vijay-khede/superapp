@@ -1,0 +1,33 @@
+@startuml
+!theme cyborg-outline
+title Import Data HostingDetails Scenario
+participant User
+User -> CXFServlet: POST, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << importData >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: importData(:HostingDetails)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: importData(:HostingDetails)
+activate HostingDetailsService
+activate HostingDetailsServiceImpl
+HostingDetailsService -> HostingDetailsServiceImpl: importData(:HostingDetails)
+HostingDetailsServiceImpl -> HostingDetailsJPARepository: saveAll(:HostingDetails)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: save(:HostingDetails)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted HostingDetails >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsServiceImpl: << persisted HostingDetails >>
+HostingDetailsServiceImpl -> HostingDetailsService: << persisted HostingDetails >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted HostingDetails >>
+deactivate HostingDetailsServiceImpl
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted HostingDetails >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

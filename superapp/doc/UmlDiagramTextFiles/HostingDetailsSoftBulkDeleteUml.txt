@@ -1,0 +1,30 @@
+@startuml
+!theme cyborg-outline
+title BulkDelete HostingDetails Scenario
+participant User
+User -> CXFServlet: DELETE, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << bulkdelete >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: bulkDelete(:List<HostingDetails>)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: softBulkDelete(:List<HostingDetails>)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsServiceImpl: softBulkDelete(:List<HostingDetails>)
+HostingDetailsServiceImpl -> HostingDetailsJPARepository: deleteAll(:List<HostingDetails>)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: delete(:List<HostingDetails>)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted HostingDetails >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted HostingDetails >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted HostingDetails >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted HostingDetails >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

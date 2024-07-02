@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Audit History MiniappDetails Scenario
+participant User
+User -> CXFServlet: GET, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << auditHistory >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: auditHistory(:MiniappDetails)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: auditHistory(:MiniappDetails)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsJPARepository: auditHistory(:MiniappDetails)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: response(:int,Integer,Integer)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetailsAuditHistory >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted MiniappDetailsAuditHistory >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetailsAuditHistory >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetailsAuditHistory >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

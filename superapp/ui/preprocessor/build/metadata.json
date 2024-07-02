@@ -1,0 +1,13 @@
+{
+  "gatewayContext": "apim",
+  "realm": "BNTV",
+  "entityList": [
+    "Home",
+    "hosting-details",
+    "miniapp-build-details",
+    "miniapp-details"
+  ],
+  "applicationName": "SUPERAPP_APP_NAME",
+  "internalHostName": "http://superapp-service/superapp/rest",
+  "hostName": "https://dev.visionwaves.com"
+}

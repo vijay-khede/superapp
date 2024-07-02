@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Create HostingDetails Scenario
+participant User
+User -> CXFServlet: POST, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << create >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: create(:HostingDetails)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: create(:HostingDetails)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsJPARepository: create(:HostingDetails)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: save(:HostingDetails)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted HostingDetails >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted HostingDetails >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted HostingDetails >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted HostingDetails >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.enttribe.superapp</groupId>
+    <artifactId>superapp</artifactId>
+    <version>1.0.0</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+  <artifactId>superapp-api</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <name>superapp-api</name>
+
+  <repositories>
+    <repository>
+      <id>internal-repository</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <releases>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencies>
+  
+  
+
+    <dependency>
+      <groupId>com.enttribe.platform</groupId>
+      <artifactId>enttribe-core</artifactId>
+      <version>4.0.0</version>
+      <exclusions>
+		  	<exclusion>
+				<groupId>com.enttribe.platform</groupId>
+     		 	<artifactId>um-api</artifactId>
+      		</exclusion>
+		  
+      	<exclusion>
+				<groupId>io.opentracing.contrib</groupId>
+				<artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+			</exclusion>
+			</exclusions>
+    </dependency>
+   
+    <dependency>
+      <groupId>com.enttribe.platform</groupId>
+      <artifactId>enttribe-mysql-impl</artifactId>
+      <version>4.0.0</version>
+       <exclusions>
+		  <exclusion>
+			  <groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+		  </exclusion>
+		 </exclusions>
+    </dependency>
+<!-- 
+       <dependency>
+        <groupId>com.enttribe.orchestrator</groupId>
+       <artifactId>utility</artifactId>
+       <version>3.0.1</version>
+       </dependency> -->
+
+
+
+	<dependency>
+		<groupId>com.enttribe.platform</groupId>
+		<artifactId>vb-helper</artifactId>
+		<version>4.0.0</version>
+	</dependency> 
+
+     
+  </dependencies>
+  
+  
+  
+  
+  
+  
+  
+    <build>
+	  <plugins>
+         <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <id>replace-import-javax-by-jakarta</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <basedir>
+                        ${project.basedir}/src/main/java/com/enttribe/superapp/model
+                    </basedir>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <replacements>
+                        <replacement>
+                            <token>import javax</token>
+                            <value>import jakarta</value>
+                        </replacement>
+                    </replacements>
+                </configuration>
+            </plugin>
+
+	  </plugins>
+  </build>
+  
+
+</project>

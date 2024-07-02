@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["**/*.ts", "../../libs/modules/superapp/**/*.ts"],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.stories.ts",
+    "../../libs/modules/superapp/**/*.spec.ts",
+    "../../libs/modules/superapp/**/*.stories.ts"
+  ]
+}

@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Search MiniappDetails Scenario
+participant User
+User -> CXFServlet: GET, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << search >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: search(:MiniappDetails)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: search(:MiniappDetails)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsJPARepository: search(:MiniappDetails)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: response(:MiniappDetails)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetails >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted MiniappDetails >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetails >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetails >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

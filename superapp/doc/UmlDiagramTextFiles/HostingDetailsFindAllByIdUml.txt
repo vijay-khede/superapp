@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title FindAllById HostingDetails Scenario
+participant User
+User -> CXFServlet: GET, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << findAllById >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: findAllById(:List<HostingDetails> id)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: findAllById(:List<HostingDetails> id)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsJPARepository: findAllById(:List<HostingDetails> id)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: response(:List<HostingDetails>findAllById)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted List HostingDetails >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted List HostingDetails >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted List HostingDetails >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted List HostingDetails >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

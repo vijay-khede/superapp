@@ -1,0 +1,8 @@
+{{- if .Values.configMap.createNginxconfConfigmap -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-cm"
+data:
+  {{ (.Files.Glob "configmapfiles/nginx.conf").AsConfig   | nindent 1 }}
+{{- end }}

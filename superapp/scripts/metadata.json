@@ -1,0 +1,23 @@
+{
+        "publisherHostname": "localhost",                                                                        # HOSTNAME OF PUBLISHER PORTAL
+        "publisherPort": "443",                                                                                        # PORT OF PUBLISHER PORTAL
+        "gatewayHostname": "localhost",                                                                                # HOSTNAME OF GATEWAY 
+        "gatewayPort": "443",                                                                                                # PORT OF GATEWAY
+        "metadata": [
+          {
+                "name": "superapp-APP",                                                                                                # API NAME
+                "version": "1.0",                                                                                                # API VERSION
+                "timeout": "180000",                                                                                        # API TIMEOUT
+                "context": "/apim/superapp",                                                                                        # API CONTEXT
+                "filePath": "/home/ubuntu/quickboot/jenkins/workspace/superapp/configuration/swagger.json",                  # Swagger file Path
+                "endpoint": "http://superapp-service/superapp",                                                                # Endpoint of Application
+                "clientName": "visionwaves",                                                                        # Client name to be subscribed
+                "isDefaultVersion":false,                                                                   # 'false' if api Run on version, 'true' if needed default 
+                "certificate_path":null,                                                                    # Certificate File path if needed, 'null' if not needed
+                "certificate_alias":null,	                                                                # Certificate Alias( SHOULD BE UNIQUE  )
+                "enableCors":false, 
+                "requested_by":"quickboot"
+                                                                  
+          }
+        ]
+}

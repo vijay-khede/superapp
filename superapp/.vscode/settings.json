@@ -1,0 +1,4 @@
+{
+    "java.configuration.maven.userSettings": "/opt/homebrew/Cellar/maven/3.9.6/libexec/conf/settings.xml",
+    "java.configuration.maven.globalSettings": "/opt/homebrew/Cellar/maven/3.9.6/libexec/conf/settings.xml"
+}

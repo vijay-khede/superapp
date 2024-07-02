@@ -1,0 +1,387 @@
+<bntv-page fxFill [style.width]="'100%'" [pageInfo]="pageInfo" [actions]="pageActions"
+  (actionPage)="actionPage($event)">
+
+  <div page-body fxFlex="100" class="body-container">
+    <div *ngIf="!isListShow" style="height: 100%; overflow: scroll;">
+      
+         <ng-container
+              *ngTemplateOutlet="maintenanceDashboard">
+            </ng-container>
+          
+    </div>
+    
+    <site-workorder-list
+  *ngIf="appName  && isListShow && title && agGridName"
+  (dashboardClickEvent)="listIconClick($event)"
+  [loadingType]="'external'"
+  [basePath]="basePath"
+  [listPath]="'maintenance_workorder_dashboard'"
+  [entityType]="entityType"
+  [appName]="appName"
+  [isActionVisible]="true"
+  [isDashboardIconVisible]="true"
+  [fromDashboard]="fromDashboard"
+  [withoutPage]="false"
+  [title]="title"
+  [agGridName]="agGridName"
+  [entityTypeList]="entityTypeList"
+  [selectedEntity]="selectedEntity"
+  [workorderListTitle]="workorderListTitle"
+  [addWorkorderVisible]="addWorkorderVisible"
+  [entityTypeListVisible]="entityTypeListVisible"
+  [addWorkorderListToggelVisible]="addWorkorderListToggelVisible"
+  [isAdHocProject]="isAdHocProject"
+  [addAdhocWorkorderVisible]="addAdhocWorkorderVisible"
+  [adhocWorkorderentityTypeList]="adhocWorkorderentityTypeList"
+  [adhocWorkorderHeaderTitle]="adhocWorkorderHeaderTitle"
+  [isScopeFieldVisible]="isScopeFieldVisible"
+  [adHocWorkorderAgGridName]="adHocWorkorderAgGridName"
+></site-workorder-list>
+
+
+  </div>
+</bntv-page>
+
+
+
+
+<ng-template #maintenanceDashboard>
+
+<div style="padding: 1em;" fxLayout="row" fxLayoutAlign="space-between stretch" fxLayoutGap="1em">
+    <!-- start of left content -->
+    <div fxLayout="column" fxLayoutAlign="space-between stretch" fxFlex="100" style="height: 100%;">
+
+        <div class="m-b-md" 
+             style="height: 6.34em; padding: 1em;border-radius: 0.385em; background-color: white;
+             box-shadow: 0 0.1875em 0.56em rgba(0, 0, 0, 0.05);" 
+             fxLayout="column">
+            <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between">
+                <div class="h1" style="text-align: start;color:#000" class="h1">{{'Dashboard'}}</div>
+
+                <div fxLayoutGap="1em" fxLayout="row" fxLayoutAlign="end center">
+                        <bntv-select-box
+                        fxFlex="40"
+                        [(data)]="selectedState"
+                        [displayExpression]="'$displayName'"
+                        [itemList]="stateList"
+                        [isMultipleSelect]="false"
+                        (onchange)="getCityList($event)"
+                    ></bntv-select-box>  
+                        <bntv-select-box
+                        fxFlex="40"
+                        class="position"
+                        [displayExpression]="'$geoName'"
+                        [disabled]="!selectedState"
+                        [(data)]="selectedCity"
+                        [itemList]="cityList"
+                        (onchange)="getAllMaintainenanceDashboard()"
+                        >
+                        </bntv-select-box>
+                        <bntv-icon 
+                            [fontSize]="'1em'" 
+                            [tooltip]="'show lists'" 
+                            [fontSet]="'icomoon'" 
+                            [type]="'fontset'"
+                            (click)="isListShow=!isListShow" 
+                            [iconName]="'List'" 
+                            [color]="'#ed7117'">
+                        </bntv-icon>
+                </div>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="" fxLayoutGap="1.5em" class="m-b-md" fxFlex="100">
+            <div class="top-card-main-container-one p-all-lg" fxLayoutGap="0.3em" fxLayout="column"
+                fxlayoutAlign="space-between center" *ngFor="let item of topCardData"
+                fxFlex="24">
+
+                <div style="color: #666666; font-size: 1.4em;">
+                    {{item.title | translate}}
+                </div>
+
+
+                <div fxLayout="row" fxLayoutAlign="space-between end">
+                    <span style="font-size: 2em;">{{item.totalCount}}</span>
+
+                    <div fxLayout="row">
+                        <div>
+                            <div fxLayout="row" fxLayoutGap="0.6em">
+                                <div *ngFor="let item of [0, 1, 2, 3, 4, 5, 6]; let j = index" class="graph-div"
+                                    fxLayoutAlign="flex-end" [ngClass]="{
+                                        'graph-div-one': j === 0,
+                                        'graph-div-two': j === 1,
+                                        'graph-div-three': j === 2,
+                                        'graph-div-four': j === 3,
+                                        'graph-div-five': j === 4,
+                                        'graph-div-six': j === 5,
+                                        'graph-div-seven': j === 6
+                                        }">
+                                    <!-- content of each div here -->
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-left: 1em; color: #ed7117;" fxLayout="column" fxLayoutAlign="end center">
+                            <span>{{"TODAY_TEXT" | translate}}</span>
+                            <span>{{item.dayCount}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center" class="m-b-md" fxLayoutGap="1.8em">
+            <div  fxFlex="38">
+                <bntv-card-layout class="top-card-main-container-one"
+                    [style.height]="'28em'" [showHeader]="true">
+                    <div header class="h2">
+                        <span>{{'MAINTENANCE_TITLE' | translate}}</span>
+
+                        <span
+                            style="color:#adacac;margin-left:0.2em">{{allMaintenanceDashboardData?.projects.suffix}}</span>
+
+                    </div>
+                    <div content>
+                        <ng-container *ngTemplateOutlet="maintenanceContent">
+                        </ng-container>
+                    </div>
+                </bntv-card-layout>
+            </div>
+            <div fxFlex="23">
+                <bntv-card-layout class="top-card-main-container-one"
+                [style.height]="'28em'" [showHeader]="true" >
+                <div header class="h2">
+                    {{'SCHEDULE_FREQUENCY_TITLE' | translate}}
+                </div>
+
+                <div header-right>
+                    <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(scheduleFrequencyPieSubject, 'SCHEDULE_FREQUENCY_TITLE')"
+
+                    >
+                    </bntv-mat-button> 
+
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="scheduleFrequencyPieChartContent">
+                    </ng-container>
+                </div>
+                </bntv-card-layout>
+            </div>
+            <div fxFlex="39">
+                <bntv-card-layout class="top-card-main-container-one"
+                [style.height]="'28em'" [showHeader]="true" >
+                <div header class="h2">
+                    {{'SCHEDULE_FREQUENCY_TITLE' | translate}}
+                </div>
+                <div header-right>
+                    <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(scheduleFrequencyColumnSubject, 'SCHEDULE_FREQUENCY_TITLE')"
+
+                    >
+                    </bntv-mat-button> 
+
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="scheduleFrequencyColumnChartContent">
+                    </ng-container>
+                </div>
+                </bntv-card-layout>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex="100" class="m-b-md">
+            <div fxFlex="49.32">
+                <bntv-card-layout class="top-card-main-container-one"
+                [showHeader]="true" >
+                <div header class="h2">
+                    {{'TOP_ASSIGNED_VENDOR' | translate}}
+                </div>
+                <div header-right>
+                    <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(assignedVendorSubject, 'TOP_ASSIGNED_VENDOR')"
+
+                    >
+                    </bntv-mat-button> 
+
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="assignedVendorColumnchart">
+                    </ng-container>
+                </div>
+                </bntv-card-layout>
+            </div>
+
+            <div fxFlex="49.30">
+                <bntv-card-layout class="top-card-main-container-one"
+                [showHeader]="true" >
+                <div header class="h2">
+                    {{'TOP_ASSIGNED_USERS' | translate}}
+                </div>
+                <div header-right>
+                    <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(assignedUsersSubject, 'TOP_ASSIGNED_USERS')"
+
+                    >
+                    </bntv-mat-button> 
+
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="assignedUsersColumnchart">
+                    </ng-container>
+                </div>
+                </bntv-card-layout>
+            </div>
+
+
+
+        </div>
+
+        <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex="100" class="m-b-md">
+            <bntv-card-layout class="top-card-main-container-one"
+                 [showHeader]="true" fxFlex="100">
+                <div header class="h2">
+                    {{'MAINTENANCE_BY_CATEGORY' | translate}}
+                </div>
+                <div header-right>
+                    <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(maintenanceCategorySubject, 'MAINTENANCE_BY_CATEGORY')"
+    
+                    >
+                    </bntv-mat-button> 
+
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="maintenanceCategoryColumnchart">
+                    </ng-container>
+                </div>
+            </bntv-card-layout>
+        </div>
+
+    </div>
+    <!-- end of left content -->
+</div>
+
+
+<ng-template #scheduleFrequencyColumnChartContent>
+    <bntv-chart [options]="scheduleFrequencyColumnSubject" *ngIf="scheduleFrequencyColumnSubject"></bntv-chart>
+</ng-template>
+
+<ng-template #scheduleFrequencyPieChartContent>
+    <bntv-chart [options]="scheduleFrequencyPieSubject" *ngIf="scheduleFrequencyPieSubject"></bntv-chart>
+</ng-template>
+
+<ng-template #assignedVendorColumnchart>
+    <bntv-chart [options]="assignedVendorSubject" *ngIf="assignedVendorSubject">
+    </bntv-chart>
+</ng-template>
+
+<ng-template #assignedUsersColumnchart>
+    <bntv-chart [options]="assignedUsersSubject" *ngIf="assignedUsersSubject">
+    </bntv-chart>
+</ng-template>
+
+<ng-template #maintenanceCategoryColumnchart>
+    <bntv-chart [options]="maintenanceCategorySubject" *ngIf="maintenanceCategorySubject">
+    </bntv-chart>
+</ng-template>
+
+<ng-template #maintenanceContent>
+    <div fxLayout="column" fxFlex="100%">
+        <div fxLayout="column" style="height:18em">
+            <div style="display:block" fxLayoutAlign="space-between center">
+                <div fxFlex="24">
+                    <span></span>
+                </div>
+
+                <div class="centered-element-center" fxLayout="column" fxFlex="20" fxLayoutAlign="space-between center">
+                    <span style="font-size: 1em;color:'#252525'">{{'ON_TIME_HEADER' | translate}}</span>
+                    <span style="font-size: 0.78em;" style="font-size: 0.9em;">({{'BLOCKERS' | translate
+                        }})</span>
+                        <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+                </div>
+
+                <div class="centered-element-center" fxLayout="column" fxFlex="20" fxLayoutAlign="space-between center">
+                    <span style="font-size: 1em;color:'#e42006'">{{'DELAYED_HEADER' | translate}}</span>
+                    <span style="font-size: 0.78em;" style="font-size: 0.9em;">({{'BLOCKERS' | translate
+                        }})</span>
+                        <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+                </div>
+
+                <div style="text-align:center" fxLayout="column" fxFlex="30" fxLayoutAlign="space-between center">
+                    <span style="font-size: 1em; color:'#5d8b70'">{{'AHEAD_OF_SCHEDULE' | translate}}</span>
+                    <span style="font-size: 0.9em;">({{'BLOCKERS' | translate }})</span>
+                    <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+
+                </div>
+            </div>
+            <div fxLayout="column" fxLayoutAlign="space-between" fxFlex="100" style="margin-top:0.5em"
+                *ngFor="let item of  mainatenanceCardData">
+                <div style="padding-bottom: 0.8em;" fxLayout="row">
+                    <div fxFlex="26">
+                        <span style="color:'#252525'">{{item.projectStatus | translate}}</span>
+                    </div>
+
+                    <div class="centered-element-center" fxLayout="column" fxFlex="20"
+                        fxLayoutAlign="space-between center">
+                        <span style="font-size: 1.8em;" class="orange-color">{{item.onTime.count}}</span>
+                        <span style="font-size: 0.78em;color: #ff1d1e;" class="red-color">{{item.onTime.blockers}}</span>
+                    </div>
+
+                    <div class="centered-element-center" fxLayout="column" fxFlex="22"
+                        fxLayoutAlign="space-between center">
+                        <span style="font-size: 1.8em;" class="orange-color">{{item.delayed.count}}</span>
+                        <span style="font-size: 0.78em;color: #ff1d1e;" class="red-color">{{item.delayed.blockers}}</span>
+                    </div>
+
+                    <div fxLayout="column" fxFlex="30" fxLayoutAlign="space-between center">
+                        <span style="font-size: 1.8em;" class="green-color">{{item.aheadOfSchedule.count}}</span>
+                        <span style="font-size: 0.78em;color: #ff1d1e;" class="red-color">{{item.aheadOfSchedule.blockers}}</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+</ng-template>

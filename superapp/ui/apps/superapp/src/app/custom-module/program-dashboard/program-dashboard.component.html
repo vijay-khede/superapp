@@ -1,0 +1,33 @@
+<app-program-dashboard
+*ngIf="appName && entityType && !isListShow"
+[appName]="appName"
+[loadingType]="'external'"
+[basePath]="basePath"
+[listPath]="'program_dashboard'"
+[adhocWorkorderHeaderTitle]="adhocWorkorderHeaderTitle"
+    [adhocWorkorderScopeHeaderTitle]="adhocWorkorderScopeHeaderTitle"
+    [title]="title"
+    [isScopeFieldVisible]="isScopeFieldVisible"
+    [entityType]="entityType"
+    [isAdhocWorkorderAddVisible]="isAdhocWorkorderAddVisible"
+    [isScopeAdhocWorkorderAddVisible]="isScopeAdhocWorkorderAddVisible"
+></app-program-dashboard>
+
+
+<app-program-list
+*ngIf="appName && entityType && isListShow"
+[appName]="appName"
+[isDashboardIconVisible]="false"
+[loadingType]="'external'"
+[basePath]="basePath"
+[listPath]="'program_dashboard'"
+(dashboardClicked)="listIconClick(false)"
+[adhocWorkorderHeaderTitle]="adhocWorkorderHeaderTitle"
+    [adhocWorkorderScopeHeaderTitle]="adhocWorkorderScopeHeaderTitle"
+    [title]="title"
+    [isScopeFieldVisible]="isScopeFieldVisible"
+    [entityType]="entityType"
+    [isAdhocWorkorderAddVisible]="isAdhocWorkorderAddVisible"
+    [isScopeAdhocWorkorderAddVisible]="isScopeAdhocWorkorderAddVisible"
+>
+</app-program-list>

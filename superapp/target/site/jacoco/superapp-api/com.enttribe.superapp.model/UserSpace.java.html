@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>UserSpace.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">UserSpace.java</span></div><h1>UserSpace.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Filter; 
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.envers.Audited;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+// @Audited
+@JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
+@Entity 
+@Getter 
+<span class="nc" id="L24">@AllArgsConstructor</span>
+<span class="nc" id="L25">@NoArgsConstructor</span>
+@Table(name = &quot;UserSpace&quot;)
+@Filters({
+    @Filter(name = &quot;userSpaceIdEqFilter&quot;, condition = &quot;userspaceid_pk = :userspaceId&quot;),
+    @Filter(name = &quot;userSpaceIdNEqFilter&quot;, condition = &quot;userspaceid_pk &lt;&gt; :userspaceId&quot;),
+    @Filter(name = &quot;userSpaceIdInFilter&quot;, condition = &quot;userspaceid_pk in (:userspaceIds)&quot;),
+    @Filter(name = &quot;userSpaceIdNInFilter&quot;, condition = &quot;userspaceid_pk not in (:userspaceIds)&quot;),
+    @Filter(name = &quot;userSpaceNameEqFilter&quot;, condition = &quot;name = :name&quot;),
+    @Filter(name = &quot;userSpaceNameNEqFilter&quot;, condition = &quot;name &lt;&gt; :name&quot;),
+    @Filter(name = &quot;userSpaceNameInFilter&quot;, condition = &quot;name in (:names)&quot;),
+    @Filter(name = &quot;userSpaceNameNInFilter&quot;, condition = &quot;name not in (:names)&quot;),
+    @Filter(name = &quot;userSpaceGeoTypeEqFilter&quot;, condition = &quot;geotype = :geotype&quot;),
+    @Filter(name = &quot;userSpaceGeoTypeNEqFilter&quot;, condition = &quot;geotype &lt;&gt; :geotype&quot;),
+    @Filter(name = &quot;userSpaceGeoTypeInFilter&quot;, condition = &quot;geotype in (:geotypes)&quot;),
+    @Filter(name = &quot;userSpaceGeoTypeNInFilter&quot;, condition = &quot;geotype not in (:geotypes)&quot;),
+    @Filter(name = &quot;userSpaceCreationTimeEqFilter&quot;, condition = &quot;creationtime = :creationtime&quot;),
+    @Filter(name = &quot;userSpaceCreationTimeNEqFilter&quot;, condition = &quot;creationtime &lt;&gt; :creationtime&quot;),
+    @Filter(name = &quot;userSpaceCreationTimeInFilter&quot;, condition = &quot;creationtime in (:creationtimes)&quot;),
+    @Filter(name = &quot;userSpaceCreationTimeNInFilter&quot;, condition = &quot;creationtime not in (:creationtimes)&quot;),
+    @Filter(name = &quot;userSpaceCreatorEqFilter&quot;, condition = &quot;creator = :creator&quot;),
+    @Filter(name = &quot;userSpaceCreatorNEqFilter&quot;, condition = &quot;creator &lt;&gt; :creator&quot;),
+    @Filter(name = &quot;userSpaceCreatorInFilter&quot;, condition = &quot;creator in (:creators)&quot;),
+    @Filter(name = &quot;userSpaceCreatorNInFilter&quot;, condition = &quot;creator not in (:creators)&quot;)
+})  
+@FilterDefs({
+    @FilterDef(name = &quot;userSpaceIdEqFilter&quot;, parameters = @ParamDef(name = &quot;userspaceId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userSpaceIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;userspaceId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userSpaceIdInFilter&quot;, parameters = @ParamDef(name = &quot;userspaceIds&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userSpaceIdNInFilter&quot;, parameters = @ParamDef(name = &quot;userspaceIds&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userSpaceNameEqFilter&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceNameNEqFilter&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceNameInFilter&quot;, parameters = @ParamDef(name = &quot;names&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceNameNInFilter&quot;, parameters = @ParamDef(name = &quot;names&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceGeoTypeEqFilter&quot;, parameters = @ParamDef(name = &quot;geotype&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceGeoTypeNEqFilter&quot;, parameters = @ParamDef(name = &quot;geotype&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceGeoTypeInFilter&quot;, parameters = @ParamDef(name = &quot;geotypes&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceGeoTypeNInFilter&quot;, parameters = @ParamDef(name = &quot;geotypes&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceCreatorEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceCreatorNEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceCreatorInFilter&quot;, parameters = @ParamDef(name = &quot;creators&quot;, type = String.class)),
+    @FilterDef(name = &quot;userSpaceCreatorNInFilter&quot;, parameters = @ParamDef(name = &quot;creators&quot;, type = String.class))
+})  
+public class UserSpace { 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = &quot;userspaceid_pk&quot;)
+<span class="nc" id="L72">    private Integer userSpaceId;</span>
+
+    @NotNull
+    @Size(max = 50)
+    @Column(name = &quot;name&quot;, unique = true)
+<span class="nc" id="L77">    private String name;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;geotype&quot;)
+<span class="nc" id="L81">    private String geoType;</span>
+
+    @Column(name = &quot;creationtime&quot;, columnDefinition = &quot;DATETIME DEFAULT CURRENT_TIMESTAMP&quot;)
+<span class="nc" id="L84">    private Date creationTime;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;creator&quot;)
+<span class="nc" id="L88">    private String creator; </span>
+
+    // Getters and Setters
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

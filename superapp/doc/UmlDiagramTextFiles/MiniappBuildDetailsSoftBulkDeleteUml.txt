@@ -1,0 +1,30 @@
+@startuml
+!theme cyborg-outline
+title BulkDelete MiniappBuildDetails Scenario
+participant User
+User -> CXFServlet: DELETE, MiniappBuildDetails
+activate CXFServlet
+CXFServlet -> MiniappBuildDetails: << bulkdelete >>
+activate MiniappBuildDetails
+MiniappBuildDetails -> CXFServlet: << instance >>
+deactivate MiniappBuildDetails
+CXFServlet -> MiniappBuildDetailsControllerImpl: bulkDelete(:List<MiniappBuildDetails>)
+activate MiniappBuildDetailsControllerImpl
+MiniappBuildDetailsControllerImpl -> MiniappBuildDetailsService: softBulkDelete(:List<MiniappBuildDetails>)
+activate MiniappBuildDetailsService
+MiniappBuildDetailsService -> MiniappBuildDetailsServiceImpl: softBulkDelete(:List<MiniappBuildDetails>)
+MiniappBuildDetailsServiceImpl -> MiniappBuildDetailsJPARepository: deleteAll(:List<MiniappBuildDetails>)
+activate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsJPARepository -> EntityManager: delete(:List<MiniappBuildDetails>)
+activate EntityManager
+EntityManager -> MiniappBuildDetailsJPARepository: << persisted MiniappBuildDetails >>
+deactivate EntityManager
+MiniappBuildDetailsJPARepository -> MiniappBuildDetailsService: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsService -> MiniappBuildDetailsControllerImpl: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsService
+MiniappBuildDetailsControllerImpl -> CXFServlet: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappBuildDetails XML
+deactivate CXFServlet
+@enduml

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>LongSizeValidation.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.annotation.hibernate</a> &gt; <span class="el_source">LongSizeValidation.java</span></div><h1>LongSizeValidation.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.annotation.hibernate;
+
+import jakarta.validation.ConstraintValidator;
+
+import jakarta.validation.ConstraintValidatorContext;
+
+
+
+/**
+
+Class LongSizeValidation
+Provides a constraint validator for the LongSize annotation.
+{@link LongSizeValidation} is a class that implements the {@link ConstraintValidator} interface, which allows it to be used by the validation framework to validate long values annotated with the LongSize annotation.
+The {@link #initialize(LongSize)} method is called when the validator is first applied, it assigns the max field with the value provided in the annotation and it also calls the super.initialize method
+The {@link #isValid(Long, ConstraintValidatorContext)} method is called by the validation framework to check if the long value being validated meets the constraints defined in the LongSize annotation.
+It converts the given Long value to String, and check the length of the string representation of the value against the max value, if the length of the string representation is less than or equal to max it returns true, else it returns false.
+@author Visionwaves  team
+@version 1.0
+@since 2022-07
+*/
+<span class="nc" id="L21">public class LongSizeValidation implements ConstraintValidator&lt;LongSize, Long&gt; {</span>
+
+	Integer max;
+	/**
+	Method initialize
+	Initializes the validator for the LongSize constraint annotation.
+	This method is called by the validation framework when the constraint is first applied, and should be used to initialize any resources needed for the validation process.
+	@param constraintAnnotation the LongSize annotation that contains the constraints to be applied to the long value
+	It assigns the max field with the value provided in the annotation and it also calls the super.initialize method
+	@author Visionwaves   team
+	@version 1.0
+	@since 2022-07
+*/
+	@Override
+	public void initialize(LongSize constraintAnnotation) {
+<span class="nc" id="L36">		max=constraintAnnotation.max();</span>
+<span class="nc" id="L37">		ConstraintValidator.super.initialize(constraintAnnotation);</span>
+<span class="nc" id="L38">	}</span>
+
+
+/**
+
+Method isValid
+Validates a long value against the constraints specified by the LongSize annotation.
+This method is called by the validation framework to check if the long value being validated meets the constraints defined in the LongSize annotation.
+@param value The long value to be validated
+@param context The context in which the constraint is evaluated
+It converts the given Long value to String, and check the length of the string representation of the value against the max value, if the length of the string representation is less than or equal to max it returns true, else it returns false.
+@return true if the long value meets the constraints defined in the LongSize annotation, false otherwise
+@author Visionwaves  team
+@version 1.0
+@since 2022-07
+*/
+		@Override
+	public boolean isValid(Long value, ConstraintValidatorContext context) {
+<span class="nc" id="L56">		boolean success = false;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">		if(null!=value)</span>
+		{
+<span class="nc" id="L59">		String size=value.toString();</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">	    if(  size.length() &lt;= max){</span>
+<span class="nc" id="L61">	      success = true;</span>
+	    } else {
+<span class="nc" id="L63">	      success = false;</span>
+	    }
+		}
+<span class="nc" id="L66">	    return success;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

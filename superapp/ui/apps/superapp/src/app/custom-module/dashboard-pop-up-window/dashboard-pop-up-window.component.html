@@ -1,0 +1,17 @@
+
+<bntv-generic-modal-layout>
+    <div dialog-title>
+        {{data.name | translate}}
+        <!-- <div class="container">
+            <span class="left" #left>{{data.name | translate}}</span>
+            <span class="right" [ngStyle]="{'margin-left.px': left.offsetWidth}">{{"("+data.ytdValue+")"}}</span>
+        </div> -->
+    </div>
+
+    
+
+    <div dialog-content>
+        <bntv-chart [options]="data">
+        </bntv-chart>
+    </div>
+</bntv-generic-modal-layout>

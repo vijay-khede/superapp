@@ -1,0 +1,549 @@
+{
+  "gridName": "miniapp-build-details superapp",
+  "host": "component",
+  "crudApi": {
+    "create": {
+      "url": "MiniappBuildDetails/create",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "view": {
+      "url": "MiniappBuildDetails/findById?id=$id",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "edit": {
+      "url": "MiniappBuildDetails/update",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "MiniappBuildDetails/deleteById?id=$id",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "bulk_delete": {
+      "url": "MiniappBuildDetails/deleteAll",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "workflow": {
+      "url": "WorkflowActions/updateActionTask",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "search": {
+      "url": "MiniappBuildDetails/search?filter=deleted==false&offset=0&size=1000&orderBy=modifiedTime&orderType=desc",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "export": {
+      "url": "MiniappBuildDetails/export?filter=deleted==false&orderBy=modifiedTime&orderType=desc",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "import": {
+      "url": "MiniappBuildDetails/importData",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "template": {
+      "url": "MiniappBuildDetails/downloadTemplate?fileName=MiniappBuildDetails.xlsx",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "commentApi": {
+    "create": {
+      "url": "MiniappBuildDetails/createComment",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "MiniappBuildDetails/deleteCommentByReferenceId",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "searchComment": {
+      "url": "MiniappBuildDetails/searchComment",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "updateComment": {
+      "url": "MiniappBuildDetails/updateComment",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "attachmentApi": {
+    "upload": {
+      "url": "MiniappBuildDetails/uploadDocument",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "getFiles": {
+      "url": "MiniappBuildDetails/getMyDocuments",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "MiniappBuildDetails/deleteFromUploadWindow",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "subFolder": {
+      "url": "MiniappBuildDetails/getSubFolderByReferenceValueAndType",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "id": "SUPERAPP_MINIAPPBUILDDETAILS",
+  "page": 0,
+  "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS",
+  "identityColumn": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.APPID",
+  "display": "form",
+  "formName": "MINIAPP-BUILD-DETAILS",
+  "numPages": 0,
+  "selected": true,
+  "components": [
+    {
+      "id": "section_0.3120",
+      "type": "panel",
+      "hover": false,
+      "input": false,
+      "title": "",
+      "main": true,
+      "hideHeader": true,
+      "columns": 2,
+      "category": "layout",
+      "isHidden": false,
+      "parentId": "page_2705",
+      "components": [
+        {
+          "id": "textfield_0.1283",
+          "type": "textfield",
+          "key": "miniappDetails",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.APPID",
+          "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.APPID",
+          "prefix": null,
+          "source": "MiniappBuildDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {},
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "textfield",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please search name",
+          "sourceTable": "MINIAPP_BUILD_DETAILS",
+          "autocomplete": true,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null,
+          "autoConfigData": {
+            "url": "MiniappDetails/search?filter=name==*$data.MiniappBuildDetails.miniappDetails*;deleted==false&offset=0&size=25",
+            "context": "SUPERAPP",
+            "urlType": "INTERNAL_TEXT",
+            "requestType": "GET",
+            "apiSourceType": "UI",
+            "displayExpression": "name"
+          }
+        },
+        {
+          "id": "textfield_0.3299",
+          "type": "textfield",
+          "key": "sourceCodeUrl",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEURL",
+          "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEURL",
+          "prefix": null,
+          "source": "MiniappBuildDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {
+            "maxLength": 255
+          },
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "text",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter SOURCE CODE URL",
+          "sourceTable": "MINIAPP_BUILD_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null
+        },
+        {
+          "id": "textfield_0.05972",
+          "type": "textfield",
+          "key": "compiledFileUrl",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.COMPILEDFILEURL",
+          "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.COMPILEDFILEURL",
+          "prefix": null,
+          "source": "MiniappBuildDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {
+            "maxLength": 255
+          },
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "text",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter COMPILED FILE URL",
+          "sourceTable": "MINIAPP_BUILD_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null
+        },
+        {
+          "id": "textfield_0.5046",
+          "type": "textfield",
+          "key": "sourceCodePath",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEPATH",
+          "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEPATH",
+          "prefix": null,
+          "source": "MiniappBuildDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {
+            "maxLength": 255
+          },
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "text",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter SOURCE CODE PATH",
+          "sourceTable": "MINIAPP_BUILD_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null
+        },
+        {
+          "id": "select_0.6111",
+          "type": "select",
+          "key": "status",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.STATUS",
+          "title": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.STATUS",
+          "prefix": null,
+          "source": "MiniappBuildDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {},
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "select",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please select status",
+          "sourceTable": "MINIAPP_BUILD_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null,
+          "dataSrc": "values",
+          "data": {
+            "values": [
+              {
+                "label": "NEW",
+                "value": "NEW"
+              },
+              {
+                "label": "PASS",
+                "value": "PASS"
+              },
+              {
+                "label": "FAIL",
+                "value": "FAIL"
+              }
+            ]
+          }
+        }
+      ],
+      "isReadOnly": false,
+      "tooltipdata": null,
+      "startNewPage": true,
+      "buttonProperties": {
+        "type": null
+      }
+    }
+  ],
+  "footerConfig": {
+    "hover": false,
+    "buttonAlignment": "default",
+    "pageCount": 0,
+    "isFooterReq": true,
+    "buttonList": {
+      "middleList": [],
+      "leftList": [],
+      "rightList": [
+        {
+          "allowDelete": false,
+          "hover": false,
+          "buttonType": "stroked",
+          "showOnlyInLastPage": false,
+          "isFooterButton": true,
+          "toolTipContent": "",
+          "label": "CANCEL_TEXT",
+          "type": "button",
+          "showOnLastPage": false,
+          "footerButtonType": "cancel"
+        },
+        {
+          "configureCommentReason": false,
+          "themeoption": [
+            "ACCENT",
+            "PRIMARY",
+            "WARNING"
+          ],
+          "checklistComplete": false,
+          "checkValidation": true,
+          "type": "button",
+          "showLabel": true,
+          "disableOnInvalid": false,
+          "checkValidationOnButtonClick": true,
+          "rulesData": {
+            "visible": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ],
+              "validation": ""
+            },
+            "editable": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ],
+              "validation": ""
+            },
+            "background": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ]
+            },
+            "mandatory": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ]
+            }
+          },
+          "action": null,
+          "block": false,
+          "id": "footer_button_1157",
+          "group": "submit",
+          "sourceTable": null,
+          "btnPositionKey": "left",
+          "$$hashKey": null,
+          "showSaveSuccessMsg": "",
+          "size": null,
+          "isTranslate": false,
+          "saveOnly": true,
+          "rightIcon": null,
+          "hideOrDisable": "show",
+          "buttonValue": "submit",
+          "roleslist": [
+            "All Roles"
+          ],
+          "leftIcon": null,
+          "values": [
+            {
+              "text": "YES_TEXT",
+              "value": "default"
+            },
+            {
+              "text": "NO_TEXT",
+              "value": "custom"
+            }
+          ],
+          "icon": "button",
+          "description": null,
+          "title": "BUTTON",
+          "hover": false,
+          "isReadOnly": false,
+          "configMsg": null,
+          "inputTypeForTooltip": "LANGUAGE_KEY",
+          "msgDescription": null,
+          "theme": "accent",
+          "disabled": false,
+          "placeholder": "",
+          "key": "submittext",
+          "isMsgConfigured": "custom",
+          "validate": {
+            "required": false
+          },
+          "showSaveFailureMsg": "",
+          "buttonProperties": {
+            "type": null
+          },
+          "label": "SUBMIT_TEXT",
+          "footerButtonType": "submit",
+          "isHidden": false,
+          "buttonLabel": null,
+          "selectedthems": "accent",
+          "showOnlyInLastPage": false,
+          "isFooterButton": true,
+          "category": "fields"
+        }
+      ]
+    },
+    "type": "footer"
+  },
+  "application": 1,
+  "description": "Sample Form",
+  "openInDialog": false,
+  "isOpenInDialog": false,
+  "displayFormName": "Sample Form",
+  "sourcesToBeSaved": [
+    "MiniappBuildDetails"
+  ],
+  "subApplicationName": "All",
+  "context": "SUPERAPP",
+  "applicationName": "SUPERAPP_APP_NAME",
+  "tableName": "MiniappBuildDetails",
+  "primaryKeyName": "id",
+  "nativeName": "MINIAPP_BUILD_DETAILS",
+  "wrapperName": "miniappBuildDetails",
+  "fileName": "superapp_MiniappBuildDetails_crud",
+  "viewName": "SUPERAPP_MINIAPPBUILDDETAILS_FORM",
+  "moduleName": "superapp"
+}

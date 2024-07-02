@@ -1,0 +1,159 @@
+replicaCount: 1
+
+image:
+  repository: registry.visionwaves.com/superapp-ui
+  pullPolicy: Always
+  tag: "1.0.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: /metrics
+  prometheus.io/scheme: http
+  prometheus.io/port: "8081"
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  name: superapp-ui
+  port: 80
+  targetPort: 8081
+
+ingress:
+  enabled: false
+  annotations: 
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host:
+      paths: ["/superapp"]
+
+virtualService:
+  enabled: true
+  context: /superapp
+  rewriteForSlash: false
+
+
+env:
+  uiChanges: "false"
+  realmName: "BNTV"
+  keycloakUrl: "https://localhost/auth/"
+  uiUrl: "https://localhost/bntv/index.html"
+  keycloakClient: "bntv"
+
+# Resource limit availble on node
+resourcesLimits:
+  cpu: 20m
+  memory: 200M
+
+# Resource Requested for container
+requestsResources:
+  cpu: 10m
+  memory: 100M
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+
+livenessProbe:
+  path: /nginx_status
+  initialDelaySeconds: 300
+  periodSeconds: 20
+  failureThreshold: 3
+
+readinessProbe:
+  path: /nginx_status
+  initialDelaySeconds: 20
+  periodSeconds: 10
+
+
+ports:
+  containerPort: 8081
+
+# istioGateway name of the default gateway available in k8s   
+gateway:
+  enabled: true
+  name: ingressgateway
+
+
+#gatewayServers http gateway configuration values
+gatewayServers:
+  portNumber: 80 #Port Number
+  portName: http #Name of the scheme port
+  portProtocol: HTTP #Scheme
+  hosts: "\"*\"" #Hosts DNS of FQDN
+
+
+configMap:
+  createIndexhtmlConfigmap: false
+  createNginxconfConfigmap: true
+  defaultMode: 0755
+
+## FOR VOLUME MOUNTS
+
+volumeMounts:
+  protectedPath: /data/report/protected
+  sharedPath: /data/report
+  nginxConfPath: /etc/nginx/nginx.conf
+  nginxConfsubPath: nginx.conf
+  indexHtmlPath: /data/webapp/platform/bntvapp/index.html
+  indexHtmlsubPath: index.html
+
+nfs:
+  hostPath: false
+  asServer: false
+  asStorageClass: false
+
+##FOR VOLUMES
+
+volumes:
+  nfsServerUrl: a023fe10a824e465190cdc133fcfbc1d-527767393.ap-south-1.elb.amazonaws.com
+  nfsServerPath: /protected
+  nfsProtectedPath: /protected
+  nfsHostPath: /data/report/protected
+  nginx_conf_configmap_name: "{{ .Release.Name }}-cm"
+
+## 
+
+exporter:
+  enable: false
+  name: nginx-exporter
+  image:
+    repository: localhost
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+  env:
+    scrapeUrl: "http://localhost:8081/nginx_status"
+    nginxRetries: "10"
+    telemetryPath: "/metrics" 
+  ports:
+    containerPort: 9113
+  resources:
+    requests:
+      memory: "1Gi"
+      cpu: "200m"
+    limits:
+      memory: "2Gi"
+      cpu: "250m"

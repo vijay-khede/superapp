@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="/" />
+    <meta charset="utf-8" />
+    <title>Superapp</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.png" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    /> 
+    <style>
+      .loading-text-style {
+        position: absolute;
+        /* top: 46%; */
+        left: 50%;
+        margin-top: 2%;
+        transform: translate(-50%, -50%);
+      }
+
+      .font-style {
+        font-size: 1.538em !important;
+        font-weight: 500;
+        /* color: rgb(255, 0, 140); */
+        color: #3036ee;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .display-none {
+        display: none;
+      }
+
+      .background-image {
+        background-color: #fff;
+        background-size: cover;
+      }
+
+      .full-size {
+        height: 100%;
+        width: 100%;
+      }
+
+      .error-msg-text {
+        position: absolute;
+        top: 50%;
+        margin-top: -0.5em;
+        overflow: hidden;
+        color: red;
+        white-space: nowrap;
+        width: 100%;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+      .background-white,
+      .background-white:before {
+        background: white !important;
+      }
+
+      .load1 {
+  width: 8vmax;
+  height: 8vmax;
+  border-right: 4px solid #5d64f5;
+  border-radius: 100%;
+  animation: spinRight 800ms linear infinite;
+}
+.load1:before, .load1:after {
+  content: '';
+  width: 6vmax;
+  height: 6vmax;
+  display: block;
+  position: absolute;
+  top: calc(50% - 3vmax);
+  left: calc(50% - 3vmax);
+  border-left: 3px solid #5d64f5;
+  border-radius: 100%;
+  animation: spinLeft 800ms linear infinite;
+}
+.load1:after {
+  width: 4vmax;
+  height: 4vmax;
+  top: calc(50% - 2vmax);
+  left: calc(50% - 2vmax);
+  border: 0;
+  border-right: 2px solid #5d64f5;
+  animation: none;
+}
+@keyframes spinLeft {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(720deg);
+  }
+}
+@keyframes spinRight {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+    </style>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#1976d2" />
+    <script src="./assets/ckeditor-build/build/ckeditor.js"></script>
+
+  </head>
+
+  <body class="theme">
+    <superapp-root>
+      <div id="loadingElement" class="font-style full-size">
+        <div class="loadingContainer">
+          <div class="load1"></div>
+        </div>
+      </div>
+      <div id="errorMsgElement" class="font-style display-none full-size">
+        <div class="error-msg-text">Application initialization failed</div>
+      </div>
+      </superapp-root>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title FindById MiniappDetails Scenario
+participant User
+User -> CXFServlet: GET, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << findById >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: findById(:int)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: findById(:int)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsJPARepository: findById(:int)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: response(:MiniappDetails)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetails >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted MiniappDetails >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetails >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetails >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

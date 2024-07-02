@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SourceCodeDetailsServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.service.impl</a> &gt; <span class="el_source">SourceCodeDetailsServiceImpl.java</span></div><h1>SourceCodeDetailsServiceImpl.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.service.impl;
+
+import org.springframework.stereotype.Service;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+import com.enttribe.commons.io.excel.Excel;
+import com.enttribe.commons.io.excel.ExcelRow;
+import com.enttribe.commons.io.excel.ExcelWriter;
+import com.enttribe.commons.lang.StringUtils;
+import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
+import com.enttribe.superapp.repository.SourceCodeDetailsRepository;
+import com.enttribe.superapp.integration.service.DocumentIntegrationService;
+import com.enttribe.superapp.model.MiniappDetails;
+import com.enttribe.superapp.model.SourceCodeDetails;
+import com.enttribe.superapp.repository.generic.GenericRepository;
+import com.enttribe.superapp.service.SourceCodeDetailsService;
+import com.enttribe.superapp.service.generic.AbstractService;
+import com.enttribe.superapp.util.APIConstants;
+import com.enttribe.superapp.util.report.ExcelUtils;
+import com.enttribe.product.security.spring.userdetails.CustomerInfo;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
+
+/**
+*
+This is a class named &quot;SourceCodeDetailsServiceImpl&quot; which is located in the package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an implementation of the &quot;SourceCodeDetailsService&quot; interface and it extends the &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD operations for entities. This class is annotated with @Service, indicating that it is a Spring Service bean.
+This class is using Lombok's @Slf4j annotation which will automatically generate an Slf4j based logger instance, so it is using the Slf4j API for logging.
+The class has a constructor which takes a single parameter of GenericRepository SourceCodeDetails and is used to call the superclass's constructor.
+This class have one public method public byte[] export(List of SourceCodeDetails  SourceCodeDetails) for exporting the SourceCodeDetails data into excel file by reading the template and mapping the SourceCodeDetails details into it.
+It's using Apache POI library for reading and writing excel files, and has methods for parsing the json files for column names and identities , and it also used 'ExcelUtils' for handling the excel operations.
+It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils' and 'APIConstants' from 'com.enttribe.superapp.util'
+*
+* */
+
+@Service
+<span class="nc" id="L46">@Slf4j</span>
+public class SourceCodeDetailsServiceImpl extends AbstractService&lt;SourceCodeDetails&gt; implements SourceCodeDetailsService {
+
+/**
+* Constructor for SourceCodeDetailsServiceImpl.
+* @param repository The GenericRepository used to perform CRUD operations for SourceCodeDetails entities.
+*/
+	public SourceCodeDetailsServiceImpl(GenericRepository&lt;SourceCodeDetails&gt; repository) {
+<span class="nc" id="L54">		super(repository,SourceCodeDetails.class);</span>
+<span class="nc" id="L55">	}</span>
+	
+	private static final String ENTITY_NAME = &quot;SourceCodeDetails&quot;; 
+	
+	@Autowired
+	private SourceCodeDetailsRepository sourceCodeDetailsRepository; 
+
+
+   @Autowired
+   private DocumentIntegrationService documentIntegrationService;
+	
+/**
+* This method is used to export the given list of SourceCodeDetails objects into an excel file.
+* It reads an excel template 'SourceCodeDetails.xlsx' from the resource folder 'templates/reports'
+* and maps the SourceCodeDetails data onto the template and returns the generated excel file in the form of a byte array.
+* param SourceCodeDetails - List of SourceCodeDetails objects to be exported
+* @return byte[] - The generated excel file in the form of a byte array
+* @throws IOException - When the template file is not found or there is an error reading the file
+*/
+	@Override
+	public byte[] export(List&lt;SourceCodeDetails&gt; sourceCodeDetails) throws IOException {
+<span class="nc" id="L76">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/SourceCodeDetails.xlsx&quot;);</span>
+<span class="nc" id="L77">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
+<span class="nc" id="L78">		int rowCount = 1;</span>
+<span class="nc" id="L79">		return setTableData(sourceCodeDetails,xssfWorkbook, rowCount);</span>
+	}
+
+/**
+ * This method is responsible for setting the data of an Excel document, using a template and a list of SourceCodeDetails objects.
+ * The data is written to the template starting at the specified row number.
+ * 
+ * @param SourceCodeDetails a List of SourceCodeDetails objects, representing the data that will be written to the Excel document
+ * @param templatePath an XSSFWorkbook object, representing the template Excel document that the data will be written to
+ * @param rowCount an int, representing the starting row number where data will be written in the Excel document
+ * @return a byte array of the Excel document after the data has been written to it.
+ * @throws IOException if there is an issue reading or writing to the Excel document
+ */
+/**This method appears to take in three parameters:
+A List of SourceCodeDetails objects, representing the data that will be written to the Excel document.
+An XSSFWorkbook object, representing the template Excel document that the data will be written to.
+An int, representing the starting row number where data will be written in the Excel document.
+The method has a return type of byte array, which is the Excel document after the data has been written to it. The method also throws an IOException, which would be thrown if there is an issue reading or writing to the Excel document.
+The method starts by creating some maps to hold data that will be used later:
+tableColumn: a map that will hold the columns of the Excel table.
+identityColumnMapping: a map that will hold the mapping of columns
+templateHeaders: a map that will hold the headers of the excel template
+then it calls ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders); to get the values for the maps created.
+Then it creates an instance of ExcelWriter which will write the data to the workbook, it set the active sheet to the first sheet of the workbook and check if SourceCodeDetails list is not empty.
+It then iterates over the list of SourceCodeDetails objects and for each SourceCodeDetails, it creates a new row in the Excel document at the specified row number.
+It also retrieves the list of columns for the &quot;SourceCodeDetails&quot; entity from the tableColumn map, and iterates over the columns.
+For each column, it attempts to retrieve the value for that column from the current SourceCodeDetails object using the ExcelUtils.invokeGetter method, passing in the current SourceCodeDetails object, the column name and the identityColumnMapping.
+The value returned by this method is then set as the value of the cell in the current row and column.
+If an introspection exception occur it will print the stacktrace of the exception
+After all the data is written to the Excel document, the method returns the Excel document as a byte array using excelWriter.toByteArray() and log &quot;going to return file&quot;
+* */
+
+	private byte[] setTableData(List&lt;SourceCodeDetails&gt;sourceCodeDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
+<span class="nc" id="L112">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
+<span class="nc" id="L113">		String entity=ENTITY_NAME;</span>
+<span class="nc" id="L114">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
+<span class="nc" id="L115">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L116">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
+<span class="nc" id="L117">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
+<span class="nc" id="L118">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
+<span class="nc" id="L119">			excelWriter.getWorkbook().setActiveSheet(0);</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(sourceCodeDetails)) {</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">			for (SourceCodeDetails sourceCodeDetailsDetails : sourceCodeDetails) {</span>
+<span class="nc" id="L122">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
+<span class="nc" id="L123">				int index = 0;</span>
+<span class="nc" id="L124">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed."> 			for(String column:columns) {</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">				if(column!=null) {   </span>
+				try {
+<span class="nc" id="L128">					row.setCellValue(index, ExcelUtils.invokeGetter(sourceCodeDetailsDetails,column,identityColumnMapping).toString());</span>
+<span class="nc" id="L129">				}catch (IntrospectionException e) {</span>
+<span class="nc" id="L130">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L131">                }</span>
+              }
+<span class="nc" id="L133">             	 ++index;</span>
+<span class="nc" id="L134">             }</span>
+<span class="nc" id="L135">            	rowCount++;</span>
+<span class="nc" id="L136">            }</span>
+        }
+<span class="nc" id="L138">		log.info(&quot;going to return file&quot;);</span>
+<span class="nc" id="L139">        return excelWriter.toByteArray();</span>
+	  }
+	}
+
+/**
+ * This method is responsible for importing data from an Excel file, specifically data related to SourceCodeDetails objects.
+ * The method takes in a MultipartFile object, which represents the Excel file containing the data.
+ * The method then validates the template headers in the Excel file and if they are valid, it saves the data to the database.
+ *
+ * @param excelFile a MultipartFile object representing the Excel file containing the data
+ * @return a string indicating whether the data import was successful or not.
+ * @throws IOException if there is an issue reading from the Excel file
+ * @throws InstantiationException when there is issue with instantiation
+ * @throws ClassNotFoundException when the class not found
+ */
+
+	@Override
+	public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
+<span class="nc" id="L157">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss =new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L158">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
+<span class="nc" id="L159">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
+<span class="nc" id="L160">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
+<span class="nc" id="L161">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L162">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L163">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
+<span class="nc" id="L164">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
+<span class="nc" id="L165">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L166">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
+<span class="nc" id="L167">      	boolean validateTableTemplateHeader =</span>
+<span class="nc" id="L168">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
+<span class="nc" id="L170">        	log.info(&quot;columns and headers are validated&quot;);</span>
+<span class="nc" id="L171">        	sourceCodeDetailss = saveData(workBook, columnsMapping, columnNames);</span>
+      	}
+    	else {
+<span class="nc" id="L174">      		log.info(&quot;columns and headers invalide&quot;);</span>
+      	}
+<span class="nc bnc" id="L176" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(sourceCodeDetailss)) {</span>
+<span class="nc" id="L177">		sourceCodeDetailsRepository.saveAll(sourceCodeDetailss);</span>
+<span class="nc" id="L178">		return APIConstants.SUCCESS_JSON;</span>
+	}
+<span class="nc" id="L180">		return APIConstants.FAILURE_JSON;</span>
+	}
+
+/**
+ * This method is responsible for saving data to the database, specifically data related to SourceCodeDetails objects.
+ * The method takes in an Excel object, which represents the sheet containing the data, a mapping of columns from the excel sheet to the SourceCodeDetails class, and a list of column names.
+ * The method uses the iterator for the sheet to read data row by row, create new SourceCodeDetails objects, and set the properties of the SourceCodeDetails objects using the column mapping and column names.
+ * The method returns a list of SourceCodeDetails objects that have been saved to the database.
+ * @param sheet an Excel object representing the sheet containing the data
+ * @param columnMapping a map representing the mapping of columns from the excel sheet to the SourceCodeDetails class
+ * @param columnNames a list of column names of the excel sheet
+ * @return a list of SourceCodeDetails objects that have been saved to the database
+ */
+
+	public List&lt;SourceCodeDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
+<span class="nc" id="L195">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L196">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L197">		rowIterator.next();</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L199">			ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L200">          	SourceCodeDetails sourceCodeDetails = new SourceCodeDetails();</span>
+<span class="nc" id="L201">            int index = -1;</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
+        	try {
+<span class="nc" id="L204">          		ExcelUtils.invokeSetter(sourceCodeDetails, columnName, excelRow.getString(++index));</span>
+<span class="nc" id="L205">                } catch (InstantiationException e) {</span>
+<span class="nc" id="L206">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
+<span class="nc" id="L207">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L208">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L209">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L210">		}</span>
+<span class="nc" id="L211">	}</span>
+<span class="nc" id="L212">	sourceCodeDetailss.add(sourceCodeDetails);</span>
+<span class="nc" id="L213"> 	}</span>
+<span class="nc" id="L214">		return sourceCodeDetailss;</span>
+	}  
+/**
+* This method is responsible for soft-deleting an SourceCodeDetails  record in the database.
+* The method takes in an int id which represents the id of the SourceCodeDetails  that needs to be soft-deleted.
+* It uses the id to find the SourceCodeDetails by calling the SourceCodeDetailsRepository.findById method.
+* If the SourceCodeDetails  is found, it sets the &quot;deleted&quot; field to true, save the SourceCodeDetails  in the repository, and saves it in the database
+* @param id an int representing the id of the SourceCodeDetails  that needs to be soft-deleted
+*/
+	
+	@Override
+	public void softDelete(int id) {
+<span class="nc" id="L226">		Optional&lt;SourceCodeDetails&gt; sourceCodeDetails = sourceCodeDetailsRepository.findById(id);</span>
+<span class="nc bnc" id="L227" title="All 2 branches missed.">		if (sourceCodeDetails.isPresent()) {</span>
+<span class="nc" id="L228">			SourceCodeDetails sourceCodeDetails1 = sourceCodeDetails.get();</span>
+<span class="nc" id="L229">			sourceCodeDetails1.setDeleted(true);</span>
+<span class="nc" id="L230">		    sourceCodeDetailsRepository.save(sourceCodeDetails1);</span>
+		}
+<span class="nc" id="L232">	}</span>
+	
+/**
+* This method is responsible for soft-deleting multiple SourceCodeDetails records in the database in bulk.
+* The method takes in a List of integers, each representing the id of an SourceCodeDetails that needs to be soft-deleted.
+* It iterates through the list, calling the softDelete method for each id passed in the list.
+* @param list a List of integers representing the ids of the SourceCodeDetails that need to be soft-deleted
+*/
+
+	@Override
+	public void softBulkDelete(List&lt;Integer&gt; list) {
+<span class="nc bnc" id="L243" title="All 2 branches missed.">		if (list != null) {</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
+<span class="nc" id="L245">				softDelete(list.get(i));</span>
+			}
+		}
+<span class="nc" id="L248">	}</span>
+
+ /**
+ * @param sourceCodeDetails The sourceCodeDetails  object to create.
+ * @return The created vendor object.
+ */ 
+	@Override
+	public SourceCodeDetails create(SourceCodeDetails sourceCodeDetails) {     
+<span class="nc" id="L256">        SourceCodeDetails sourceCodeDetails2 =  sourceCodeDetailsRepository.save(sourceCodeDetails); </span>
+		try {
+<span class="nc" id="L258">		  documentIntegrationService.createFolderForEntity(&quot;SOURCE_CODE_DETAILS&quot;, sourceCodeDetails2.getId());</span>
+<span class="nc" id="L259">		} catch (Exception e) {</span>
+<span class="nc" id="L260">		  e.printStackTrace();</span>
+<span class="nc" id="L261">		  log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
+<span class="nc" id="L262">		}  </span>
+<span class="nc" id="L263">		return sourceCodeDetails2;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

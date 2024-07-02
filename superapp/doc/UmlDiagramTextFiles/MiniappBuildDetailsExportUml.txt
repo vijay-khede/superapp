@@ -1,0 +1,31 @@
+@startuml
+!theme cyborg-outline
+title Export Data MiniappBuildDetails Scenario
+participant User
+User -> CXFServlet: MiniappBuildDetails
+activate CXFServlet
+CXFServlet -> MiniappBuildDetails: << export >>
+activate MiniappBuildDetails
+MiniappBuildDetails -> CXFServlet: << instance >>
+deactivate MiniappBuildDetails
+CXFServlet -> MiniappBuildDetailsControllerImpl: export(:MiniappBuildDetails)
+activate MiniappBuildDetailsControllerImpl
+MiniappBuildDetailsControllerImpl -> MiniappBuildDetailsService: search(:MiniappBuildDetails)
+activate MiniappBuildDetailsService
+MiniappBuildDetailsService -> MiniappBuildDetailsJPARepository: search(:MiniappBuildDetails)
+activate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsJPARepository -> EntityManager: save(:MiniappBuildDetails)
+activate EntityManager
+EntityManager -> MiniappBuildDetailsJPARepository: << persisted MiniappBuildDetails >>
+deactivate EntityManager
+MiniappBuildDetailsJPARepository -> MiniappBuildDetailsService: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsService -> MiniappBuildDetailsControllerImpl: response(:List<MiniappBuildDetails>)
+MiniappBuildDetailsControllerImpl -> MiniappBuildDetailsService: export(:MiniappBuildDetails)
+MiniappBuildDetailsService -> MiniappBuildDetailsControllerImpl: << persisted MiniappBuildDetails.xlsx >>
+deactivate MiniappBuildDetailsService
+MiniappBuildDetailsControllerImpl -> CXFServlet: << persisted MiniappBuildDetails.xlsx >>
+deactivate MiniappBuildDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappBuildDetails XML
+deactivate CXFServlet
+@enduml

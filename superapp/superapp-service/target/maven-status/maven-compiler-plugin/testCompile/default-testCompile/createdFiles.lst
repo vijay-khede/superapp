@@ -1,0 +1,7 @@
+com/enttribe/superapp/SpringAuditorAware.class
+com/enttribe/superapp/SpringJUnitRunner.class
+com/enttribe/superapp/test/MiniappBuildDetailsControllerTest.class
+com/enttribe/superapp/test/HostingDetailsControllerTest.class
+com/enttribe/superapp/Application.class
+com/enttribe/superapp/test/SwaggerGenerationTest.class
+com/enttribe/superapp/test/MiniappDetailsControllerTest.class

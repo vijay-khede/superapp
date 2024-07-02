@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Update MiniappBuildDetails Scenario
+participant User
+User -> CXFServlet: UPDATE, MiniappBuildDetails
+activate CXFServlet
+CXFServlet -> MiniappBuildDetails: << update >>
+activate MiniappBuildDetails
+MiniappBuildDetails -> CXFServlet: << instance >>
+deactivate MiniappBuildDetails
+CXFServlet -> MiniappBuildDetailsControllerImpl: update(:MiniappBuildDetails)
+activate MiniappBuildDetailsControllerImpl
+MiniappBuildDetailsControllerImpl -> MiniappBuildDetailsService: update(:MiniappBuildDetails)
+activate MiniappBuildDetailsService
+MiniappBuildDetailsService -> MiniappBuildDetailsJPARepository: update(:MiniappBuildDetails)
+activate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsJPARepository -> EntityManager: update(:MiniappBuildDetails)
+activate EntityManager
+EntityManager -> MiniappBuildDetailsJPARepository: << persisted MiniappBuildDetails >>
+deactivate EntityManager
+MiniappBuildDetailsJPARepository -> MiniappBuildDetailsService: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsService -> MiniappBuildDetailsControllerImpl: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsService
+MiniappBuildDetailsControllerImpl -> CXFServlet: << persisted MiniappBuildDetails >>
+deactivate MiniappBuildDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappBuildDetails XML
+deactivate CXFServlet
+@enduml

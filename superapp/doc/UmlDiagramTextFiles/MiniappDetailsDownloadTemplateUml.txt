@@ -1,0 +1,21 @@
+@startuml
+!theme cyborg-outline
+title  Download Template MiniappDetails Scenario
+participant User
+User -> CXFServlet: MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << downloadTemplate >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsController: downloadTemplate(:String fileName)
+activate MiniappDetailsController
+MiniappDetailsController -> MiniappDetailsControllerImpl: ResponseBuilder(workbook,fileName)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsController: response(:ResponseEntity)
+deactivate MiniappDetailsControllerImpl
+MiniappDetailsController -> CXFServlet: << MiniappDetails  >>
+deactivate MiniappDetailsController
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

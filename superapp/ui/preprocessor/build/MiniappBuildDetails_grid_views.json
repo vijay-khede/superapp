@@ -1,0 +1,70 @@
+{
+  "tileConfig": {
+    "title": {
+      "key": "miniappDetails.undefined",
+      "type": "Reference",
+      "columnType": "textfield",
+      "entityName": "MiniappBuildDetails"
+    },
+    "subTitle": {
+      "key": "sourceCodeUrl",
+      "displayName": "SOURCE CODE URL",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappBuildDetails"
+    },
+    "fields": [
+      {
+        "key": "miniappDetails.name",
+        "displayName": "SUPERAPP_APP_NAME.MINIAPPDETAILS_NAME",
+        "type": "Reference",
+        "entityName": "MiniappDetails",
+        "columnType": "text",
+        "navigationConfig": {
+          "applicationName": "superapp",
+          "entity": "miniappDetails",
+          "route": "superapp/miniappdetails/miniappdetails-view"
+        }
+      },
+      {
+        "key": "compiledFileUrl",
+        "displayName": "COMPILED FILE URL",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappBuildDetails"
+      },
+      {
+        "key": "sourceCodePath",
+        "displayName": "SOURCE CODE PATH",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappBuildDetails"
+      },
+      {
+        "key": "status",
+        "displayName": "STATUS",
+        "type": "Choice",
+        "columnType": "select",
+        "entityName": "MiniappBuildDetails"
+      }
+    ]
+  },
+  "splitViewConfig": {
+    "title": {
+      "key": "miniappDetails.undefined",
+      "type": "Reference",
+      "columnType": "textfield",
+      "entityName": "MiniappBuildDetails"
+    },
+    "subTitle": {
+      "key": "sourceCodeUrl",
+      "displayName": "SOURCE CODE URL",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappBuildDetails"
+    },
+    "countUrl": null,
+    "dataUrl": null,
+    "apiOptions": null
+  }
+}

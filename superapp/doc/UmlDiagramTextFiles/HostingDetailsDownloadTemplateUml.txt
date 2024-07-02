@@ -1,0 +1,21 @@
+@startuml
+!theme cyborg-outline
+title  Download Template HostingDetails Scenario
+participant User
+User -> CXFServlet: HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << downloadTemplate >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsController: downloadTemplate(:String fileName)
+activate HostingDetailsController
+HostingDetailsController -> HostingDetailsControllerImpl: ResponseBuilder(workbook,fileName)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsController: response(:ResponseEntity)
+deactivate HostingDetailsControllerImpl
+HostingDetailsController -> CXFServlet: << HostingDetails  >>
+deactivate HostingDetailsController
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

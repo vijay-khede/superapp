@@ -1,0 +1,30 @@
+@startuml
+!theme cyborg-outline
+title BulkDelete MiniappDetails Scenario
+participant User
+User -> CXFServlet: DELETE, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << bulkdelete >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: bulkDelete(:List<MiniappDetails>)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: softBulkDelete(:List<MiniappDetails>)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsServiceImpl: softBulkDelete(:List<MiniappDetails>)
+MiniappDetailsServiceImpl -> MiniappDetailsJPARepository: deleteAll(:List<MiniappDetails>)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: delete(:List<MiniappDetails>)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetails >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted MiniappDetails >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetails >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetails >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

@@ -1,0 +1,8 @@
+{
+  "IDM": {
+    "DN": "http://ae49d9cafb125433cbc8c890ed343431-1101089723.ap-south-1.elb.amazonaws.com/auth/",
+    "ADN": "http://ae49d9cafb125433cbc8c890ed343431-1101089723.ap-south-1.elb.amazonaws.com",
+    "GW": "apim",
+    "RCV":"BNTV~bootnext~1.0"
+  }
+}

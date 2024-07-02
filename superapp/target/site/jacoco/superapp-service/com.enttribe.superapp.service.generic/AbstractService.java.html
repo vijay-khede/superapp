@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>AbstractService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.service.generic</a> &gt; <span class="el_source">AbstractService.java</span></div><h1>AbstractService.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.service.generic;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import lombok.extern.slf4j.Slf4j;
+import com.enttribe.core.generic.dao.impl.HibernateGenericDao;
+import com.enttribe.core.generic.dao.impl.CustomRsqlVisitor;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.enttribe.product.security.spring.userdetails.CustomerInfo;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.enttribe.superapp.repository.generic.GenericRepository;
+import cz.jirutka.rsql.parser.RSQLParser;
+import cz.jirutka.rsql.parser.ast.Node;
+import org.springframework.data.jpa.domain.Specification;
+
+/**
+ * The AbstractService class is an abstract implementation of the GenericService interface.
+ * This class provides a base implementation for common service functionalities.
+ *
+ * @param &lt;T&gt; The type parameter representing the entity that this service manages.
+ */
+<span class="nc" id="L32">@Slf4j</span>
+public abstract class AbstractService&lt;T&gt; implements GenericService&lt;T&gt; {
+
+/**
+* Generic repository for the entity being audited.
+*/
+	private GenericRepository&lt;T&gt; repository;
+
+/**
+* EntityManager for interacting with the persistence layer.
+*/
+	@PersistenceContext
+	private EntityManager entityManager;
+	
+/**
+* Class type of the entity being audited.
+*/
+	private Class&lt;T&gt; entityType;
+	
+/**
+ * Constructor for AbstractService.
+ * @param repository GenericRepository for the entity being managed by the service.
+ * @param entityType Class type of the entity being managed by the service.
+ */
+<span class="nc" id="L56">	protected AbstractService(GenericRepository&lt;T&gt; repository, Class&lt;T&gt; entityType) {</span>
+<span class="nc" id="L57">		this.repository = repository;</span>
+<span class="nc" id="L58">			this.entityType = entityType;</span>
+<span class="nc" id="L59">	}</span>
+	
+/**
+ * Creates a new entity and saves it to the repository.
+ * @param entity The entity to be created and saved.
+ * @return The created entity, with any auto-generated fields (such as ID) populated.
+ */
+	@Override
+ 	public T create(T entity) {
+<span class="nc" id="L68">    	return repository.saveAndFlush(entity);</span>
+	}
+
+ /**
+ * Updates an existing entity and saves the changes to the repository.
+ * @param entity The updated entity to be saved.
+ * @return The updated entity with any changes made by the repository (such as auto-generated fields)
+ */
+ 	@Override
+	public T update(T entity) {
+<span class="nc" id="L78">  	   return repository.saveAndFlush(entity);</span>
+	}
+
+/**
+ * Finds and retrieves an entity by its ID.
+ * @param id The ID of the entity to be retrieved.
+ * @return An Optional containing the found entity, or empty if no entity with the given ID is found.
+ */
+	@Override
+	public Optional&lt;T&gt; findById(Integer id) {
+<span class="nc" id="L88">		return repository.findById(id);</span>
+	}
+
+/**
+ * Retrieves a list of entities by their IDs.
+ * @param id A List of IDs of entities to be retrieved.
+ * @return A List of found entities, empty list if no entities with the given IDs are found.
+ */
+	@Override
+	public List&lt;T&gt; findAllById(List&lt;Integer&gt; id) {
+<span class="nc" id="L98">		return repository.findAllById(id);</span>
+	}
+
+ /**
+ * Deletes an entity by its ID.
+ * @param id The ID of the entity to be deleted.
+ */
+	@Override
+	public void deleteById(Integer id) {
+<span class="nc" id="L107">		repository.deleteById(id);</span>
+<span class="nc" id="L108">	}</span>
+
+/**
+ * Deletes a list of entities.
+ * @param entities A List of entities to be deleted.
+ */
+	@Override
+	public void deleteAll(List&lt;T&gt; entities) {
+<span class="nc" id="L116">		repository.deleteAll(entities);</span>
+<span class="nc" id="L117">	}</span>
+
+/**
+ * Retrieves the audit history for a specific entity.
+ * @param id The ID of the entity to retrieve the audit history for.
+ * @param limit The maximum number of history records to retrieve.
+ * @param skip Number of records to skip.
+ * @return A JSON string containing the audit history of the entity
+ */
+	@Override
+	public String auditHistory(int id, Integer limit, Integer skip) {
+<span class="nc" id="L128">	HibernateGenericDao hibernateGenericDao = new HibernateGenericDao(entityType, entityManager);</span>
+	try {
+<span class="nc" id="L130">		List list = hibernateGenericDao.findAudit(id);</span>
+<span class="nc" id="L131">	    return list.toString();</span>
+<span class="nc" id="L132">	 } catch (Exception e) {</span>
+<span class="nc" id="L133">		log.error(&quot;Error Inside @class: &quot; + this.getClass().getName() + &quot; @Method: auditHistory()&quot; + e.getMessage());</span>
+<span class="nc" id="L134">	    return null;</span>
+	 }
+	}
+  
+ /**
+ * Search for entities that match the given query.
+ * @param query The RSQL query to use for searching entities.
+ * @param offset The starting position for the search results.
+ * @param size The maximum number of search results to return.
+ * @param orderby The field to use for ordering the search results.
+ * @param orderType Order direction. Valid values are 'asc' and 'desc'.
+ * @return List of entities that match the given query.
+ */
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public List&lt;T&gt; search(String query, Integer offset, Integer size, String orderby, String orderType) {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">		if(query==null)</span>
+		{
+<span class="nc" id="L152">			return Collections.emptyList();</span>
+		}
+<span class="nc" id="L154">		return searchByFilter(entityType,query,orderby,orderType,offset,size);</span>
+	}
+    
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private List&lt;T&gt; searchByFilter(Class&lt;?&gt; type, String query, String orderBy, String orderType, Integer offset, Integer size) {
+<span class="nc" id="L159">		CriteriaBuilder builder = entityManager.getCriteriaBuilder();</span>
+<span class="nc" id="L160">		CriteriaQuery&lt;?&gt; criteria = builder.createQuery(type);</span>
+<span class="nc" id="L161">		Root&lt;?&gt; root = criteria.from(type);</span>
+<span class="nc" id="L162">		Node rootNode = new RSQLParser().parse(query);</span>
+<span class="nc" id="L163">		Specification&lt;T&gt; specification = rootNode.accept(new CustomRsqlVisitor&lt;T&gt;());</span>
+<span class="nc" id="L164">		Predicate predicate = specification.toPredicate((Root&lt;T&gt;)root, criteria, builder);</span>
+<span class="nc" id="L165">		criteria.where(predicate);</span>
+<span class="nc bnc" id="L166" title="All 4 branches missed.">		if (orderBy != null &amp;&amp; orderType != null) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">		if (&quot;desc&quot;.equalsIgnoreCase(orderType)) {</span>
+<span class="nc" id="L168">			criteria.orderBy(entityManager.getCriteriaBuilder().desc(root.get(orderBy)));</span>
+		} else {
+<span class="nc" id="L170">			criteria.orderBy(entityManager.getCriteriaBuilder().asc(root.get(orderBy)));</span>
+		}
+		}
+<span class="nc" id="L173">		TypedQuery&lt;?&gt; typedQuery = entityManager.createQuery(criteria);</span>
+<span class="nc bnc" id="L174" title="All 4 branches missed.">		if (offset &gt;= 0 &amp;&amp; size &gt;= 0) {</span>
+<span class="nc" id="L175">		typedQuery.setMaxResults(size);</span>
+<span class="nc" id="L176">		typedQuery.setFirstResult(offset);</span>
+		}
+<span class="nc" id="L178">		return (List&lt;T&gt;) typedQuery.getResultList();</span>
+	}
+    
+	@Override
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public Long count(String query) {
+<span class="nc bnc" id="L184" title="All 2 branches missed.">		if(query==null)</span>
+		{
+<span class="nc" id="L186">			return null;</span>
+		}
+<span class="nc" id="L188">		return countByFilter(entityType ,query);</span>
+	}
+	
+	@SuppressWarnings(&quot;unchecked&quot;)
+	private Long countByFilter(Class&lt;?&gt; t, String query) {
+<span class="nc" id="L193">		CriteriaBuilder builder =entityManager.getCriteriaBuilder();</span>
+<span class="nc" id="L194">		CriteriaQuery&lt;Long&gt; criteria = builder.createQuery(Long.class);</span>
+<span class="nc" id="L195">		Root&lt;?&gt; root = criteria.from(t);</span>
+<span class="nc" id="L196">		Node rootNode = new RSQLParser().parse(query);</span>
+<span class="nc" id="L197">		Specification&lt;T&gt; specification = rootNode.accept(new CustomRsqlVisitor&lt;T&gt;());</span>
+<span class="nc" id="L198">		Predicate predicate = specification.toPredicate((Root&lt;T&gt;)root, criteria, builder);</span>
+<span class="nc" id="L199">		criteria.where(predicate);</span>
+<span class="nc" id="L200">		criteria.select(entityManager.getCriteriaBuilder().countDistinct(root));</span>
+<span class="nc" id="L201">		return entityManager.createQuery(criteria).getSingleResult();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

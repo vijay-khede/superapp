@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>OrganisationRole.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">OrganisationRole.java</span></div><h1>OrganisationRole.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.envers.Audited;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.Set;
+// @Audited
+@Entity 
+<span class="nc" id="L24">@Setter</span>
+@Getter  
+<span class="nc" id="L26">@NoArgsConstructor </span>
+<span class="nc" id="L27">@AllArgsConstructor</span>
+@Table(name = &quot;OrganisationRole&quot;)
+@Filters({
+    @Filter(name = &quot;organisationroleid_pkEqFilter&quot;, condition = &quot;organisationroleid_pk = :organisationroleid_pk&quot;),
+    @Filter(name = &quot;organisationroleid_pkNEqFilter&quot;, condition = &quot;organisationroleid_pk &lt;&gt; :organisationroleid_pk&quot;),
+    @Filter(name = &quot;organisationroleid_pkInFilter&quot;, condition = &quot;organisationroleid_pk in (:organisationroleid_pks)&quot;),
+    @Filter(name = &quot;organisationroleid_pkNInFilter&quot;, condition = &quot;organisationroleid_pk not in (:organisationroleid_pks)&quot;),
+    @Filter(name = &quot;nameEqqFilter&quot;, condition = &quot;name = :name&quot;),
+    @Filter(name = &quot;nameNEqqFilter&quot;, condition = &quot;name &lt;&gt; :name&quot;),
+    @Filter(name = &quot;nameInnFilter&quot;, condition = &quot;name in (:names)&quot;),
+    @Filter(name = &quot;nameNInFilter&quot;, condition = &quot;name not in (:names)&quot;),
+    @Filter(name = &quot;orgIdEqFilter&quot;, condition = &quot;orgId = :orgId&quot;),
+    @Filter(name = &quot;orgIdNEqFilter&quot;, condition = &quot;orgId &lt;&gt; :orgId&quot;),
+    @Filter(name = &quot;orgIdInFilter&quot;, condition = &quot;orgId in (:orgIds)&quot;),
+    @Filter(name = &quot;orgIdNInFilter&quot;, condition = &quot;orgId not in (:orgIds)&quot;),
+    @Filter(name = &quot;descriptionEqFilter&quot;, condition = &quot;description = :description&quot;),
+    @Filter(name = &quot;descriptionNEqFilter&quot;, condition = &quot;description &lt;&gt; :description&quot;),
+    @Filter(name = &quot;descriptionInFilter&quot;, condition = &quot;description in (:descriptions)&quot;),
+    @Filter(name = &quot;descriptionNInFilter&quot;, condition = &quot;description not in (:descriptions)&quot;),
+    // @Filter(name = &quot;displayNameEqFilter&quot;, condition = &quot;displayName = :displayName&quot;),
+    @Filter(name = &quot;displayNameNEqFilter&quot;, condition = &quot;displayName &lt;&gt; :displayName&quot;),
+    @Filter(name = &quot;displayNameInFilter&quot;, condition = &quot;displayName in (:displayNames)&quot;),
+    @Filter(name = &quot;displayNameNInFilter&quot;, condition = &quot;displayName not in (:displayNames)&quot;),
+    @Filter(name = &quot;parentroleidEqFilter&quot;, condition = &quot;parentroleid = :parentroleid&quot;),
+    @Filter(name = &quot;parentroleidNEqFilter&quot;, condition = &quot;parentroleid &lt;&gt; :parentroleid&quot;),
+    @Filter(name = &quot;parentroleidInFilter&quot;, condition = &quot;parentroleid in (:parentroleids)&quot;),
+    @Filter(name = &quot;parentroleidNInFilter&quot;, condition = &quot;parentroleid not in (:parentroleids)&quot;),
+    @Filter(name = &quot;creationtimeEqFilter&quot;, condition = &quot;creationtime = :creationtime&quot;),
+    @Filter(name = &quot;creationtimeNEqFilter&quot;, condition = &quot;creationtime &lt;&gt; :creationtime&quot;),
+    @Filter(name = &quot;creationtimeInFilter&quot;, condition = &quot;creationtime in (:creationtimes)&quot;),
+    @Filter(name = &quot;creationtimeNInFilter&quot;, condition = &quot;creationtime not in (:creationtimes)&quot;),
+    @Filter(name = &quot;modificationtimeEqFilter&quot;, condition = &quot;modificationtime = :modificationtime&quot;),
+    @Filter(name = &quot;modificationtimeNEqFilter&quot;, condition = &quot;modificationtime &lt;&gt; :modificationtime&quot;),
+    @Filter(name = &quot;modificationtimeInFilter&quot;, condition = &quot;modificationtime in (:modificationtimes)&quot;),
+    @Filter(name = &quot;modificationtimeNInFilter&quot;, condition = &quot;modificationtime not in (:modificationtimes)&quot;),
+    @Filter(name = &quot;creatorByEqFilter&quot;, condition = &quot;creatorBy = :creatorBy&quot;),
+    @Filter(name = &quot;creatorByNEqFilter&quot;, condition = &quot;creatorBy &lt;&gt; :creatorBy&quot;),
+    @Filter(name = &quot;creatorByInFilter&quot;, condition = &quot;creatorBy in (:creatorBys)&quot;),
+    @Filter(name = &quot;creatorByNInFilter&quot;, condition = &quot;creatorBy not in (:creatorBys)&quot;),
+    @Filter(name = &quot;modificationByEqFilter&quot;, condition = &quot;modificationBy = :modificationBy&quot;),
+    @Filter(name = &quot;modificationByNEqFilter&quot;, condition = &quot;modificationBy &lt;&gt; :modificationBy&quot;),
+    @Filter(name = &quot;modificationByInFilter&quot;, condition = &quot;modificationBy in (:modificationBys)&quot;),
+    @Filter(name = &quot;modificationByNInFilter&quot;, condition = &quot;modificationBy not in (:modificationBys)&quot;),
+    @Filter(name = &quot;isActiveEqFilter&quot;, condition = &quot;isActive = :isActive&quot;),
+    @Filter(name = &quot;isActiveNEqFilter&quot;, condition = &quot;isActive &lt;&gt; :isActive&quot;),
+    @Filter(name = &quot;isActiveInFilter&quot;, condition = &quot;isActive in (:isActives)&quot;),
+    @Filter(name = &quot;isActiveNInFilter&quot;, condition = &quot;isActive not in (:isActives)&quot;),
+    @Filter(name = &quot;userspaceid_fkEqFilter&quot;, condition = &quot;userspaceid_fk = :userspaceid_fk&quot;),
+    @Filter(name = &quot;userspaceid_fkNEqFilter&quot;, condition = &quot;userspaceid_fk &lt;&gt; :userspaceid_fk&quot;),
+    @Filter(name = &quot;userspaceid_fkInFilter&quot;, condition = &quot;userspaceid_fk in (:userspaceid_fks)&quot;),
+    @Filter(name = &quot;userspaceid_fkNInFilter&quot;, condition = &quot;userspaceid_fk not in (:userspaceid_fks)&quot;),
+    @Filter(name = &quot;customeridEqFilter&quot;, condition = &quot;customerid = :customerid&quot;),
+    @Filter(name = &quot;customeridNEqFilter&quot;, condition = &quot;customerid &lt;&gt; :customerid&quot;),
+    @Filter(name = &quot;customeridInFilter&quot;, condition = &quot;customerid in (:customerids)&quot;),
+    @Filter(name = &quot;customeridNInFilter&quot;, condition = &quot;customerid not in (:customerids)&quot;)
+})
+@FilterDefs({
+    @FilterDef(name = &quot;organisationroleid_pkEqFilter&quot;, parameters = @ParamDef(name = &quot;organisationroleid_pk&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;organisationroleid_pkNEqFilter&quot;, parameters = @ParamDef(name = &quot;organisationroleid_pk&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;organisationroleid_pkInFilter&quot;, parameters = @ParamDef(name = &quot;organisationroleid_pks&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;organisationroleid_pkNInFilter&quot;, parameters = @ParamDef(name = &quot;organisationroleid_pks&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;nameEqqFilters&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;nameNEqqFilters&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;nameInnFilters&quot;, parameters = @ParamDef(name = &quot;names&quot;,  type = String.class)),
+    @FilterDef(name = &quot;nameNInFilters&quot;, parameters = @ParamDef(name = &quot;names&quot;, type = String.class)),
+    @FilterDef(name = &quot;orgIdEqFilters&quot;, parameters = @ParamDef(name = &quot;orgId&quot;, type = String.class)),
+    @FilterDef(name = &quot;orgIdNEqFilters&quot;, parameters = @ParamDef(name = &quot;orgId&quot;, type = String.class)),
+    @FilterDef(name = &quot;orgIdInFilters&quot;, parameters = @ParamDef(name = &quot;orgIds&quot;, type = String.class)),
+    @FilterDef(name = &quot;orgIdNInFilters&quot;, parameters = @ParamDef(name = &quot;orgIds&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionEqFilters&quot;, parameters = @ParamDef(name = &quot;description&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionNEqFilters&quot;, parameters = @ParamDef(name = &quot;description&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionInFilters&quot;, parameters = @ParamDef(name = &quot;descriptions&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionNInFilters&quot;, parameters = @ParamDef(name = &quot;descriptions&quot;, type = String.class)),
+    // @FilterDef(name = &quot;displayNameEqFilter&quot;, parameters = @ParamDef(name = &quot;displayName&quot;, type = String.class)),
+    @FilterDef(name = &quot;displayNameNEqFilters&quot;, parameters = @ParamDef(name = &quot;displayName&quot;, type = String.class)),
+    @FilterDef(name = &quot;displayNameInFilters&quot;, parameters = @ParamDef(name = &quot;displayNames&quot;, type = String.class)),
+    @FilterDef(name = &quot;displayNameNInFilters&quot;, parameters = @ParamDef(name = &quot;displayNames&quot;, type = String.class)),
+    @FilterDef(name = &quot;parentroleidEqFilters&quot;, parameters = @ParamDef(name = &quot;parentroleid&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;parentroleidNEqFilters&quot;, parameters = @ParamDef(name = &quot;parentroleid&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;parentroleidInFilters&quot;, parameters = @ParamDef(name = &quot;parentroleids&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;parentroleidNInFilters&quot;, parameters = @ParamDef(name = &quot;parentroleids&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;creatorByNEqFilters&quot;, parameters = @ParamDef(name = &quot;creatorBy&quot;, type = String.class)),
+    @FilterDef(name = &quot;creatorByInFilters&quot;, parameters = @ParamDef(name = &quot;creatorBys&quot;, type = String.class)),
+    @FilterDef(name = &quot;creatorByNInFilters&quot;, parameters = @ParamDef(name = &quot;creatorBys&quot;, type = String.class)),
+    @FilterDef(name = &quot;modificationByEqFilters&quot;, parameters = @ParamDef(name = &quot;modificationBy&quot;, type = String.class)),
+    @FilterDef(name = &quot;modificationByNEqFilters&quot;, parameters = @ParamDef(name = &quot;modificationBy&quot;, type = String.class)),
+    @FilterDef(name = &quot;modificationByInFilters&quot;, parameters = @ParamDef(name = &quot;modificationBys&quot;, type = String.class)),
+    @FilterDef(name = &quot;modificationByNInFilters&quot;, parameters = @ParamDef(name = &quot;modificationBys&quot;, type = String.class)),
+    @FilterDef(name = &quot;isActiveEqFilters&quot;, parameters = @ParamDef(name = &quot;isActive&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;isActiveNEqFilters&quot;, parameters = @ParamDef(name = &quot;isActive&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;isActiveInFilters&quot;, parameters = @ParamDef(name = &quot;isActives&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;isActiveNInFilters&quot;, parameters = @ParamDef(name = &quot;isActives&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;userspaceid_fkEqFilters&quot;, parameters = @ParamDef(name = &quot;userspaceid_fk&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userspaceid_fkNEqFilters&quot;, parameters = @ParamDef(name = &quot;userspaceid_fk&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userspaceid_fkInFilters&quot;, parameters = @ParamDef(name = &quot;userspaceid_fks&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;userspaceid_fkNInFilters&quot;, parameters = @ParamDef(name = &quot;userspaceid_fks&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customeridEqFilters&quot;, parameters = @ParamDef(name = &quot;customerid&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customeridNEqFilters&quot;, parameters = @ParamDef(name = &quot;customerid&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customeridInFilters&quot;, parameters = @ParamDef(name = &quot;customerids&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customeridNInFilter&quot;, parameters = @ParamDef(name = &quot;customerids&quot;, type = Integer.class))
+})
+public class OrganisationRole { 
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = &quot;organisationroleid_pk&quot;)
+<span class="nc" id="L133">    private Integer organisationRoleId;</span>
+
+    @NotNull
+    @Size(max = 50)
+    @Column(name = &quot;name&quot;, nullable = false)
+<span class="nc" id="L138">    private String name;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;orgId&quot;)
+<span class="nc" id="L142">    private String orgId;</span>
+
+    @Size(max = 255)
+    @Column(name = &quot;description&quot;)
+<span class="nc" id="L146">    private String description;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;displayName&quot;)
+<span class="nc" id="L150">    private String displayName;</span>
+
+    @Column(name = &quot;parentroleid&quot;)
+<span class="nc" id="L153">    private Integer parentRoleId;</span>
+
+    @Column(name = &quot;creationtime&quot;, columnDefinition = &quot;DATETIME DEFAULT CURRENT_TIMESTAMP&quot;)
+<span class="nc" id="L156">    private Date creationTime;</span>
+
+    @Column(name = &quot;modificationtime&quot;, columnDefinition = &quot;DATETIME DEFAULT CURRENT_TIMESTAMP&quot;)
+<span class="nc" id="L159">    private Date modificationTime;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;creatorBy&quot;)
+<span class="nc" id="L163">    private String creatorBy;</span>
+
+    @Size(max = 50)
+    @Column(name = &quot;modificationBy&quot;)
+<span class="nc" id="L167">    private String modificationBy;</span>
+
+    @NotNull
+    @Column(name = &quot;isActive&quot;, columnDefinition = &quot;TINYINT(1) DEFAULT 1&quot;)
+<span class="nc" id="L171">    private Boolean isActive;</span>
+
+    @Column(name = &quot;userspaceid_fk&quot;)
+<span class="nc" id="L174">    private Integer userspaceIdFk;</span>
+
+    @Column(name = &quot;customerid&quot;)
+<span class="nc" id="L177">    private Integer customerId;</span>
+
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = &quot;parentroleid&quot;, referencedColumnName = &quot;organisationroleid_pk&quot;, insertable = false, updatable = false)
+    // private OrganisationRole parentRole;
+
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = &quot;userspaceid_fk&quot;, referencedColumnName = &quot;userspaceid_pk&quot;, insertable = false, updatable = false)
+    // private UserSpace userSpace;
+    
+    @JsonIgnoreProperties({&quot;organisationRoles&quot;,&quot;miniappDetails&quot;})
+    @Basic 
+    @ManyToMany(mappedBy = &quot;organisationRoles&quot;,fetch = FetchType.LAZY)
+<span class="nc" id="L190">    private Set&lt;MiniappDetails&gt; miniappDetails;</span>
+
+    // @Override
+    // public String toString() {
+    //     return &quot;OrganisationRole [organisationRoleId=&quot; + organisationRoleId + &quot;, name=&quot; + name + &quot;, orgId=&quot; + orgId
+    //             + &quot;, description=&quot; + description + &quot;, displayName=&quot; + displayName + &quot;, parentRoleId=&quot; + parentRoleId
+    //             + &quot;, creationTime=&quot; + creationTime + &quot;, modificationTime=&quot; + modificationTime + &quot;, creatorBy=&quot;
+    //             + creatorBy + &quot;, modificationBy=&quot; + modificationBy + &quot;, isActive=&quot; + isActive + &quot;, userspaceIdFk=&quot;
+    //             + userspaceIdFk + &quot;, customerId=&quot; + customerId + &quot;, miniappDetails=&quot; + miniappDetails + &quot;]&quot;;
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     final int prime = 31;
+    //     int result = 1;
+    //     result = prime * result + ((organisationRoleId == null) ? 0 : organisationRoleId.hashCode());
+    //     result = prime * result + ((name == null) ? 0 : name.hashCode());
+    //     result = prime * result + ((orgId == null) ? 0 : orgId.hashCode());
+    //     result = prime * result + ((description == null) ? 0 : description.hashCode());
+    //     result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
+    //     result = prime * result + ((parentRoleId == null) ? 0 : parentRoleId.hashCode());
+    //     result = prime * result + ((creationTime == null) ? 0 : creationTime.hashCode());
+    //     result = prime * result + ((modificationTime == null) ? 0 : modificationTime.hashCode());
+    //     result = prime * result + ((creatorBy == null) ? 0 : creatorBy.hashCode());
+    //     result = prime * result + ((modificationBy == null) ? 0 : modificationBy.hashCode());
+    //     result = prime * result + ((isActive == null) ? 0 : isActive.hashCode());
+    //     result = prime * result + ((userspaceIdFk == null) ? 0 : userspaceIdFk.hashCode());
+    //     result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+    //     result = prime * result + ((miniappDetails == null) ? 0 : miniappDetails.hashCode());
+    //     return result;
+    // }
+
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (this == obj)
+    //         return true;
+    //     if (obj == null)
+    //         return false;
+    //     if (getClass() != obj.getClass())
+    //         return false;
+    //     OrganisationRole other = (OrganisationRole) obj;
+    //     if (organisationRoleId == null) {
+    //         if (other.organisationRoleId != null)
+    //             return false;
+    //     } else if (!organisationRoleId.equals(other.organisationRoleId))
+    //         return false;
+    //     if (name == null) {
+    //         if (other.name != null)
+    //             return false;
+    //     } else if (!name.equals(other.name))
+    //         return false;
+    //     if (orgId == null) {
+    //         if (other.orgId != null)
+    //             return false;
+    //     } else if (!orgId.equals(other.orgId))
+    //         return false;
+    //     if (description == null) {
+    //         if (other.description != null)
+    //             return false;
+    //     } else if (!description.equals(other.description))
+    //         return false;
+    //     if (displayName == null) {
+    //         if (other.displayName != null)
+    //             return false;
+    //     } else if (!displayName.equals(other.displayName))
+    //         return false;
+    //     if (parentRoleId == null) {
+    //         if (other.parentRoleId != null)
+    //             return false;
+    //     } else if (!parentRoleId.equals(other.parentRoleId))
+    //         return false;
+    //     if (creationTime == null) {
+    //         if (other.creationTime != null)
+    //             return false;
+    //     } else if (!creationTime.equals(other.creationTime))
+    //         return false;
+    //     if (modificationTime == null) {
+    //         if (other.modificationTime != null)
+    //             return false;
+    //     } else if (!modificationTime.equals(other.modificationTime))
+    //         return false;
+    //     if (creatorBy == null) {
+    //         if (other.creatorBy != null)
+    //             return false;
+    //     } else if (!creatorBy.equals(other.creatorBy))
+    //         return false;
+    //     if (modificationBy == null) {
+    //         if (other.modificationBy != null)
+    //             return false;
+    //     } else if (!modificationBy.equals(other.modificationBy))
+    //         return false;
+    //     if (isActive == null) {
+    //         if (other.isActive != null)
+    //             return false;
+    //     } else if (!isActive.equals(other.isActive))
+    //         return false;
+    //     if (userspaceIdFk == null) {
+    //         if (other.userspaceIdFk != null)
+    //             return false;
+    //     } else if (!userspaceIdFk.equals(other.userspaceIdFk))
+    //         return false;
+    //     if (customerId == null) {
+    //         if (other.customerId != null)
+    //             return false;
+    //     } else if (!customerId.equals(other.customerId))
+    //         return false;
+    //     if (miniappDetails == null) {
+    //         if (other.miniappDetails != null)
+    //             return false;
+    //     } else if (!miniappDetails.equals(other.miniappDetails))
+    //         return false;
+    //     return true;
+    // }
+
+    
+    
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

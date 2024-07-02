@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BuildInfo.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">BuildInfo.java</span></div><h1>BuildInfo.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+
+
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.envers.Audited;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+
+import java.sql.Date;
+
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+
+@Entity 
+<span class="nc" id="L36">@Setter</span>
+@Getter 
+<span class="nc" id="L38">@NoArgsConstructor </span>
+<span class="nc" id="L39">@AllArgsConstructor</span>
+@Table(name = &quot;BUILD_INFO&quot;)
+@Filters({
+    @Filter(name = &quot;buildInfoBuildNumberEqFilter&quot;, condition = &quot;BUILD_NUMBER = :buildNumber&quot;),
+    @Filter(name = &quot;buildInfoBuildNumberNEqFilter&quot;, condition = &quot;BUILD_NUMBER != :buildNumber&quot;),
+    @Filter(name = &quot;buildInfoBuildNumberInFilter&quot;, condition = &quot;BUILD_NUMBER in (:buildNumber)&quot;),
+    @Filter(name = &quot;buildInfoBuildNumberNInFilter&quot;, condition = &quot;BUILD_NUMBER not in (:buildNumber)&quot;),
+    @Filter(name = &quot;buildInfoAppIdEqFilter&quot;, condition = &quot;APP_ID = :appId&quot;),
+    @Filter(name = &quot;buildInfoAppIdNEqFilter&quot;, condition = &quot;APP_ID != :appId&quot;),
+    @Filter(name = &quot;buildInfoAppIdInFilter&quot;, condition = &quot;APP_ID in (:appId)&quot;),
+    @Filter(name = &quot;buildInfoAppIdNInFilter&quot;, condition = &quot;APP_ID not in (:appId)&quot;),
+    @Filter(name = &quot;buildInfoStatusEqFilter&quot;, condition = &quot;STATUS = :status&quot;),
+    @Filter(name = &quot;buildInfoStatusNEqFilter&quot;, condition = &quot;STATUS != :status&quot;),
+    @Filter(name = &quot;buildInfoStatusInFilter&quot;, condition = &quot;STATUS in (:status)&quot;),
+    @Filter(name = &quot;buildInfoStatusNInFilter&quot;, condition = &quot;STATUS not in (:status)&quot;),
+    @Filter(name = &quot;buildInfoDeletedEqFilter&quot;, condition = &quot;DELETED = :deleted&quot;),
+    @Filter(name = &quot;buildInfoDeletedNEqFilter&quot;, condition = &quot;DELETED != :deleted&quot;),
+    @Filter(name = &quot;buildInfoCustomerIdEqFilter&quot;, condition = &quot;CUSTOMER_ID = :customerId&quot;),
+    @Filter(name = &quot;buildInfoCustomerIdNEqFilter&quot;, condition = &quot;CUSTOMER_ID != :customerId&quot;),
+    @Filter(name = &quot;buildInfoCustomerIdInFilter&quot;, condition = &quot;CUSTOMER_ID in (:customerId)&quot;),
+    @Filter(name = &quot;buildInfoCustomerIdNInFilter&quot;, condition = &quot;CUSTOMER_ID not in (:customerId)&quot;),
+    @Filter(name = &quot;buildInfoCreatedTimeEqFilter&quot;, condition = &quot;CREATED_TIME = :createdTime&quot;),
+    @Filter(name = &quot;buildInfoCreatedTimeNEqFilter&quot;, condition = &quot;CREATED_TIME != :createdTime&quot;),
+    @Filter(name = &quot;buildInfoCreatedTimeInFilter&quot;, condition = &quot;CREATED_TIME in (:createdTime)&quot;),
+    @Filter(name = &quot;buildInfoCreatedTimeNInFilter&quot;, condition = &quot;CREATED_TIME not in (:createdTime)&quot;),
+    @Filter(name = &quot;buildInfoModifiedTimeEqFilter&quot;, condition = &quot;MODIFIED_TIME = :modifiedTime&quot;),
+    @Filter(name = &quot;buildInfoModifiedTimeNEqFilter&quot;, condition = &quot;MODIFIED_TIME != :modifiedTime&quot;),
+    @Filter(name = &quot;buildInfoModifiedTimeInFilter&quot;, condition = &quot;MODIFIED_TIME in (:modifiedTime)&quot;),
+    @Filter(name = &quot;buildInfoModifiedTimeNInFilter&quot;, condition = &quot;MODIFIED_TIME not in (:modifiedTime)&quot;),
+    @Filter(name = &quot;buildInfoCreatorEqFilter&quot;, condition = &quot;CREATOR = :creator&quot;),
+    @Filter(name = &quot;buildInfoCreatorNEqFilter&quot;, condition = &quot;CREATOR != :creator&quot;),
+    @Filter(name = &quot;buildInfoCreatorInFilter&quot;, condition = &quot;CREATOR in (:creator)&quot;),
+    @Filter(name = &quot;buildInfoCreatorNInFilter&quot;, condition = &quot;CREATOR not in (:creator)&quot;),
+    @Filter(name = &quot;buildInfoLastModifierEqFilter&quot;, condition = &quot;LAST_MODIFIER = :lastModifier&quot;),
+    @Filter(name = &quot;buildInfoLastModifierNEqFilter&quot;, condition = &quot;LAST_MODIFIER != :lastModifier&quot;),
+    @Filter(name = &quot;buildInfoLastModifierInFilter&quot;, condition = &quot;LAST_MODIFIER in (:lastModifier)&quot;),
+    @Filter(name = &quot;buildInfoLastModifierNInFilter&quot;, condition = &quot;LAST_MODIFIER not in (:lastModifier)&quot;)
+})
+@FilterDefs({
+    @FilterDef(name = &quot;buildInfoBuildNumberEqFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoBuildNumberNEqFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoBuildNumberInFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoBuildNumberNInFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoAppIdEqFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoAppIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoAppIdInFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoAppIdNInFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoStatusEqFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;buildInfoStatusNEqFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;buildInfoStatusInFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;buildInfoStatusNInFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;buildInfoDeletedEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;buildInfoDeletedNEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;buildInfoCustomerIdEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCustomerIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCustomerIdInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCustomerIdNInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCreatedTimeEqFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoCreatedTimeNEqFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoCreatedTimeInFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoCreatedTimeNInFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoModifiedTimeEqFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoModifiedTimeNEqFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoModifiedTimeInFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoModifiedTimeNInFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildInfoCreatorEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCreatorNEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCreatorInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoCreatorNInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoLastModifierEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoLastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoLastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildInfoLastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class))
+}) 
+public class BuildInfo  extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = &quot;BUILD_NUMBER&quot;)
+<span class="nc" id="L118">    private int buildNumber;</span>
+
+    @Basic
+    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;enum('PENDING','COMPLETED','FAILED') default 'PENDING'&quot;)
+<span class="nc" id="L122">    private String status ;</span>
+
+    @Column(name = &quot;LOG_INFO&quot;)
+<span class="nc" id="L125">    private String logInfo;</span>
+
+    @Column(name = &quot;CUSTOMER_ID&quot;)
+<span class="nc" id="L128">    private Integer customerId;</span>
+
+    @NotNull
+    @Column(name = &quot;DELETED&quot;,nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
+<span class="nc" id="L132">    private boolean deleted;</span>
+   
+    @ManyToOne
+    @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;, nullable = false)
+<span class="nc" id="L136">    private MiniappDetails miniAppDetails; </span>
+    
+     @OneToOne(mappedBy = &quot;buildInfo&quot;)
+<span class="nc" id="L139">     private BuildLogInfo buildLogInfo;</span>
+
+    // @Override
+    // public int hashCode() {
+    //     final int prime = 31;
+    //     int result = 1;
+    //     result = prime * result + buildNumber;
+    //     result = prime * result + ((status == null) ? 0 : status.hashCode());
+    //     result = prime * result + ((logInfo == null) ? 0 : logInfo.hashCode());
+    //     result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+    //     result = prime * result + (deleted ? 1231 : 1237);
+    //     result = prime * result + ((miniAppDetails == null) ? 0 : miniAppDetails.hashCode());
+    //     result = prime * result + ((buildLogInfo == null) ? 0 : buildLogInfo.hashCode());
+    //     return result;
+    // }
+
+    // @Override
+    // public boolean equals(Object obj) {
+    //     if (this == obj)
+    //         return true;
+    //     if (obj == null)
+    //         return false;
+    //     if (getClass() != obj.getClass())
+    //         return false;
+    //     BuildInfo other = (BuildInfo) obj;
+    //     if (buildNumber != other.buildNumber)
+    //         return false;
+    //     if (status == null) {
+    //         if (other.status != null)
+    //             return false;
+    //     } else if (!status.equals(other.status))
+    //         return false;
+    //     if (logInfo == null) {
+    //         if (other.logInfo != null)
+    //             return false;
+    //     } else if (!logInfo.equals(other.logInfo))
+    //         return false;
+    //     if (customerId == null) {
+    //         if (other.customerId != null)
+    //             return false;
+    //     } else if (!customerId.equals(other.customerId))
+    //         return false;
+    //     if (deleted != other.deleted)
+    //         return false;
+    //     if (miniAppDetails == null) {
+    //         if (other.miniAppDetails != null)
+    //             return false;
+    //     } else if (!miniAppDetails.equals(other.miniAppDetails))
+    //         return false;
+    //     if (buildLogInfo == null) {
+    //         if (other.buildLogInfo != null)
+    //             return false;
+    //     } else if (!buildLogInfo.equals(other.buildLogInfo))
+    //         return false;
+    //     return true;
+    // }
+
+    // @Override
+    // public String toString() {
+    //     return &quot;BuildInfo [buildNumber=&quot; + buildNumber + &quot;, status=&quot; + status + &quot;, logInfo=&quot; + logInfo + &quot;, customerId=&quot;
+    //             + customerId + &quot;, deleted=&quot; + deleted + &quot;, miniAppDetails=&quot; + miniAppDetails + &quot;, buildLogInfo=&quot;
+    //             + buildLogInfo + &quot;]&quot;;
+    // }
+
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

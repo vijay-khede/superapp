@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?><database name="generatedapps" schema="generatedapps" type="MySQL - 8.0.26">
+   <tables>
+      <table catalog="generatedapps" name="HOSTING_DETAILS" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="1" name="DELETED" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="APP_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="ID" foreignKey="HOSTING_DETAILS_ibfk_1" implied="false" onDeleteCascade="false" table="MINIAPP_DETAILS"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="ENVIRONMENT" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="DOMAIN" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="SSL_CERTIFICATE" nullable="true" remarks="" size="2147483647" type="LONGTEXT" typeCode="-1"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="FKg2w2qqgqmlcsjtc3o4ggyc1uo" unique="false">
+            <column ascending="true" name="APP_ID"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="HOSTING_DETAILS_AUD" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="REV" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="REV" foreignKey="FK19civg94fie2yw4673faic0sm" implied="false" onDeleteCascade="false" table="REVINFO"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="REVTYPE" nullable="true" remarks="" size="3" type="TINYINT" typeCode="-6"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="CREATED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="MODIFIED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="deleted" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="domain" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="environment" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="SSL_CERTIFICATE" nullable="true" remarks="" size="2147483647" type="LONGTEXT" typeCode="-1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="CREATOR" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="LAST_MODIFIER" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="APP_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <primaryKey column="REV" sequenceNumberInPK="1"/>
+         <primaryKey column="id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="REV"/>
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="MINIAPP_BUILD_DETAILS" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="1" name="DELETED" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="APP_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="ID" foreignKey="MINIAPP_BUILD_DETAILS_ibfk_1" implied="false" onDeleteCascade="false" table="MINIAPP_DETAILS"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="SOURCE_CODE_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="COMPILED_FILE_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="SOURCE_CODE_PATH" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="STATUS" nullable="true" remarks="" size="4" type="enum('NEW', 'PASS', 'FAIL')" typeCode="1"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+         <index name="FKow8aoxe7gy5xbfume2ieiayyj" unique="false">
+            <column ascending="true" name="APP_ID"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="MINIAPP_BUILD_DETAILS_AUD" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="REV" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="REV" foreignKey="FKfcdc2vmh04r7cjemfhklai14y" implied="false" onDeleteCascade="false" table="REVINFO"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="REVTYPE" nullable="true" remarks="" size="3" type="TINYINT" typeCode="-6"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="CREATED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="MODIFIED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="COMPILED_FILE_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="deleted" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="SOURCE_CODE_PATH" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="SOURCE_CODE_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="STATUS" nullable="true" remarks="" size="4" type="enum('NEW', 'PASS', 'FAIL')" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="CREATOR" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="LAST_MODIFIER" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="APP_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <primaryKey column="REV" sequenceNumberInPK="1"/>
+         <primaryKey column="id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="REV"/>
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="MINIAPP_DETAILS" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <child catalog="generatedapps" column="APP_ID" foreignKey="HOSTING_DETAILS_ibfk_1" implied="false" onDeleteCascade="false" table="HOSTING_DETAILS"/>
+            <child catalog="generatedapps" column="APP_ID" foreignKey="MINIAPP_BUILD_DETAILS_ibfk_1" implied="false" onDeleteCascade="false" table="MINIAPP_BUILD_DETAILS"/>
+         </column>
+         <column autoUpdated="false" defaultValue="0" digits="0" id="1" name="DELETED" nullable="false" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="NAME" nullable="false" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="DESCRIPTION" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="ICON_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="VERSION" nullable="true" remarks="" size="15" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="APPLICATION_KEY" nullable="false" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="TAGGING" nullable="true" remarks="" size="30" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="MINIAPP_DETAILS_AUD" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="REV" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="REV" foreignKey="FKfvwesy57s3tnhhrxeltl4p04g" implied="false" onDeleteCascade="false" table="REVINFO"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="REVTYPE" nullable="true" remarks="" size="3" type="TINYINT" typeCode="-6"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="CREATED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="MODIFIED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="APPLICATION_KEY" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="CUSTOMER_ID" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="deleted" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="description" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="ICON_URL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="name" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="tagging" nullable="true" remarks="" size="30" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="version" nullable="true" remarks="" size="15" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="CREATOR" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="14" name="LAST_MODIFIER" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <primaryKey column="REV" sequenceNumberInPK="1"/>
+         <primaryKey column="id" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="REV"/>
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="RESOURCE_FIELD_AUDIT" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="CREATED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="CREATOR_FK" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="CREATOR_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="MODIFIER_FK" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="MODIFIER_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="MODIFIED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="USER_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="ACTION" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="APPLICATION_NAME" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="COLUMN_NAME" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="ENTITY_ID" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="ENTITY_NAME" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="ENTITY_TYPE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="14" name="FIELD_KEY" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="15" name="FIELD_TYPE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="16" name="IDENTIFIER1" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="17" name="IDENTIFIER2" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="18" name="IDENTIFIER3" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="19" name="IDENTIFIER4" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="20" name="LABEL" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="21" name="NEW_VALUE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="22" name="OLD_VALUE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="23" name="RESOURCE_NAME" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="24" name="SEQUENCE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="25" name="TASK_CODE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="26" name="VIEW_ID" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="RESOURCE_JSON_AUDIT" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="ID" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="CREATED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="CREATOR_FK" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="CREATOR_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="MODIFIER_FK" nullable="true" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="MODIFIER_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="MODIFIED_TIME" nullable="true" remarks="" size="26" type="DATETIME" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="USER_NAME" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="ACTION_TYPE" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="CONTEXT_JSON" nullable="true" remarks="" size="255" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="PROCESS" nullable="true" remarks="" size="1" type="BIT" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="VIEW_ID" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="ID" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="ID"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="REVINFO" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="REV" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <child catalog="generatedapps" column="REV" foreignKey="FK19civg94fie2yw4673faic0sm" implied="false" onDeleteCascade="false" table="HOSTING_DETAILS_AUD"/>
+            <child catalog="generatedapps" column="REV" foreignKey="FKfcdc2vmh04r7cjemfhklai14y" implied="false" onDeleteCascade="false" table="MINIAPP_BUILD_DETAILS_AUD"/>
+            <child catalog="generatedapps" column="REV" foreignKey="FKfvwesy57s3tnhhrxeltl4p04g" implied="false" onDeleteCascade="false" table="MINIAPP_DETAILS_AUD"/>
+            <child catalog="generatedapps" column="REV" foreignKey="FKilft2rdosb65jocpcoan7xnjq" implied="false" onDeleteCascade="false" table="User_AUD"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="REVTSTMP" nullable="true" remarks="" size="19" type="BIGINT" typeCode="-5"/>
+         <primaryKey column="REV" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="REV"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="User" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="userid_pk" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="firstname" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="lastname" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="middlename" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="username" nullable="false" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="userid_pk" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="userid_pk"/>
+         </index>
+      </table>
+      <table catalog="generatedapps" name="User_AUD" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="userid_pk" nullable="false" remarks="" size="10" type="INT" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="REV" nullable="false" remarks="" size="10" type="INT" typeCode="4">
+            <parent catalog="generatedapps" column="REV" foreignKey="FKilft2rdosb65jocpcoan7xnjq" implied="false" onDeleteCascade="false" table="REVINFO"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="REVTYPE" nullable="true" remarks="" size="3" type="TINYINT" typeCode="-6"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="firstname" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="lastname" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="middlename" nullable="true" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="username" nullable="true" remarks="" size="100" type="VARCHAR" typeCode="12"/>
+         <primaryKey column="REV" sequenceNumberInPK="1"/>
+         <primaryKey column="userid_pk" sequenceNumberInPK="2"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="REV"/>
+            <column ascending="true" name="userid_pk"/>
+         </index>
+      </table>
+   </tables>
+</database>

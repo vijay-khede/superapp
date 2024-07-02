@@ -1,0 +1,522 @@
+{
+  "version": 1,
+  "projects": {
+    "console": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/console",
+      "sourceRoot": "apps/console/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "outputPath": "dist/apps/console",
+            "index": "apps/console/src/index.html",
+            "main": "apps/console/src/main.single-spa.ts",
+            "polyfills": "apps/console/src/polyfills.ts",
+            "tsConfig": "apps/console/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/console/src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "apps/console/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/shared-gx-assets/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/core/layout/assets",
+                "output": "assets/layout"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/core/tools/src/assets",
+                "output": "assets/core/tools"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/modules/console/src/assets",
+                "output": "assets/console"
+              },
+              "apps/console/src/manifest.webmanifest"
+            ],
+            "styles": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/@enttribe/themes-gx-theme/src/lib/",
+                "node_modules/@ag-grid-community/",
+                "node_modules/ngx-drag-to-select/",
+                "@sourceloop/user-onboarding-client/"
+              ]
+            },
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "./webpack.micro.app.config.js",
+              "libraryName": "console"
+            },
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "crypto-js",
+              "moment-timezone",
+              "core-js",
+              "raf",
+              "keycloak-js",
+              "dompurify",
+              "html2canvas",
+              "moment",
+              "@tweenjs/tween.js",
+              "js-sha256",
+              "base64-js",
+              "rgbcolor",
+              "uuid",
+              "fast-deep-equal",
+              "html-to-image",
+              "iv-viewer",
+              "codemirror",
+              "diff-match-patch",
+              "fiql-parser",
+              "js-base64",
+              "fabric",
+              "recordrtc",
+              "leaflet-side-by-side",
+              "leaflet.markercluster",
+              "dom-to-image",
+              "highcharts",
+              "csv2geojson",
+              "createjs-module",
+              "leaflet-freedraw",
+              "highcharts-custom-events",
+              "highcharts-rounded-corners",
+              "systemjs-webpack-interop",
+              "@fullcalendar/core/locales-all",
+              "leaflet-tile-loading-progress-control",
+              "leaflet-lasso",
+              "leaflet-canvas-layer",
+              "leaflet",
+              "jshint",
+              "jsonlint"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/console/src/environments/environment.ts",
+                  "with": "apps/console/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "none",
+              "namedChunks": true,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "15mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100kb",
+                  "maximumError": "550kb"
+                }
+              ]
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/console/src/environments/environment.ts",
+                  "with": "apps/console/src/environments/environment.test.ts"
+                }
+              ]
+            },
+            "micro-app": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/console/src/environments/environment.ts",
+                  "with": "apps/console/src/environments/environment.micro.app.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": true,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "15mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100kb",
+                  "maximumError": "550kb"
+                }
+              ]
+            },
+            "mtest": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/console/src/environments/environment.ts",
+                  "with": "apps/console/src/environments/environment.micro.app.test.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "console:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "console:build:production"
+            },
+            "test": {
+              "browserTarget": "console:build:test"
+            },
+            "micro-app": {
+              "browserTarget": "console:build:micro-app"
+            },
+            "mtest": {
+              "browserTarget": "console:build:mtest"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "console:build"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/console/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "console-e2e": {
+      "root": "apps/console-e2e",
+      "sourceRoot": "apps/console-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/console-e2e/cypress.json",
+            "tsConfig": "apps/console-e2e/tsconfig.e2e.json",
+            "devServerTarget": "console:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "console:serve:production"
+            }
+          }
+        }
+      },
+      "tags": []
+    },
+    "modules-custom-templates": {
+      "projectType": "library",
+      "root": "libs/modules/custom-templates",
+      "sourceRoot": "libs/modules/custom-templates/src",
+      "prefix": "custom",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/angular:package",
+          "outputs": [
+            "dist/libs/modules/custom-templates"
+          ],
+          "options": {
+            "tsConfig": "libs/modules/custom-templates/tsconfig.lib.json",
+            "project": "libs/modules/custom-templates/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "libs/modules/custom-templates/tsconfig.lib.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/modules/custom-templates"
+          ],
+          "options": {
+            "jestConfig": "libs/modules/custom-templates/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "superapp": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/superapp",
+      "sourceRoot": "apps/superapp/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "outputPath": "dist/apps/superapp",
+            "index": "apps/superapp/src/index.html",
+            "main": "apps/superapp/src/main.single-spa.ts",
+            "polyfills": "apps/superapp/src/polyfills.ts",
+            "tsConfig": "apps/superapp/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/superapp/src/favicon.ico",
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/shared-gx-assets/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/template-app-template10/src/assets",
+                "output": "assets/template"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/template-app-template12/src/assets",
+                "output": "assets/template"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/template-coore-template/src/assets",
+                "output": "assets/template"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/core/map/src/assets",
+                "output": "assets/core-map"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/core/layout/assets",
+                "output": "assets/layout"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@enttribe/core/tools/src/assets",
+                "output": "assets/core/tools"
+              },
+              "apps/superapp/src/manifest.webmanifest"
+            ],
+            "styles": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/@enttribe/themes-gx-theme/src/lib/",
+                "node_modules/@ag-grid-community/",
+                "node_modules/ngx-drag-to-select/",
+                "@sourceloop/user-onboarding-client/"
+              ]
+            },
+            "scripts": [],
+            "customWebpackConfig": {
+              "path": "./webpack.micro.app.config.js",
+              "libraryName": "superapp"
+            },
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "crypto-js",
+              "moment-timezone",
+              "core-js",
+              "raf",
+              "keycloak-js",
+              "dompurify",
+              "html2canvas",
+              "moment",
+              "@tweenjs/tween.js",
+              "js-sha256",
+              "base64-js",
+              "rgbcolor",
+              "uuid",
+              "fast-deep-equal",
+              "html-to-image",
+              "iv-viewer",
+              "codemirror",
+              "diff-match-patch",
+              "fiql-parser",
+              "js-base64",
+              "fabric",
+              "recordrtc",
+              "leaflet-side-by-side",
+              "leaflet.markercluster",
+              "dom-to-image",
+              "highcharts",
+              "csv2geojson",
+              "createjs-module",
+              "leaflet-freedraw",
+              "highcharts-custom-events",
+              "highcharts-rounded-corners",
+              "systemjs-webpack-interop",
+              "@fullcalendar/core/locales-all",
+              "leaflet-tile-loading-progress-control",
+              "leaflet-lasso",
+              "leaflet-canvas-layer",
+              "leaflet",
+              "jshint",
+              "jsonlint"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/superapp/src/environments/environment.ts",
+                  "with": "apps/superapp/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": true,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "15mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100kb",
+                  "maximumError": "550kb"
+                }
+              ]
+            },
+            "test": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/superapp/src/environments/environment.ts",
+                  "with": "apps/superapp/src/environments/environment.test.ts"
+                }
+              ]
+            },
+            "micro-app": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/superapp/src/environments/environment.ts",
+                  "with": "apps/superapp/src/environments/environment.micro.app.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": true,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "15mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100kb",
+                  "maximumError": "550kb"
+                }
+              ]
+            },
+            "mtest": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/superapp/src/environments/environment.ts",
+                  "with": "apps/superapp/src/environments/environment.micro.app.test.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "options": {
+            "browserTarget": "superapp:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "superapp:build:production"
+            },
+            "test": {
+              "browserTarget": "superapp:build:test"
+            },
+            "micro-app": {
+              "browserTarget": "superapp:build:micro-app"
+            },
+            "mtest": {
+              "browserTarget": "superapp:build:mtest"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "superapp:build"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/superapp/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "superapp-e2e": {
+      "root": "apps/superapp-e2e",
+      "sourceRoot": "apps/superapp-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/superapp-e2e/cypress.json",
+            "tsConfig": "apps/superapp-e2e/tsconfig.e2e.json",
+            "devServerTarget": "superapp:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "superapp:serve:production"
+            }
+          }
+        }
+      }
+    }
+  }
+}

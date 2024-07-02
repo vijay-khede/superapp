@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Count HostingDetails Scenario
+participant User
+User -> CXFServlet: GET, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << count >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: count(:HostingDetails)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: count(:HostingDetails)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsJPARepository: count(:HostingDetails)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: save(:Long)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted Count >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted Count >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted Count >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted Count >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

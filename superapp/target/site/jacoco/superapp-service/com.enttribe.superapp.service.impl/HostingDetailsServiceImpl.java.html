@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>HostingDetailsServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.service.impl</a> &gt; <span class="el_source">HostingDetailsServiceImpl.java</span></div><h1>HostingDetailsServiceImpl.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.service.impl;
+
+import org.springframework.stereotype.Service;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+import com.enttribe.commons.io.excel.Excel;
+import com.enttribe.commons.io.excel.ExcelRow;
+import com.enttribe.commons.io.excel.ExcelWriter;
+import com.enttribe.commons.lang.StringUtils;
+import java.beans.IntrospectionException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import java.util.Optional;
+import com.enttribe.superapp.repository.HostingDetailsRepository;
+import com.enttribe.superapp.model.HostingDetails;
+import com.enttribe.superapp.repository.generic.GenericRepository;
+import com.enttribe.superapp.service.HostingDetailsService;
+import com.enttribe.superapp.service.generic.AbstractService;
+import com.enttribe.superapp.util.APIConstants;
+import com.enttribe.superapp.util.report.ExcelUtils;
+import com.enttribe.product.security.spring.userdetails.CustomerInfo;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
+
+/**
+*
+This is a class named &quot;HostingDetailsServiceImpl&quot; which is located in the package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an implementation of the &quot;HostingDetailsService&quot; interface and it extends the &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD operations for entities. This class is annotated with @Service, indicating that it is a Spring Service bean.
+This class is using Lombok's @Slf4j annotation which will automatically generate an Slf4j based logger instance, so it is using the Slf4j API for logging.
+The class has a constructor which takes a single parameter of GenericRepository HostingDetails and is used to call the superclass's constructor.
+This class have one public method public byte[] export(List of HostingDetails  HostingDetails) for exporting the HostingDetails data into excel file by reading the template and mapping the HostingDetails details into it.
+It's using Apache POI library for reading and writing excel files, and has methods for parsing the json files for column names and identities , and it also used 'ExcelUtils' for handling the excel operations.
+It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils' and 'APIConstants' from 'com.enttribe.superapp.util'
+*
+* */
+
+@Service
+<span class="nc" id="L44">@Slf4j</span>
+public class HostingDetailsServiceImpl extends AbstractService&lt;HostingDetails&gt; implements HostingDetailsService {
+
+/**
+* Constructor for HostingDetailsServiceImpl.
+* @param repository The GenericRepository used to perform CRUD operations for HostingDetails entities.
+*/
+	public HostingDetailsServiceImpl(GenericRepository&lt;HostingDetails&gt; repository) {
+<span class="nc" id="L52">		super(repository,HostingDetails.class);</span>
+<span class="nc" id="L53">	}</span>
+	
+	private static final String ENTITY_NAME = &quot;HostingDetails&quot;; 
+	
+	@Autowired
+	private HostingDetailsRepository hostingDetailsRepository;
+	
+/**
+* This method is used to export the given list of HostingDetails objects into an excel file.
+* It reads an excel template 'HostingDetails.xlsx' from the resource folder 'templates/reports'
+* and maps the HostingDetails data onto the template and returns the generated excel file in the form of a byte array.
+* param HostingDetails - List of HostingDetails objects to be exported
+* @return byte[] - The generated excel file in the form of a byte array
+* @throws IOException - When the template file is not found or there is an error reading the file
+*/
+	@Override
+	public byte[] export(List&lt;HostingDetails&gt; hostingDetails) throws IOException {
+<span class="nc" id="L70">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/HostingDetails.xlsx&quot;);</span>
+<span class="nc" id="L71">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
+<span class="nc" id="L72">		int rowCount = 1;</span>
+<span class="nc" id="L73">		return setTableData(hostingDetails,xssfWorkbook, rowCount);</span>
+	}
+
+/**
+ * This method is responsible for setting the data of an Excel document, using a template and a list of HostingDetails objects.
+ * The data is written to the template starting at the specified row number.
+ * 
+ * @param HostingDetails a List of HostingDetails objects, representing the data that will be written to the Excel document
+ * @param templatePath an XSSFWorkbook object, representing the template Excel document that the data will be written to
+ * @param rowCount an int, representing the starting row number where data will be written in the Excel document
+ * @return a byte array of the Excel document after the data has been written to it.
+ * @throws IOException if there is an issue reading or writing to the Excel document
+ */
+/**This method appears to take in three parameters:
+A List of HostingDetails objects, representing the data that will be written to the Excel document.
+An XSSFWorkbook object, representing the template Excel document that the data will be written to.
+An int, representing the starting row number where data will be written in the Excel document.
+The method has a return type of byte array, which is the Excel document after the data has been written to it. The method also throws an IOException, which would be thrown if there is an issue reading or writing to the Excel document.
+The method starts by creating some maps to hold data that will be used later:
+tableColumn: a map that will hold the columns of the Excel table.
+identityColumnMapping: a map that will hold the mapping of columns
+templateHeaders: a map that will hold the headers of the excel template
+then it calls ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders); to get the values for the maps created.
+Then it creates an instance of ExcelWriter which will write the data to the workbook, it set the active sheet to the first sheet of the workbook and check if HostingDetails list is not empty.
+It then iterates over the list of HostingDetails objects and for each HostingDetails, it creates a new row in the Excel document at the specified row number.
+It also retrieves the list of columns for the &quot;HostingDetails&quot; entity from the tableColumn map, and iterates over the columns.
+For each column, it attempts to retrieve the value for that column from the current HostingDetails object using the ExcelUtils.invokeGetter method, passing in the current HostingDetails object, the column name and the identityColumnMapping.
+The value returned by this method is then set as the value of the cell in the current row and column.
+If an introspection exception occur it will print the stacktrace of the exception
+After all the data is written to the Excel document, the method returns the Excel document as a byte array using excelWriter.toByteArray() and log &quot;going to return file&quot;
+* */
+
+	private byte[] setTableData(List&lt;HostingDetails&gt;hostingDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
+<span class="nc" id="L106">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
+<span class="nc" id="L107">		String entity=ENTITY_NAME;</span>
+<span class="nc" id="L108">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
+<span class="nc" id="L109">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L110">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
+<span class="nc" id="L111">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
+<span class="nc" id="L112">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
+<span class="nc" id="L113">			excelWriter.getWorkbook().setActiveSheet(0);</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(hostingDetails)) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">			for (HostingDetails hostingDetailsDetails : hostingDetails) {</span>
+<span class="nc" id="L116">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
+<span class="nc" id="L117">				int index = 0;</span>
+<span class="nc" id="L118">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed."> 			for(String column:columns) {</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">				if(column!=null) {   </span>
+				try {
+<span class="nc" id="L122">					row.setCellValue(index, ExcelUtils.invokeGetter(hostingDetailsDetails,column,identityColumnMapping).toString());</span>
+<span class="nc" id="L123">				}catch (IntrospectionException e) {</span>
+<span class="nc" id="L124">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L125">                }</span>
+              }
+<span class="nc" id="L127">             	 ++index;</span>
+<span class="nc" id="L128">             }</span>
+<span class="nc" id="L129">            	rowCount++;</span>
+<span class="nc" id="L130">            }</span>
+        }
+<span class="nc" id="L132">		log.info(&quot;going to return file&quot;);</span>
+<span class="nc" id="L133">        return excelWriter.toByteArray();</span>
+	  }
+	}
+
+/**
+ * This method is responsible for importing data from an Excel file, specifically data related to HostingDetails objects.
+ * The method takes in a MultipartFile object, which represents the Excel file containing the data.
+ * The method then validates the template headers in the Excel file and if they are valid, it saves the data to the database.
+ *
+ * @param excelFile a MultipartFile object representing the Excel file containing the data
+ * @return a string indicating whether the data import was successful or not.
+ * @throws IOException if there is an issue reading from the Excel file
+ * @throws InstantiationException when there is issue with instantiation
+ * @throws ClassNotFoundException when the class not found
+ */
+
+	@Override
+	public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
+<span class="nc" id="L151">		List&lt;HostingDetails&gt; hostingDetailss =new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L152">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
+<span class="nc" id="L153">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
+<span class="nc" id="L154">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
+<span class="nc" id="L155">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L156">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L157">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
+<span class="nc" id="L158">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
+<span class="nc" id="L159">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L160">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
+<span class="nc" id="L161">      	boolean validateTableTemplateHeader =</span>
+<span class="nc" id="L162">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
+<span class="nc" id="L164">        	log.info(&quot;columns and headers are validated&quot;);</span>
+<span class="nc" id="L165">        	hostingDetailss = saveData(workBook, columnsMapping, columnNames);</span>
+      	}
+    	else {
+<span class="nc" id="L168">      		log.info(&quot;columns and headers invalide&quot;);</span>
+      	}
+<span class="nc bnc" id="L170" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(hostingDetailss)) {</span>
+<span class="nc" id="L171">		hostingDetailsRepository.saveAll(hostingDetailss);</span>
+<span class="nc" id="L172">		return APIConstants.SUCCESS_JSON;</span>
+	}
+<span class="nc" id="L174">		return APIConstants.FAILURE_JSON;</span>
+	}
+
+/**
+ * This method is responsible for saving data to the database, specifically data related to HostingDetails objects.
+ * The method takes in an Excel object, which represents the sheet containing the data, a mapping of columns from the excel sheet to the HostingDetails class, and a list of column names.
+ * The method uses the iterator for the sheet to read data row by row, create new HostingDetails objects, and set the properties of the HostingDetails objects using the column mapping and column names.
+ * The method returns a list of HostingDetails objects that have been saved to the database.
+ * @param sheet an Excel object representing the sheet containing the data
+ * @param columnMapping a map representing the mapping of columns from the excel sheet to the HostingDetails class
+ * @param columnNames a list of column names of the excel sheet
+ * @return a list of HostingDetails objects that have been saved to the database
+ */
+
+	public List&lt;HostingDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
+<span class="nc" id="L189">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L190">		List&lt;HostingDetails&gt; hostingDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L191">		rowIterator.next();</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L193">			ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L194">          	HostingDetails hostingDetails = new HostingDetails();</span>
+<span class="nc" id="L195">            int index = -1;</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
+        	try {
+<span class="nc" id="L198">          		ExcelUtils.invokeSetter(hostingDetails, columnName, excelRow.getString(++index));</span>
+<span class="nc" id="L199">                } catch (InstantiationException e) {</span>
+<span class="nc" id="L200">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
+<span class="nc" id="L201">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L202">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L203">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L204">		}</span>
+<span class="nc" id="L205">	}</span>
+<span class="nc" id="L206">	hostingDetailss.add(hostingDetails);</span>
+<span class="nc" id="L207"> 	}</span>
+<span class="nc" id="L208">		return hostingDetailss;</span>
+	}
+/**
+* This method is responsible for soft-deleting an HostingDetails  record in the database.
+* The method takes in an int id which represents the id of the HostingDetails  that needs to be soft-deleted.
+* It uses the id to find the HostingDetails by calling the HostingDetailsRepository.findById method.
+* If the HostingDetails  is found, it sets the &quot;deleted&quot; field to true, save the HostingDetails  in the repository, and saves it in the database
+* @param id an int representing the id of the HostingDetails  that needs to be soft-deleted
+*/
+	
+	@Override
+	public void softDelete(int id) {
+<span class="nc" id="L220">		Optional&lt;HostingDetails&gt; hostingDetails = hostingDetailsRepository.findById(id);</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">		if (hostingDetails.isPresent()) {</span>
+<span class="nc" id="L222">			HostingDetails hostingDetails1 = hostingDetails.get();</span>
+<span class="nc" id="L223">			hostingDetails1.setDeleted(true);</span>
+<span class="nc" id="L224">		    hostingDetailsRepository.save(hostingDetails1);</span>
+		}
+<span class="nc" id="L226">	}</span>
+	
+/**
+* This method is responsible for soft-deleting multiple HostingDetails records in the database in bulk.
+* The method takes in a List of integers, each representing the id of an HostingDetails that needs to be soft-deleted.
+* It iterates through the list, calling the softDelete method for each id passed in the list.
+* @param list a List of integers representing the ids of the HostingDetails that need to be soft-deleted
+*/
+
+	@Override
+	public void softBulkDelete(List&lt;Integer&gt; list) {
+<span class="nc bnc" id="L237" title="All 2 branches missed.">		if (list != null) {</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
+<span class="nc" id="L239">				softDelete(list.get(i));</span>
+			}
+		}
+<span class="nc" id="L242">	}</span>
+
+
+ /**
+ * @param hostingDetails The hostingDetails  object to create.
+ * @return The created vendor object.
+ */
+	@Override
+	public HostingDetails create(HostingDetails hostingDetails) {	
+<span class="nc" id="L251">		return hostingDetailsRepository.save(hostingDetails);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

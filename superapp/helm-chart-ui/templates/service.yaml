@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "administration-ui.fullname" . }}
+  labels:
+    {{- include "administration-ui.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: {{ .Values.service.name }}
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+    - name: exporter
+      port: {{ .Values.exporter.ports.containerPort }}
+      targetPort: {{ .Values.exporter.ports.containerPort }}
+      protocol: TCP
+  selector:
+    {{- include "administration-ui.selectorLabels" . | nindent 4 }}

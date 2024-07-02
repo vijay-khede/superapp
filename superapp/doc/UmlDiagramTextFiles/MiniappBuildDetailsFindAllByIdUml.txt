@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title FindAllById MiniappBuildDetails Scenario
+participant User
+User -> CXFServlet: GET, MiniappBuildDetails
+activate CXFServlet
+CXFServlet -> MiniappBuildDetails: << findAllById >>
+activate MiniappBuildDetails
+MiniappBuildDetails -> CXFServlet: << instance >>
+deactivate MiniappBuildDetails
+CXFServlet -> MiniappBuildDetailsControllerImpl: findAllById(:List<MiniappBuildDetails> id)
+activate MiniappBuildDetailsControllerImpl
+MiniappBuildDetailsControllerImpl -> MiniappBuildDetailsService: findAllById(:List<MiniappBuildDetails> id)
+activate MiniappBuildDetailsService
+MiniappBuildDetailsService -> MiniappBuildDetailsJPARepository: findAllById(:List<MiniappBuildDetails> id)
+activate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsJPARepository -> EntityManager: response(:List<MiniappBuildDetails>findAllById)
+activate EntityManager
+EntityManager -> MiniappBuildDetailsJPARepository: << persisted List MiniappBuildDetails >>
+deactivate EntityManager
+MiniappBuildDetailsJPARepository -> MiniappBuildDetailsService: << persisted List MiniappBuildDetails >>
+deactivate MiniappBuildDetailsJPARepository
+MiniappBuildDetailsService -> MiniappBuildDetailsControllerImpl: << persisted List MiniappBuildDetails >>
+deactivate MiniappBuildDetailsService
+MiniappBuildDetailsControllerImpl -> CXFServlet: << persisted List MiniappBuildDetails >>
+deactivate MiniappBuildDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappBuildDetails XML
+deactivate CXFServlet
+@enduml

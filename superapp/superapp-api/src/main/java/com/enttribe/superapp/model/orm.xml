@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd" version="2.0">
+    <package>
+        com.enttribe.superapp.model
+    </package>
+    <access>
+        PROPERTY
+    </access>
+    <entity class="HostingDetails">
+        <table name="HOSTING_DETAILS"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" column-definition="INT"/>
+            </id>
+            <basic name="customerId">
+                <column name="CUSTOMER_ID" column-definition="INT"/>
+            </basic>
+            <basic name="deleted">
+                <column name="DELETED"/>
+            </basic>
+            <basic name="domain">
+                <column name="DOMAIN"/>
+            </basic>
+            <basic name="environment">
+                <column name="ENVIRONMENT" length="50"/>
+            </basic>
+            <basic name="sslCertificate">
+                <column name="SSL_CERTIFICATE" column-definition="LONGTEXT"/>
+            </basic>
+            <many-to-one name="miniappDetails" fetch="LAZY">
+                <join-column name="APP_ID" column-definition="INT"/>
+                <cascade>
+                    <cascade-merge/>
+                </cascade>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity class="MiniappBuildDetails">
+        <table name="MINIAPP_BUILD_DETAILS"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" column-definition="INT"/>
+            </id>
+            <basic name="compiledFileUrl">
+                <column name="COMPILED_FILE_URL"/>
+            </basic>
+            <basic name="customerId">
+                <column name="CUSTOMER_ID" column-definition="INT"/>
+            </basic>
+            <basic name="deleted">
+                <column name="DELETED"/>
+            </basic>
+            <basic name="sourceCodePath">
+                <column name="SOURCE_CODE_PATH"/>
+            </basic>
+            <basic name="sourceCodeUrl">
+                <column name="SOURCE_CODE_URL"/>
+            </basic>
+            <basic name="status">
+                <column name="STATUS" column-definition="ENUM" length="4"/>
+            </basic>
+            <many-to-one name="miniappDetails" fetch="LAZY">
+                <join-column name="APP_ID" column-definition="INT"/>
+                <cascade>
+                    <cascade-merge/>
+                </cascade>
+            </many-to-one>
+        </attributes>
+    </entity>
+    <entity class="MiniappDetails">
+        <table name="MINIAPP_DETAILS"/>
+        <attributes>
+            <id name="id">
+                <column name="ID" column-definition="INT"/>
+            </id>
+            <basic name="applicationKey">
+                <column name="APPLICATION_KEY" nullable="false" length="100"/>
+            </basic>
+            <basic name="customerId">
+                <column name="CUSTOMER_ID" column-definition="INT"/>
+            </basic>
+            <basic name="deleted">
+                <column name="DELETED"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <basic name="iconUrl">
+                <column name="ICON_URL"/>
+            </basic>
+            <basic name="name">
+                <column name="NAME" nullable="false" length="50"/>
+            </basic>
+            <basic name="tagging">
+                <column name="TAGGING" length="30"/>
+            </basic>
+            <basic name="version">
+                <column name="VERSION" length="15"/>
+            </basic>
+            <one-to-many name="hostingDetails" target-entity="com.enttribe.superapp.model.HostingDetails" mapped-by="miniappDetails">
+                <cascade>
+                    <cascade-merge/>
+                </cascade>
+            </one-to-many>
+            <one-to-many name="miniappBuildDetails" target-entity="com.enttribe.superapp.model.MiniappBuildDetails" mapped-by="miniappDetails">
+                <cascade>
+                    <cascade-merge/>
+                </cascade>
+            </one-to-many>
+        </attributes>
+    </entity>
+</entity-mappings>

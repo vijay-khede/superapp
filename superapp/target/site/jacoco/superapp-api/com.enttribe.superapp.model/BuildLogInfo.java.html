@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BuildLogInfo.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">BuildLogInfo.java</span></div><h1>BuildLogInfo.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.envers.Audited;
+
+@JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
+@Entity 
+@Table(name = &quot;BUILD_LOG_INFO&quot;)
+<span class="nc" id="L22">@Setter</span>
+@Getter 
+<span class="nc" id="L24">@NoArgsConstructor </span>
+<span class="nc" id="L25">@AllArgsConstructor</span>
+@Filters({
+    @Filter(name = &quot;buildLogInfoIdEqFilter&quot;, condition = &quot;ID = :id&quot;),
+    @Filter(name = &quot;buildLogInfoIdNEqFilter&quot;, condition = &quot;ID != :id&quot;),
+    @Filter(name = &quot;buildLogInfoIdInFilter&quot;, condition = &quot;ID in (:id)&quot;),
+    @Filter(name = &quot;buildLogInfoIdNInFilter&quot;, condition = &quot;ID not in (:id)&quot;),
+    @Filter(name = &quot;buildLogInfoBuildNumberEqFilter&quot;, condition = &quot;BUILD_NUMBER = :buildNumber&quot;),
+    @Filter(name = &quot;buildLogInfoBuildNumberNEqFilter&quot;, condition = &quot;BUILD_NUMBER != :buildNumber&quot;),
+    @Filter(name = &quot;buildLogInfoBuildNumberInFilter&quot;, condition = &quot;BUILD_NUMBER in (:buildNumber)&quot;),
+    @Filter(name = &quot;buildLogInfoBuildNumberNInFilter&quot;, condition = &quot;BUILD_NUMBER not in (:buildNumber)&quot;),
+    @Filter(name = &quot;buildLogInfoDeletedEqFilter&quot;, condition = &quot;DELETED = :deleted&quot;),
+    @Filter(name = &quot;buildLogInfoDeletedNEqFilter&quot;, condition = &quot;DELETED != :deleted&quot;),
+    @Filter(name = &quot;buildLogInfoCustomerIdEqFilter&quot;, condition = &quot;CUSTOMER_ID = :customerId&quot;),
+    @Filter(name = &quot;buildLogInfoCustomerIdNEqFilter&quot;, condition = &quot;CUSTOMER_ID != :customerId&quot;),
+    @Filter(name = &quot;buildLogInfoCustomerIdInFilter&quot;, condition = &quot;CUSTOMER_ID in (:customerId)&quot;),
+    @Filter(name = &quot;buildLogInfoCustomerIdNInFilter&quot;, condition = &quot;CUSTOMER_ID not in (:customerId)&quot;),
+    @Filter(name = &quot;buildLogInfoCreatedTimeEqFilter&quot;, condition = &quot;CREATED_TIME = :createdTime&quot;),
+    @Filter(name = &quot;buildLogInfoCreatedTimeNEqFilter&quot;, condition = &quot;CREATED_TIME != :createdTime&quot;),
+    @Filter(name = &quot;buildLogInfoCreatedTimeInFilter&quot;, condition = &quot;CREATED_TIME in (:createdTime)&quot;),
+    @Filter(name = &quot;buildLogInfoCreatedTimeNInFilter&quot;, condition = &quot;CREATED_TIME not in (:createdTime)&quot;),
+    @Filter(name = &quot;buildLogInfoModifiedTimeEqFilter&quot;, condition = &quot;MODIFIED_TIME = :modifiedTime&quot;),
+    @Filter(name = &quot;buildLogInfoModifiedTimeNEqFilter&quot;, condition = &quot;MODIFIED_TIME != :modifiedTime&quot;),
+    @Filter(name = &quot;buildLogInfoModifiedTimeInFilter&quot;, condition = &quot;MODIFIED_TIME in (:modifiedTime)&quot;),
+    @Filter(name = &quot;buildLogInfoModifiedTimeNInFilter&quot;, condition = &quot;MODIFIED_TIME not in (:modifiedTime)&quot;),
+    @Filter(name = &quot;buildLogInfoCreatorEqFilter&quot;, condition = &quot;CREATOR = :creator&quot;),
+    @Filter(name = &quot;buildLogInfoCreatorNEqFilter&quot;, condition = &quot;CREATOR != :creator&quot;),
+    @Filter(name = &quot;buildLogInfoCreatorInFilter&quot;, condition = &quot;CREATOR in (:creator)&quot;),
+    @Filter(name = &quot;buildLogInfoCreatorNInFilter&quot;, condition = &quot;CREATOR not in (:creator)&quot;),
+    @Filter(name = &quot;buildLogInfoLastModifierEqFilter&quot;, condition = &quot;LAST_MODIFIER = :lastModifier&quot;),
+    @Filter(name = &quot;buildLogInfoLastModifierNEqFilter&quot;, condition = &quot;LAST_MODIFIER != :lastModifier&quot;),
+    @Filter(name = &quot;buildLogInfoLastModifierInFilter&quot;, condition = &quot;LAST_MODIFIER in (:lastModifier)&quot;),
+    @Filter(name = &quot;buildLogInfoLastModifierNInFilter&quot;, condition = &quot;LAST_MODIFIER not in (:lastModifier)&quot;)
+})
+@FilterDefs({
+    @FilterDef(name = &quot;buildLogInfoIdEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoIdInFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoIdNInFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoBuildNumberEqFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoBuildNumberNEqFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoBuildNumberInFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoBuildNumberNInFilter&quot;, parameters = @ParamDef(name = &quot;buildNumber&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoDeletedEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;buildLogInfoDeletedNEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;buildLogInfoCustomerIdEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCustomerIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCustomerIdInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCustomerIdNInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatedTimeEqFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatedTimeNEqFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatedTimeInFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatedTimeNInFilter&quot;, parameters = @ParamDef(name = &quot;createdTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoModifiedTimeEqFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoModifiedTimeNEqFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoModifiedTimeInFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoModifiedTimeNInFilter&quot;, parameters = @ParamDef(name = &quot;modifiedTime&quot;, type = Date.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatorEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatorNEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatorInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoCreatorNInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoLastModifierEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoLastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoLastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;buildLogInfoLastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class))
+})
+public class BuildLogInfo extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name=&quot;ID&quot;)
+<span class="nc" id="L95">    private Integer id;</span>
+
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = &quot;BUILD_NUMBER&quot;, referencedColumnName = &quot;BUILD_NUMBER&quot;)
+<span class="nc" id="L100">    private BuildInfo buildInfo;</span>
+
+    @Column(name=&quot;LOG&quot;)
+<span class="nc" id="L103">    private String log;</span>
+
+    @NotNull
+    @Column(name=&quot;DELETED&quot;,nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
+<span class="nc" id="L107">    private boolean deleted;</span>
+
+    @Column(name = &quot;CUSTOMER_ID&quot;, columnDefinition = &quot;INT&quot;)
+<span class="nc" id="L110">    private Integer customerId;</span>
+
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

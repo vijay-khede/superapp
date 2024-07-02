@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>SourceCodeDetails.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">SourceCodeDetails.java</span></div><h1>SourceCodeDetails.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+
+import jakarta.persistence.*;
+import java.util.Date;
+import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import org.hibernate.envers.Audited;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
+
+// @Audited
+@JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
+@Entity 
+<span class="nc" id="L24">@Setter </span>
+@Getter
+<span class="nc" id="L26">@NoArgsConstructor </span>
+@Table(name = &quot;SOURCE_CODE_DETAILS&quot;)
+@Filters({
+    @Filter(name = &quot;sourceCodeDetailsIdEqFilter&quot;, condition = &quot;ID = :id&quot;),
+    @Filter(name = &quot;sourceCodeDetailsIdNEqFilter&quot;, condition = &quot;ID != :id&quot;),
+    @Filter(name = &quot;sourceCodeDetailsIdInFilter&quot;, condition = &quot;ID in (:id)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsIdNInFilter&quot;, condition = &quot;ID not in (:id)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsAppIdEqFilter&quot;, condition = &quot;APP_ID = :appId&quot;),
+    @Filter(name = &quot;sourceCodeDetailsAppIdNEqFilter&quot;, condition = &quot;APP_ID != :appId&quot;),
+    @Filter(name = &quot;sourceCodeDetailsAppIdInFilter&quot;, condition = &quot;APP_ID in (:appId)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsAppIdNInFilter&quot;, condition = &quot;APP_ID not in (:appId)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDeletedEqFilter&quot;, condition = &quot;DELETED = :deleted&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDeletedNEqFilter&quot;, condition = &quot;DELETED != :deleted&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCustomerIdEqFilter&quot;, condition = &quot;CUSTOMER_ID = :customerId&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCustomerIdNEqFilter&quot;, condition = &quot;CUSTOMER_ID != :customerId&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCustomerIdInFilter&quot;, condition = &quot;CUSTOMER_ID in (:customerId)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCustomerIdNInFilter&quot;, condition = &quot;CUSTOMER_ID not in (:customerId)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodePathEqFilter&quot;, condition = &quot;SOURCE_CODE_PATH = :sourceCodePath&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodePathNEqFilter&quot;, condition = &quot;SOURCE_CODE_PATH != :sourceCodePath&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodePathInFilter&quot;, condition = &quot;SOURCE_CODE_PATH in (:sourceCodePath)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodePathNInFilter&quot;, condition = &quot;SOURCE_CODE_PATH not in (:sourceCodePath)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodeUrlEqFilter&quot;, condition = &quot;SOURCE_CODE_URL = :sourceCodeUrl&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodeUrlNEqFilter&quot;, condition = &quot;SOURCE_CODE_URL != :sourceCodeUrl&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodeUrlInFilter&quot;, condition = &quot;SOURCE_CODE_URL in (:sourceCodeUrl)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsSourceCodeUrlNInFilter&quot;, condition = &quot;SOURCE_CODE_URL not in (:sourceCodeUrl)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsStatusEqFilter&quot;, condition = &quot;STATUS = :status&quot;),
+    @Filter(name = &quot;sourceCodeDetailsStatusNEqFilter&quot;, condition = &quot;STATUS != :status&quot;),
+    @Filter(name = &quot;sourceCodeDetailsStatusInFilter&quot;, condition = &quot;STATUS in (:status)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsStatusNInFilter&quot;, condition = &quot;STATUS not in (:status)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsVersionEqFilter&quot;, condition = &quot;VERSION = :version&quot;),
+    @Filter(name = &quot;sourceCodeDetailsVersionNEqFilter&quot;, condition = &quot;VERSION != :version&quot;),
+    @Filter(name = &quot;sourceCodeDetailsVersionInFilter&quot;, condition = &quot;VERSION in (:version)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsVersionNInFilter&quot;, condition = &quot;VERSION not in (:version)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDartVersionEqFilter&quot;, condition = &quot;DART_VERSION = :dartVersion&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDartVersionNEqFilter&quot;, condition = &quot;DART_VERSION != :dartVersion&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDartVersionInFilter&quot;, condition = &quot;DART_VERSION in (:dartVersion)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsDartVersionNInFilter&quot;, condition = &quot;DART_VERSION not in (:dartVersion)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsFlutterVersionEqFilter&quot;, condition = &quot;FLUTTER_VERSION = :flutterVersion&quot;),
+    @Filter(name = &quot;sourceCodeDetailsFlutterVersionNEqFilter&quot;, condition = &quot;FLUTTER_VERSION != :flutterVersion&quot;),
+    @Filter(name = &quot;sourceCodeDetailsFlutterVersionInFilter&quot;, condition = &quot;FLUTTER_VERSION in (:flutterVersion)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsFlutterVersionNInFilter&quot;, condition = &quot;FLUTTER_VERSION not in (:flutterVersion)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatedTimeEqFilter&quot;, condition = &quot;CREATED_TIME = :createdTime&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatedTimeNEqFilter&quot;, condition = &quot;CREATED_TIME != :createdTime&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatedTimeInFilter&quot;, condition = &quot;CREATED_TIME in (:createdTime)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatedTimeNInFilter&quot;, condition = &quot;CREATED_TIME not in (:createdTime)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsModifiedTimeEqFilter&quot;, condition = &quot;MODIFIED_TIME = :modifiedTime&quot;),
+    @Filter(name = &quot;sourceCodeDetailsModifiedTimeNEqFilter&quot;, condition = &quot;MODIFIED_TIME != :modifiedTime&quot;),
+    @Filter(name = &quot;sourceCodeDetailsModifiedTimeInFilter&quot;, condition = &quot;MODIFIED_TIME in (:modifiedTime)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsModifiedTimeNInFilter&quot;, condition = &quot;MODIFIED_TIME not in (:modifiedTime)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatorEqFilter&quot;, condition = &quot;CREATOR = :creator&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatorNEqFilter&quot;, condition = &quot;CREATOR != :creator&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatorInFilter&quot;, condition = &quot;CREATOR in (:creator)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsCreatorNInFilter&quot;, condition = &quot;CREATOR not in (:creator)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsLastModifierEqFilter&quot;, condition = &quot;LAST_MODIFIER = :lastModifier&quot;),
+    @Filter(name = &quot;sourceCodeDetailsLastModifierNEqFilter&quot;, condition = &quot;LAST_MODIFIER != :lastModifier&quot;),
+    @Filter(name = &quot;sourceCodeDetailsLastModifierInFilter&quot;, condition = &quot;LAST_MODIFIER in (:lastModifier)&quot;),
+    @Filter(name = &quot;sourceCodeDetailsLastModifierNInFilter&quot;, condition = &quot;LAST_MODIFIER not in (:lastModifier)&quot;)
+}) 
+@FilterDefs({
+    @FilterDef(name = &quot;sourceCodeDetailsIdEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsIdInFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsIdNInFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsAppIdEqFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsAppIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsAppIdInFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsAppIdNInFilter&quot;, parameters = @ParamDef(name = &quot;appId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDeletedEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDeletedNEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCustomerIdEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCustomerIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCustomerIdInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCustomerIdNInFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodePathEqFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodePath&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodePathNEqFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodePath&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodePathInFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodePath&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodePathNInFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodePath&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodeUrlEqFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodeUrl&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodeUrlNEqFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodeUrl&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodeUrlInFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodeUrl&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsSourceCodeUrlNInFilter&quot;, parameters = @ParamDef(name = &quot;sourceCodeUrl&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsStatusEqFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsStatusNEqFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsStatusInFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsStatusNInFilter&quot;, parameters = @ParamDef(name = &quot;status&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsVersionEqFilter&quot;, parameters = @ParamDef(name = &quot;version&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsVersionNEqFilter&quot;, parameters = @ParamDef(name = &quot;version&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsVersionInFilter&quot;, parameters = @ParamDef(name = &quot;version&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsVersionNInFilter&quot;, parameters = @ParamDef(name = &quot;version&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDartVersionEqFilter&quot;, parameters = @ParamDef(name = &quot;dartVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDartVersionNEqFilter&quot;, parameters = @ParamDef(name = &quot;dartVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDartVersionInFilter&quot;, parameters = @ParamDef(name = &quot;dartVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsDartVersionNInFilter&quot;, parameters = @ParamDef(name = &quot;dartVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsFlutterVersionEqFilter&quot;, parameters = @ParamDef(name = &quot;flutterVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsFlutterVersionNEqFilter&quot;, parameters = @ParamDef(name = &quot;flutterVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsFlutterVersionInFilter&quot;, parameters = @ParamDef(name = &quot;flutterVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsFlutterVersionNInFilter&quot;, parameters = @ParamDef(name = &quot;flutterVersion&quot;, type = String.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCreatorEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCreatorNEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCreatorInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsCreatorNInFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsLastModifierEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsLastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsLastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;sourceCodeDetailsLastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class))
+}) 
+
+public class SourceCodeDetails extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = &quot;INT&quot;)
+<span class="nc" id="L138">    private Integer id;</span>
+
+    @NotNull
+    @Column(nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
+<span class="nc" id="L142">    private boolean deleted;</span>
+
+    @Column(name = &quot;CUSTOMER_ID&quot;, columnDefinition = &quot;INT&quot;)
+<span class="nc" id="L145">    private Integer customerId;</span>
+
+    @Size(max = 255)
+    @Column(name = &quot;SOURCE_CODE_PATH&quot;, length = 255)
+<span class="nc" id="L149">    private String sourceCodePath;</span>
+
+    @Size(max = 255)
+    @Column(name = &quot;SOURCE_CODE_URL&quot;, length = 255)
+<span class="nc" id="L153">    private String sourceCodeUrl;</span>
+
+    @Basic
+    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;ENUM('NEW','PASS','FAIL')&quot;)
+<span class="nc" id="L157">    private String status; </span>
+
+    @Size(max = 15)
+    @Column(name = &quot;VERSION&quot;, length = 15)
+<span class="nc" id="L161">    private String version;</span>
+
+    @Size(max = 15)
+    @Column(name = &quot;DART_VERSION&quot;, length = 15)
+<span class="nc" id="L165">    private String dartVersion;</span>
+
+    @Size(max = 15)
+    @Column(name = &quot;FLUTTER_VERSION&quot;, length = 15)
+<span class="nc" id="L169">    private String flutterVersion;</span>
+
+    @ManyToOne
+    @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;, nullable = false)
+<span class="nc" id="L173">    private MiniappDetails miniAppDetails; </span>
+
+    
+  
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

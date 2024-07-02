@@ -1,0 +1,45 @@
+{
+  "npmScope": "console",
+  "implicitDependencies": {
+    "angular.json": "*",
+    "package.json": "*",
+    "tslint.json": "*",
+    "nx.json": "*",
+    "tsconfig.base.json": "*",
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/src/tasks-runner/tasks-runner-v2",
+      "options": {
+        "cacheableOperations": [
+          "build",
+          "test",
+          "lint"
+        ]
+      }
+    }
+  },
+  "affected": {
+    "defaultBase": "master"
+  },
+  "cli": {
+    "analytics": "1dbc1c82-48b9-4349-9c1a-d22463d4e001",
+    "defaultCollection": "@nrwl/angular"
+  },
+  "defaultProject": "superapp",
+  "generators": {
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest",
+      "simple-module-name": true,
+      "publishable": true
+    },
+    "@schematics/angular:component": {
+      "style": "scss"
+    }
+  }
+}

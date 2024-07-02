@@ -1,0 +1,98 @@
+// @import 'variables.scss';
+// @import 'mixin.scss';
+:host {
+    height: 100%;
+    width: 100%;
+  }
+  .body {
+      height: 100%;
+      background-color: white;
+      &-box {
+          background-color: white;
+          box-shadow: 0 0 11px rgba(33,33,33,.2);
+  
+          border: 1px solid #edf0f4;
+          margin: 0 0 2.5em 0;
+         
+          height: 23em;
+          padding: 2em;
+         
+         
+          &-upper {
+              height: 13em;
+              margin-bottom: 1em;
+              padding-bottom: 0.5em;
+              border-bottom: 1px solid #caced2;
+          }
+          &-points-label {
+              font-size: 1.1em; 
+              color: #5c5c63; 
+              padding-right: 1em;
+          }
+          &-points-count {
+              font-weight: bold; 
+              font-size: 1.2em;
+              height: 1.8em;
+              min-width: 2.7em;
+              border-radius: 1em;
+          }
+          &-points {
+              border-right: 1px solid #caced2;
+              height: 2.5em;
+              align-items: center;
+              // padding-bottom: 1em; 
+              padding-right: 1em;
+              margin-right: 1em;
+          }
+      }
+      &-box:hover{
+          box-shadow: 0.5em 0.5em 2.3em rgba(0, 0, 0, 0.15);
+  
+  
+      }
+      &-app-icon {
+          height: 2.5em;
+          width: 2.5em;
+          font-size: 2em;
+          margin: 0 1em 0em 0; 
+          padding: 0.5em;
+          border-radius: 2em;
+          border: 1px solid black;
+          align-items: center;
+      }
+      &-appname {
+          font-size: 1.5em;
+          color: #646465;
+      }
+      &-logo {
+          font-size: 1.5em;
+      }
+      &-desc {
+          color: #878799;
+      }
+  }
+  
+  .bg-1 {
+      // background: linear-gradient(to right bottom, #c6ccfc, #d0cefd, #d9d0fe, #e2d2ff, #ebd4ff);
+      background: #57dfc029;
+  }
+  .bg-2 {
+      // background: linear-gradient(to right bottom, #1d6bc4, #1575c9, #147ecd, #1a88d0, #2591d3);
+      background: #7b9cf626;
+  }
+  .bg-3 {
+      background: #ffc86a29;
+      // background: linear-gradient(to right bottom, #c1eafc, #cfeaff, #dce9ff, #e9e9ff, #f3eafc);
+  }
+  .bg-4 {
+      background: #b998fb29;
+      // background: linear-gradient(to right bottom, #bdf9e7, #b7f5f5, #baf0fd, #c4eaff, #d1e3fd);
+  }
+  .bg-5 {
+      background: linear-gradient(to right bottom, #c0d8f7, #d5d5f5, #e7d4ed, #f2d4e4, #f7d7db);
+  }
+  .bg-6 {
+      background: linear-gradient(to right bottom, #fddecd, #ffd9d6, #fcd6e3, #efd7ef, #dbd9f7);
+  }
+  
+  

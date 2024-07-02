@@ -1,0 +1,31 @@
+@startuml
+!theme cyborg-outline
+title Export Data MiniappDetails Scenario
+participant User
+User -> CXFServlet: MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << export >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: export(:MiniappDetails)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: search(:MiniappDetails)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsJPARepository: search(:MiniappDetails)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: save(:MiniappDetails)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetails >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted MiniappDetails >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: response(:List<MiniappDetails>)
+MiniappDetailsControllerImpl -> MiniappDetailsService: export(:MiniappDetails)
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetails.xlsx >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetails.xlsx >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

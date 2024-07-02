@@ -1,0 +1,486 @@
+{
+  "gridName": "hosting-details superapp",
+  "host": "component",
+  "crudApi": {
+    "create": {
+      "url": "HostingDetails/create",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "view": {
+      "url": "HostingDetails/findById?id=$id",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "edit": {
+      "url": "HostingDetails/update",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "HostingDetails/deleteById?id=$id",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "bulk_delete": {
+      "url": "HostingDetails/deleteAll",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "workflow": {
+      "url": "WorkflowActions/updateActionTask",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "search": {
+      "url": "HostingDetails/search?filter=deleted==false&offset=0&size=1000&orderBy=modifiedTime&orderType=desc",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "export": {
+      "url": "HostingDetails/export?filter=deleted==false&orderBy=modifiedTime&orderType=desc",
+      "context": "SUPERAPP",
+      "method": "get"
+    },
+    "import": {
+      "url": "HostingDetails/importData",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "template": {
+      "url": "HostingDetails/downloadTemplate?fileName=HostingDetails.xlsx",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "commentApi": {
+    "create": {
+      "url": "HostingDetails/createComment",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "HostingDetails/deleteCommentByReferenceId",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "searchComment": {
+      "url": "HostingDetails/searchComment",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "updateComment": {
+      "url": "HostingDetails/updateComment",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "attachmentApi": {
+    "upload": {
+      "url": "HostingDetails/uploadDocument",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "getFiles": {
+      "url": "HostingDetails/getMyDocuments",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "delete": {
+      "url": "HostingDetails/deleteFromUploadWindow",
+      "context": "SUPERAPP",
+      "method": "post"
+    },
+    "subFolder": {
+      "url": "HostingDetails/getSubFolderByReferenceValueAndType",
+      "context": "SUPERAPP",
+      "method": "get"
+    }
+  },
+  "id": "SUPERAPP_HOSTINGDETAILS",
+  "page": 0,
+  "title": "SUPERAPP_APP_NAME.HOSTINGDETAILS",
+  "identityColumn": "SUPERAPP_APP_NAME.HOSTINGDETAILS.APPID",
+  "display": "form",
+  "formName": "HOSTING-DETAILS",
+  "numPages": 0,
+  "selected": true,
+  "components": [
+    {
+      "id": "section_0.4234",
+      "type": "panel",
+      "hover": false,
+      "input": false,
+      "title": "",
+      "main": true,
+      "hideHeader": true,
+      "columns": 2,
+      "category": "layout",
+      "isHidden": false,
+      "parentId": "page_2705",
+      "components": [
+        {
+          "id": "textfield_0.1296",
+          "type": "textfield",
+          "key": "miniappDetails",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.HOSTINGDETAILS.APPID",
+          "title": "SUPERAPP_APP_NAME.HOSTINGDETAILS.APPID",
+          "prefix": null,
+          "source": "HostingDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {},
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "textfield",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please search name",
+          "sourceTable": "HOSTING_DETAILS",
+          "autocomplete": true,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null,
+          "autoConfigData": {
+            "url": "MiniappDetails/search?filter=name==*$data.HostingDetails.miniappDetails*;deleted==false&offset=0&size=25",
+            "context": "SUPERAPP",
+            "urlType": "INTERNAL_TEXT",
+            "requestType": "GET",
+            "apiSourceType": "UI",
+            "displayExpression": "name"
+          }
+        },
+        {
+          "id": "textfield_0.1703",
+          "type": "textfield",
+          "key": "environment",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.HOSTINGDETAILS.ENVIRONMENT",
+          "title": "SUPERAPP_APP_NAME.HOSTINGDETAILS.ENVIRONMENT",
+          "prefix": null,
+          "source": "HostingDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {
+            "maxLength": 50
+          },
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "text",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter ENVIRONMENT",
+          "sourceTable": "HOSTING_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null
+        },
+        {
+          "id": "textfield_0.01245",
+          "type": "textfield",
+          "key": "domain",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.HOSTINGDETAILS.DOMAIN",
+          "title": "SUPERAPP_APP_NAME.HOSTINGDETAILS.DOMAIN",
+          "prefix": null,
+          "source": "HostingDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {
+            "maxLength": 255
+          },
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "text",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter DOMAIN",
+          "sourceTable": "HOSTING_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null
+        },
+        {
+          "id": "textarea_0.9367",
+          "type": "textarea",
+          "key": "sslCertificate",
+          "icon": "text",
+          "text": "",
+          "email": false,
+          "hover": false,
+          "label": "SUPERAPP_APP_NAME.HOSTINGDETAILS.SSLCERTIFICATE",
+          "title": "SUPERAPP_APP_NAME.HOSTINGDETAILS.SSLCERTIFICATE",
+          "prefix": null,
+          "source": "HostingDetails",
+          "suffix": null,
+          "apiCall": null,
+          "context": null,
+          "category": "fields",
+          "disabled": false,
+          "isHidden": false,
+          "parentid": "section_8914",
+          "redrawOn": "submit",
+          "validate": {},
+          "dependent": false,
+          "hideLabel": false,
+          "inputType": "area",
+          "conditional": {
+            "eq": "",
+            "show": "",
+            "when": "",
+            "disable": ""
+          },
+          "description": null,
+          "placeholder": "Please enter SSL CERTIFICATE",
+          "sourceTable": "HOSTING_DETAILS",
+          "autocomplete": false,
+          "defaultValue": null,
+          "isdependence": false,
+          "queryBuilder": {
+            "table": null,
+            "database": null,
+            "selectQuery": null
+          },
+          "buttonProperties": {
+            "type": null
+          },
+          "displayExpression": null,
+          "editor": true,
+          "textAreaRow": 2
+        }
+      ],
+      "isReadOnly": false,
+      "tooltipdata": null,
+      "startNewPage": true,
+      "buttonProperties": {
+        "type": null
+      }
+    }
+  ],
+  "footerConfig": {
+    "hover": false,
+    "buttonAlignment": "default",
+    "pageCount": 0,
+    "isFooterReq": true,
+    "buttonList": {
+      "middleList": [],
+      "leftList": [],
+      "rightList": [
+        {
+          "allowDelete": false,
+          "hover": false,
+          "buttonType": "stroked",
+          "showOnlyInLastPage": false,
+          "isFooterButton": true,
+          "toolTipContent": "",
+          "label": "CANCEL_TEXT",
+          "type": "button",
+          "showOnLastPage": false,
+          "footerButtonType": "cancel"
+        },
+        {
+          "configureCommentReason": false,
+          "themeoption": [
+            "ACCENT",
+            "PRIMARY",
+            "WARNING"
+          ],
+          "checklistComplete": false,
+          "checkValidation": true,
+          "type": "button",
+          "showLabel": true,
+          "disableOnInvalid": false,
+          "checkValidationOnButtonClick": true,
+          "rulesData": {
+            "visible": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ],
+              "validation": ""
+            },
+            "editable": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ],
+              "validation": ""
+            },
+            "background": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ]
+            },
+            "mandatory": {
+              "when": [
+                {
+                  "condition": "",
+                  "other": [],
+                  "secondCondition": null,
+                  "firstCondition": null
+                }
+              ]
+            }
+          },
+          "action": null,
+          "block": false,
+          "id": "footer_button_1157",
+          "group": "submit",
+          "sourceTable": null,
+          "btnPositionKey": "left",
+          "$$hashKey": null,
+          "showSaveSuccessMsg": "",
+          "size": null,
+          "isTranslate": false,
+          "saveOnly": true,
+          "rightIcon": null,
+          "hideOrDisable": "show",
+          "buttonValue": "submit",
+          "roleslist": [
+            "All Roles"
+          ],
+          "leftIcon": null,
+          "values": [
+            {
+              "text": "YES_TEXT",
+              "value": "default"
+            },
+            {
+              "text": "NO_TEXT",
+              "value": "custom"
+            }
+          ],
+          "icon": "button",
+          "description": null,
+          "title": "BUTTON",
+          "hover": false,
+          "isReadOnly": false,
+          "configMsg": null,
+          "inputTypeForTooltip": "LANGUAGE_KEY",
+          "msgDescription": null,
+          "theme": "accent",
+          "disabled": false,
+          "placeholder": "",
+          "key": "submittext",
+          "isMsgConfigured": "custom",
+          "validate": {
+            "required": false
+          },
+          "showSaveFailureMsg": "",
+          "buttonProperties": {
+            "type": null
+          },
+          "label": "SUBMIT_TEXT",
+          "footerButtonType": "submit",
+          "isHidden": false,
+          "buttonLabel": null,
+          "selectedthems": "accent",
+          "showOnlyInLastPage": false,
+          "isFooterButton": true,
+          "category": "fields"
+        }
+      ]
+    },
+    "type": "footer"
+  },
+  "application": 1,
+  "description": "Sample Form",
+  "openInDialog": false,
+  "isOpenInDialog": false,
+  "displayFormName": "Sample Form",
+  "sourcesToBeSaved": [
+    "HostingDetails"
+  ],
+  "subApplicationName": "All",
+  "context": "SUPERAPP",
+  "applicationName": "SUPERAPP_APP_NAME",
+  "tableName": "HostingDetails",
+  "primaryKeyName": "id",
+  "nativeName": "HOSTING_DETAILS",
+  "wrapperName": "hostingDetails",
+  "fileName": "superapp_HostingDetails_crud",
+  "viewName": "SUPERAPP_HOSTINGDETAILS_FORM",
+  "moduleName": "superapp"
+}

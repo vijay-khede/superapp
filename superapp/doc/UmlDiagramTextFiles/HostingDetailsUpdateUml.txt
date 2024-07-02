@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Update HostingDetails Scenario
+participant User
+User -> CXFServlet: UPDATE, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << update >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: update(:HostingDetails)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: update(:HostingDetails)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsJPARepository: update(:HostingDetails)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: update(:HostingDetails)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted HostingDetails >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted HostingDetails >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted HostingDetails >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted HostingDetails >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

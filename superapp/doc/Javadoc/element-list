@@ -1,0 +1,9 @@
+com.enttribe.superapp.controller.impl
+com.enttribe.superapp.integration.service
+com.enttribe.superapp.integration.service.impl
+com.enttribe.superapp.repository
+com.enttribe.superapp.repository.generic
+com.enttribe.superapp.service
+com.enttribe.superapp.service.generic
+com.enttribe.superapp.service.impl
+com.enttribe.superapp.util.report

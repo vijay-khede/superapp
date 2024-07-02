@@ -1,0 +1,171 @@
+replicaCount: 1
+
+image:
+  repository: registry.visionwaves.com/superapp
+  tag: "1.0.0"
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+rollingUpdate:
+  maxSurge: 50%
+  maxUnavailable: 0%
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: /superapp/actuator/prometheus
+  prometheus.io/scheme: http
+  prometheus.io/port: "9019"
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  port: 80
+  targetPort: 8081
+  type: ClusterIP
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+
+virtualService:
+  enabled: false
+  context: /superapp
+  hosts: "*" 
+  gateways: fs-gateway
+
+# Resource limit availble on node
+resourcesLimits:
+  cpu: 200m
+  memory: 1G
+# Resource Requested for container
+requestsResources:
+  cpu: 200m
+  memory: 1G
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 75
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+#READYNESS
+
+livenessProbe:
+  enable: false
+  path: /superapp/rest/ping
+  initialDelaySeconds: 300
+  periodSeconds: 20
+  failureThreshold: 3
+  timeoutSeconds: 3
+
+readinessProbe:
+  path: /superapp/rest/ping
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 3
+
+ports:
+  containerPort: 8081
+
+
+## FOR VOLUME MOUNTS
+
+volumeMounts:
+  protectedPath: /protected
+  sharedPath: /data/report
+  hadoopPath: /usr/hdp/current/hadoop-client/conf
+  hbasePath: /usr/hdp/current/hbase-client/conf
+  appServerBuild: /opt/platform/superapp-build/
+
+##FOR VOLUMES
+nfs:
+   hostpath: false
+   asServer: false
+volumeName:
+  sharedDir1: shared-vol1
+  #sharedDir2: shared-vol2
+volumes:
+  nfsServerUrl: a023fe10a824e465190cdc133fcfbc1d-527767393.ap-south-1.elb.amazonaws.com
+  nfsServerPath: /cluster-nfs/protected
+  nfsProtectedPath: /cluster-nfs/protected
+
+
+## 
+configMap:
+  defaultMode: 0755
+## FOR ENV
+
+env:
+    mysqlUrl: "emyL53yqrEWTK6wXkVNcug==:r0esrKSmAPEQC99gK/DQow==:pLx5TTrS9b28lkT2RT/FZUFw/HZ6P0qHOTQft5CV081Uo8y0TNdzHfuTXtl2UD7EnakvKvAB3Axeltr207A4JnSaHe60kaicX08yYYe4+u27i8HP0H5a5eHQN892D8B0montX9FkO5JaWuwggsuKk+C+Zl6GsiNlmiKhHqptC7aAHes94rw88NbjHEM1novcJOgN9Gw0TkF7+8QyiydX1wtJsHNtpC54EclrqFOKrCfG7d/UJA7t9rAbjpC/dQt3KqoZZ68OnDzx/iMuxk4V7eHy2pHRRZvIFJT21jpwiXIrMsb3X+9yX71nXqX8DrR4"
+    mysqlUsername: "5tlBEpf606+Qs5xBEN1Niw==:kovJdDtyybhzJmzMV3+tYQ==:dITeIsQj27glMFZEki15QA=="
+    mysqlChecksum: "YefrMNd4CeILwz3yjdRJ7A==:dmJAot9pSGhGhSfVUKn1aA==:itmU2/KVBgxJo4oCbDgY/w=="
+    ipv6: false
+    auditKafkaEnable: "false"
+    servicePort: 8081
+    serviceContext: "/superapp"
+    serviceJavamelodyUserpass: "cHJvZHVjdDpwcm9kdWN0Cg=="
+    redisSenitalList: "lj4j9n7g1fjW43/64LF417Q15+yk36v8ZTwKVuS/rfQ0BUKdly/O7WHOskMf3YMg5J+LDFCi1Q6BMNyu5h2pJTe66ZmPbjFC/tD7GZR7R3k=,lj4j9n7g1fjW43/64LF415DeayaMPwEES2zdCIUVVWD9awkkyiueKcMoca5oGKd3smGYlSFqMQp7EqEBPAKo1IKajtxLb8H/SOMWwaGV9Ro=,lj4j9n7g1fjW43/64LF41zpB5FnnqbDIoBuqYf6SjQfCzYaHiQybdkdwnNus3xNNDHQiH5evYNWdmFQETu3FqB6YuZQO7v054nTFUX7Zxkw="
+    redisMaster: "tHSoqN4LH8Ae9+HrbpKIXg=="
+    redisMasterAuth: "7+izoW1FilKhEwNRfy2hww=="
+    redisSenitalEnable: "B6V+uDmE1LvqI+UAcULNtg=="
+    auditKafkaServiceEnable: "false"
+    redis.idle.min: "S3R/kLwWNjromPt3yYrXgQ=="
+    redis.idle.max: "HDlw71nze5lQXpvD534idw=="
+    umUrl: "http://base-utility-service/base/util/rest" 
+    geoUrl: "http://base-utility-service/base/util/rest"
+    inventoryUrl: "http://microservice/platform/rest"
+    plateformUrl: "http://base-utility-service/base/util/rest"
+    fmUrl: "http://fm-microservice/fm/rest"
+    pmUrl: 
+    meta: "http://microservice/platform/rest"
+    layer:
+    PORT: "8081"
+    notificationUrl: "http://base-utility-service/base/util/rest"
+    workflowServiceURL: "http://workflow-management-service/wfm/rest"
+    viewBuilderUrl: "http://form-builder-service/fb/rest"
+    namingServiceurl: "http://identity-management-service/ipam-naming/rest"
+    checklistBuilderUrl: "http://catalogue-builder-service/catalogue/rest"
+    documentManagementUrl: "http://document-management-service/document-management/rest"
+    basePlatformServiceUrl: "http://base-utility-service/base/util/rest"
+    catalogueBuilderUrl: "http://catalogue-builder-service/cb/rest"
+    commentServiceUrl: "http://workflow-management-service/wfm/rest"
+    slaServiceUrl: "http://sla.ansible.svc.cluster.local/sla/rest"
+    oneSearchUrl: "http://onesearch-service.ansible.svc.cluster.local/onesearch/rest"
+
+collectServer:
+  register: false
+  postStartScript: "/protected/ops-script/postStart.sh"
+  preStopEnable: false
+  preStopScript: "/protected/ops-script/Pre-Stop.sh"
+
+sidecar:
+  Name: melody-service
+  image:
+    repository: visionwaves/melody-service
+    tag: 1.0.1
+    pullPolicy: Always
+  ports:
+    containerPort: 9096  

@@ -1,0 +1,13 @@
+<app-task-list
+*ngIf="appName && title"
+[appName]="appName"
+[entityType]="entityType"
+[loadingType]="'external'"
+[basePath]="basePath"
+[listPath]="'task_list'"
+[title]="title"
+[addWorkorderListToggelVisible]="addWorkorderListToggelVisible"
+[isAdHocProject]="isAdHocProject"
+[adHocTaskAgGridName]="adHocTaskAgGridName"
+[agGridName]="agGridName"
+></app-task-list>

@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Count MiniappDetails Scenario
+participant User
+User -> CXFServlet: GET, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << count >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: count(:MiniappDetails)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: count(:MiniappDetails)
+activate MiniappDetailsService
+MiniappDetailsService -> MiniappDetailsJPARepository: count(:MiniappDetails)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: save(:Long)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted Count >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsService: << persisted Count >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted Count >>
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted Count >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>DocumentIntegrationServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.integration.service.impl</a> &gt; <span class="el_source">DocumentIntegrationServiceImpl.java</span></div><h1>DocumentIntegrationServiceImpl.java</h1><pre class="source lang-java linenums">
+package com.enttribe.superapp.integration.service.impl; 
+ 
+import org.json.JSONObject;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+ 
+import com.google.gson.Gson;
+import com.enttribe.core.generic.exceptions.application.BusinessException;
+import com.enttribe.document.rest.IDocumentStreamRest;
+import com.enttribe.document.wrapper.UploadWrapper;
+import com.enttribe.superapp.integration.service.DocumentIntegrationService;
+import com.enttribe.superapp.util.APIConstants;
+import com.enttribe.document.rest.IDocumentIntegrationRest;
+import com.enttribe.document.rest.IDocumentRest;
+import com.enttribe.document.model.SubFolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import com.enttribe.document.model.Document;
+import org.springframework.http.ResponseEntity;
+import com.enttribe.document.wrapper.SubFolderWrapper;
+import java.util.List;
+ 
+/**
+* The DocumentIntegrationServiceImpl class is an implementation of the DocsumentIntegrationService interface.
+* This class provides methods to manage documents and attachments.
+*
+* It is marked with the Spring Framework's @Service annotation to indicate that this class
+* is a service component and should be automatically discovered and registered as a Spring bean.
+*
+* It also uses the Lombok @Slf4j annotation to automatically generate a logger field named &quot;log&quot;.
+* This logger can be used to log messages and simplify logging throughout the class.
+*/
+@Service
+<span class="nc" id="L35">@Slf4j</span>
+<span class="nc" id="L36">public class DocumentIntegrationServiceImpl implements DocumentIntegrationService {</span>
+ 
+    @Autowired
+    private IDocumentStreamRest documentStreamRest;
+    
+    @Autowired
+    private IDocumentIntegrationRest documentIntegrationRest;
+        
+    @Autowired
+    private IDocumentRest documentRest;
+    
+    public static final String ENTITY_STRING = &quot;ENTITY&quot;;
+ 
+ 
+    @Override
+    public Document uploadDocument(MultipartFile file, String fileName, String referenceId,String applicatoinName, String entityName) {
+<span class="nc" id="L52">        log.info(&quot;inside upload document&quot;);</span>
+        try {
+<span class="nc" id="L54">            log.info(&quot;Getting Parent Folder&quot;);</span>
+<span class="nc" id="L55">            SubFolder parentfolderByValue = documentIntegrationRest.getSubFolderByReferenceValueAndType(&quot;APPLICATIONNAME&quot;,</span>
+                    applicatoinName, null);
+            
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (parentfolderByValue == null) {</span>
+<span class="nc" id="L59">                throw new BusinessException(&quot;Application Folder Not Exist&quot;);</span>
+            }
+<span class="nc" id="L61">            log.info(&quot;Getting Entity Folder&quot;);</span>
+<span class="nc" id="L62">            SubFolder entityfolderByValue = documentIntegrationRest.getSubFolderByReferenceValueAndType(ENTITY_STRING,</span>
+<span class="nc" id="L63">                    entityName, parentfolderByValue.getId());</span>
+            
+<span class="nc bnc" id="L65" title="All 2 branches missed.">            if (entityfolderByValue == null) {</span>
+<span class="nc" id="L66">                throw new BusinessException(&quot;Entity Folder Not Exist&quot;);</span>
+            }
+            
+<span class="nc" id="L69">            String referenceValue = applicatoinName + &quot;_&quot; + entityName + &quot;_&quot; + referenceId;</span>
+<span class="nc" id="L70">            UploadWrapper uploadWrapper = new UploadWrapper();</span>
+<span class="nc" id="L71">            uploadWrapper.setFileName(fileName);</span>
+<span class="nc" id="L72">            uploadWrapper.setIsPublic(true);</span>
+<span class="nc" id="L73">            uploadWrapper.setIsRoot(false);</span>
+<span class="nc" id="L74">            uploadWrapper.setIsProcessedDocument(false);</span>
+<span class="nc" id="L75">            uploadWrapper.setUserIds(null);</span>
+<span class="nc" id="L76">            uploadWrapper.setIsVersioningRequired(true);</span>
+<span class="nc" id="L77">            uploadWrapper.setRefType(ENTITY_STRING);</span>
+<span class="nc" id="L78">            uploadWrapper.setRefValue(referenceValue);</span>
+            
+<span class="nc" id="L80">             String folderReferenceValue =  entityName + &quot;_&quot; + referenceId;</span>
+            
+<span class="nc" id="L82">            log.info(&quot;Getting Entity Sub Folder&quot;);</span>
+<span class="nc" id="L83">            SubFolder entitytSubFolderByValue = documentIntegrationRest.getSubFolderByReferenceValueAndType(ENTITY_STRING,</span>
+<span class="nc" id="L84">                    folderReferenceValue, entityfolderByValue.getId());</span>
+ 
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            if (entitytSubFolderByValue == null) {</span>
+<span class="nc" id="L87">                entitytSubFolderByValue = createSubFolder(referenceId,folderReferenceValue,entityfolderByValue.getId());</span>
+            }
+ 
+<span class="nc" id="L90">            uploadWrapper.setFolderId(entitytSubFolderByValue.getId());</span>
+<span class="nc" id="L91">            JSONObject jsonObject = new JSONObject(uploadWrapper);</span>
+<span class="nc" id="L92">            log.info(&quot;uploadDocument Json Obj&quot;, jsonObject);</span>
+<span class="nc" id="L93">            log.info(&quot;uploadDocument Json Obj1&quot;, jsonObject.toString());</span>
+ 
+<span class="nc" id="L95">            log.info(&quot;uploadDocument Obj2&quot;, new Gson().toJson(uploadWrapper));</span>
+<span class="nc" id="L96">            return documentStreamRest.uploadFile(file, jsonObject.toString());</span>
+<span class="nc" id="L97">        } catch (Exception ex) {</span>
+<span class="nc" id="L98">            log.info(&quot;&quot;, ex);</span>
+<span class="nc" id="L99">            throw new BusinessException(ex.getMessage());</span>
+        }
+    }
+ 
+    private SubFolder createSubFolder(String referenceId,String referenceValue,Integer parentId) {
+<span class="nc" id="L104">        log.info(&quot;createSubFolder&quot;);</span>
+<span class="nc" id="L105">        SubFolderWrapper subFolder = new SubFolderWrapper();</span>
+<span class="nc" id="L106">        log.info(&quot;SUBFOLDER NAME&quot;, referenceValue);</span>
+<span class="nc" id="L107">        subFolder.setSubFolderName(referenceValue);</span>
+<span class="nc" id="L108">        subFolder.setIsPublic(true);</span>
+<span class="nc" id="L109">        subFolder.setIsRoot(false);</span>
+<span class="nc" id="L110">        subFolder.setIsProcessDocument(true);</span>
+<span class="nc" id="L111">        subFolder.setReferenceId((long)(Integer.parseInt(referenceId)));</span>
+<span class="nc" id="L112">        subFolder.setReferenceType(ENTITY_STRING);</span>
+<span class="nc" id="L113">        subFolder.setReferenceValue(referenceValue);</span>
+<span class="nc" id="L114">        subFolder.setParentSubFolderId(parentId);</span>
+<span class="nc" id="L115">        return documentIntegrationRest.createFolder(subFolder);</span>
+    }
+    
+    @Override
+      public String deleteFileEntityAttachment(Integer documentIdPk) {  
+<span class="nc" id="L120">            log.info( &quot;deleteFileEntityAttachment documentIdPk:{}&quot;, documentIdPk);    </span>
+        try {
+<span class="nc" id="L122">          return documentRest.deleteDocument(documentIdPk);</span>
+<span class="nc" id="L123">        } catch (Exception ex) {</span>
+<span class="nc" id="L124">          throw new BusinessException(ex.getMessage());</span>
+        }
+      }
+    
+    @Override
+      public ResponseEntity downloadAttachment(Integer documentIdPk) {
+<span class="nc" id="L130">        log.info( &quot;downloadAttachment documentIdPk:{}&quot;, documentIdPk);</span>
+        try {
+<span class="nc" id="L132">          return documentStreamRest.fileDownload(documentIdPk);</span>
+<span class="nc" id="L133">        } catch (Exception ex) {</span>
+<span class="nc" id="L134">          throw new BusinessException(ex.getMessage());</span>
+        }
+      }
+ 
+    @Override
+    public Integer countOfMyDocuments(Integer parentId, String searchText) {
+<span class="nc" id="L140">            log.info( &quot;countOfMyDocuments searchText:{}&quot;, searchText);  </span>
+          try {
+<span class="nc" id="L142">              return documentIntegrationRest.countOfMyDocuments(parentId, searchText);</span>
+<span class="nc" id="L143">            } catch (Exception ex) {</span>
+<span class="nc" id="L144">              throw new BusinessException(ex.getMessage());</span>
+            }
+    }
+ 
+    @Override
+    public List getMyDocuments(Integer parentId, Integer upperLimit, Integer lowerLimit, String modifiedTimeType,
+            Long modificationtime, String searchText) {
+<span class="nc" id="L151">                        log.info( &quot;getMyDocuments searchText:{}&quot;, searchText);              </span>
+          try {
+<span class="nc" id="L153">              return documentIntegrationRest.getMyDocuments(parentId, upperLimit, lowerLimit, modifiedTimeType, modificationtime, searchText);</span>
+<span class="nc" id="L154">            } catch (Exception ex) {</span>
+<span class="nc" id="L155">              throw new BusinessException(ex.getMessage());</span>
+            }
+    }
+    
+    @Override
+      public SubFolder getSubFolderByReferenceValueAndType(String referenceType, String referenceValue) {
+<span class="nc" id="L161">        log.info(&quot;getSubFolderByReferenceIdAndType&quot;);</span>
+<span class="nc" id="L162">        SubFolder subFolderObj = documentIntegrationRest.getSubFolderByReferenceValueAndType(referenceType, referenceValue,null);</span>
+<span class="nc" id="L163">        log.info(&quot;subFolderObj :{}&quot;,subFolderObj);</span>
+<span class="nc" id="L164">        return subFolderObj;</span>
+      }
+ 
+      @Override
+      public void createFolderForEntity(String entityType,Integer entityId) {
+        try {
+<span class="nc" id="L170">            String appName=APIConstants.APPNAME;</span>
+<span class="nc" id="L171">          SubFolderWrapper subFolderWrapper =null;</span>
+          // Need to revisit
+<span class="nc" id="L173">          String  entityIDReferenceValue=appName+&quot;_&quot;+entityType+&quot;_&quot;+entityId;</span>
+<span class="nc" id="L174">          SubFolder entitySubFolder = getSubFolderByReferenceValueAndType(APIConstants.ENTITY,entityIDReferenceValue);</span>
+<span class="nc" id="L175">          log.info(&quot;inside @class DocumentIntegrationServiceImpl  @method createFolder entitySubFolder {} :&quot;,</span>
+                  entitySubFolder);
+<span class="nc bnc" id="L177" title="All 2 branches missed.">          if(entitySubFolder==null)</span>
+          {
+<span class="nc" id="L179">               SubFolder appSubFolder = getSubFolderByReferenceValueAndType(APIConstants.APPLICATIONNAME,appName);</span>
+               
+<span class="nc" id="L181">               log.info(&quot;inside @class DocumentIntegrationServiceImpl  @method createFolder appSubFolder {} :&quot;,</span>
+                       appSubFolder);
+<span class="nc bnc" id="L183" title="All 2 branches missed.">               if(appSubFolder==null)</span>
+               {
+<span class="nc" id="L185">                   subFolderWrapper=new SubFolderWrapper();</span>
+<span class="nc" id="L186">                    subFolderWrapper.setSubFolderName(appName);</span>
+<span class="nc" id="L187">                      subFolderWrapper.setReferenceType(APIConstants.APPLICATIONNAME);</span>
+<span class="nc" id="L188">                      subFolderWrapper.setReferenceValue(appName);</span>
+<span class="nc" id="L189">                      setCommonParameter(subFolderWrapper);</span>
+<span class="nc" id="L190">                      subFolderWrapper.setIsRoot(true</span>
+                      );
+<span class="nc" id="L192">                      appSubFolder=    documentIntegrationRest.createFolder(subFolderWrapper);</span>
+               }
+               
+<span class="nc" id="L195">                subFolderWrapper=new SubFolderWrapper();</span>
+<span class="nc" id="L196">                subFolderWrapper.setSubFolderName(entityType+&quot;_&quot;+entityId);</span>
+<span class="nc" id="L197">                  subFolderWrapper.setReferenceType(APIConstants.ENTITY);</span>
+<span class="nc" id="L198">                  subFolderWrapper.setReferenceValue(entityIDReferenceValue);</span>
+<span class="nc" id="L199">                  subFolderWrapper.setRelativePath(entityIDReferenceValue);</span>
+<span class="nc" id="L200">                  log.info(&quot;subFolderWrapper {} :&quot;,subFolderWrapper);</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">                  if(entityId!=null)</span>
+                  {
+<span class="nc" id="L203">                    log.info(&quot;inside if body : {} &quot;,entityId);</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">                  if (appSubFolder != null) {</span>
+<span class="nc" id="L205">                      subFolderWrapper.setParentSubFolderId(appSubFolder.getId());</span>
+                    }
+<span class="nc" id="L207">                    setCommonParameter(subFolderWrapper);</span>
+                  }
+               
+<span class="nc" id="L210">                  log.info(&quot;subFolderWrapper last obj : {} &quot;,subFolderWrapper);</span>
+<span class="nc" id="L211">                  SubFolder childFolderCreated = new SubFolder();</span>
+<span class="nc" id="L212">                  childFolderCreated =documentIntegrationRest.createFolder(subFolderWrapper);</span>
+<span class="nc" id="L213">                  log.info(&quot;childFolderCreated last obj : {} &quot;,childFolderCreated);</span>
+          }
+         
+<span class="nc" id="L216">        } catch (Exception ex) {</span>
+<span class="nc" id="L217">          log.info(&quot;error @class DocumentIntegrationServiceImpl @method createFolder exception : &quot;, ex);</span>
+<span class="nc" id="L218">        }</span>
+<span class="nc" id="L219">      }</span>
+    
+      public void setCommonParameter(SubFolderWrapper subfolderWrapper) {
+<span class="nc" id="L222">        subfolderWrapper.setIsPublic(false);</span>
+<span class="nc" id="L223">        subfolderWrapper.setIsRoot(false);</span>
+<span class="nc" id="L224">        subfolderWrapper.setIsProcessDocument(true);</span>
+<span class="nc" id="L225">      }</span>
+}
+ 
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

@@ -1,0 +1,33 @@
+@startuml
+!theme cyborg-outline
+title Import Data MiniappDetails Scenario
+participant User
+User -> CXFServlet: POST, MiniappDetails
+activate CXFServlet
+CXFServlet -> MiniappDetails: << importData >>
+activate MiniappDetails
+MiniappDetails -> CXFServlet: << instance >>
+deactivate MiniappDetails
+CXFServlet -> MiniappDetailsControllerImpl: importData(:MiniappDetails)
+activate MiniappDetailsControllerImpl
+MiniappDetailsControllerImpl -> MiniappDetailsService: importData(:MiniappDetails)
+activate MiniappDetailsService
+activate MiniappDetailsServiceImpl
+MiniappDetailsService -> MiniappDetailsServiceImpl: importData(:MiniappDetails)
+MiniappDetailsServiceImpl -> MiniappDetailsJPARepository: saveAll(:MiniappDetails)
+activate MiniappDetailsJPARepository
+MiniappDetailsJPARepository -> EntityManager: save(:MiniappDetails)
+activate EntityManager
+EntityManager -> MiniappDetailsJPARepository: << persisted MiniappDetails >>
+deactivate EntityManager
+MiniappDetailsJPARepository -> MiniappDetailsServiceImpl: << persisted MiniappDetails >>
+MiniappDetailsServiceImpl -> MiniappDetailsService: << persisted MiniappDetails >>
+deactivate MiniappDetailsJPARepository
+MiniappDetailsService -> MiniappDetailsControllerImpl: << persisted MiniappDetails >>
+deactivate MiniappDetailsServiceImpl
+deactivate MiniappDetailsService
+MiniappDetailsControllerImpl -> CXFServlet: << persisted MiniappDetails >>
+deactivate MiniappDetailsControllerImpl
+CXFServlet -> User: marshalled MiniappDetails XML
+deactivate CXFServlet
+@enduml

@@ -1,0 +1,29 @@
+@startuml
+!theme cyborg-outline
+title Audit History HostingDetails Scenario
+participant User
+User -> CXFServlet: GET, HostingDetails
+activate CXFServlet
+CXFServlet -> HostingDetails: << auditHistory >>
+activate HostingDetails
+HostingDetails -> CXFServlet: << instance >>
+deactivate HostingDetails
+CXFServlet -> HostingDetailsControllerImpl: auditHistory(:HostingDetails)
+activate HostingDetailsControllerImpl
+HostingDetailsControllerImpl -> HostingDetailsService: auditHistory(:HostingDetails)
+activate HostingDetailsService
+HostingDetailsService -> HostingDetailsJPARepository: auditHistory(:HostingDetails)
+activate HostingDetailsJPARepository
+HostingDetailsJPARepository -> EntityManager: response(:int,Integer,Integer)
+activate EntityManager
+EntityManager -> HostingDetailsJPARepository: << persisted HostingDetailsAuditHistory >>
+deactivate EntityManager
+HostingDetailsJPARepository -> HostingDetailsService: << persisted HostingDetailsAuditHistory >>
+deactivate HostingDetailsJPARepository
+HostingDetailsService -> HostingDetailsControllerImpl: << persisted HostingDetailsAuditHistory >>
+deactivate HostingDetailsService
+HostingDetailsControllerImpl -> CXFServlet: << persisted HostingDetailsAuditHistory >>
+deactivate HostingDetailsControllerImpl
+CXFServlet -> User: marshalled HostingDetails XML
+deactivate CXFServlet
+@enduml

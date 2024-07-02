@@ -1,0 +1,25 @@
+export const customModulePermissionConstant = {
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewDashboard: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewDashboard',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTaskDashboard: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTaskDashboard',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewWorkOrderDashboard: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewWorkOrderDashboard',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewMaintenanceWorkOrderDashboard: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewMaintenanceWorkOrderDashboard',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTaskList: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTaskList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewProjectTemplate: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewProjectTemplate',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewEntityStatusMaster: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewEntityStatusMaster',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewForms: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewForms',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewWorkflowsList: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewWorkflowsList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewPages: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewPages',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewList: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewCheckList: 'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewCheckList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTestCaseList:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewTestCaseList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewDictionaryList:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewDictionaryList',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewAnalytics:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewAnalytics',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDataset:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDataset',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDatasource:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDatasource',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDashboard:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiDashboard',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiChartTemplate:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiChartTemplate',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiReportTemplate:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiReportTemplate',
+    ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiApidatasource:'ROLE_FEAT_Superapp_CUSTOM_MODULE_canViewBiApidatasource',
+    ROLE_FEAT_HOME_MODULE_canViewHome:'ROLE_FEAT_HOME_MODULE_canViewHome'
+};
+

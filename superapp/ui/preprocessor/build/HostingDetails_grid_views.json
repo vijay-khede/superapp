@@ -1,0 +1,56 @@
+{
+  "tileConfig": {
+    "title": {
+      "key": "miniappDetails.undefined",
+      "type": "Reference",
+      "columnType": "textfield",
+      "entityName": "HostingDetails"
+    },
+    "subTitle": {
+      "key": "environment",
+      "displayName": "ENVIRONMENT",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "HostingDetails"
+    },
+    "fields": [
+      {
+        "key": "miniappDetails.name",
+        "displayName": "SUPERAPP_APP_NAME.MINIAPPDETAILS_NAME",
+        "type": "Reference",
+        "entityName": "MiniappDetails",
+        "columnType": "text",
+        "navigationConfig": {
+          "applicationName": "superapp",
+          "entity": "miniappDetails",
+          "route": "superapp/miniappdetails/miniappdetails-view"
+        }
+      },
+      {
+        "key": "domain",
+        "displayName": "DOMAIN",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "HostingDetails"
+      }
+    ]
+  },
+  "splitViewConfig": {
+    "title": {
+      "key": "miniappDetails.undefined",
+      "type": "Reference",
+      "columnType": "textfield",
+      "entityName": "HostingDetails"
+    },
+    "subTitle": {
+      "key": "environment",
+      "displayName": "ENVIRONMENT",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "HostingDetails"
+    },
+    "countUrl": null,
+    "dataUrl": null,
+    "apiOptions": null
+  }
+}

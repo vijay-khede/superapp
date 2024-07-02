@@ -1,0 +1,73 @@
+{
+  "pageType": "section",
+  "sectionDetails": {
+    "infoSection": {
+      "title": "heading",
+      "subTitle": "subheading",
+      "fields": [
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEURL",
+          "key": "sourceCodeUrl",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.COMPILEDFILEURL",
+          "key": "compiledFileUrl",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.SOURCECODEPATH",
+          "key": "sourceCodePath",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPBUILDDETAILS.STATUS",
+          "key": "status",
+          "type": "select"
+        }
+      ]
+    },
+    "tabSection": [
+      {
+        "name": "miniappDetails",
+        "displayName": "MINIAPP DETAILS",
+        "selected": false,
+        "uiorder": 1,
+        "type": "normal",
+        "isDisable": false,
+        "fields": [
+          {
+            "label": "NAME",
+            "key": "miniappDetails?.name",
+            "type": "textfield"
+          },
+          {
+            "label": "DESCRIPTION",
+            "key": "miniappDetails?.description",
+            "type": "textfield"
+          },
+          {
+            "label": "ICON URL",
+            "key": "miniappDetails?.iconUrl",
+            "type": "textfield"
+          },
+          {
+            "label": "VERSION",
+            "key": "miniappDetails?.version",
+            "type": "textfield"
+          },
+          {
+            "label": "APPLICATION KEY",
+            "key": "miniappDetails?.applicationKey",
+            "type": "textfield"
+          },
+          {
+            "label": "TAGGING",
+            "key": "miniappDetails?.tagging",
+            "type": "textfield"
+          }
+        ]
+      }
+    ]
+  }
+}

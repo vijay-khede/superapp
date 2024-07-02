@@ -1,0 +1,79 @@
+<bntv-page
+  fxFlex
+  [pageInfo]="pageInfo"
+  [pageFooter]="false"
+  [style.width]="'100%'"
+  [actions]="pageActions"
+  (actionPage)="actionPage($event)"
+  [sideMode]="'side'"
+  [sidePosition]="'end'"
+  [sideMargin]="'1.84em'"
+  [sideRadius]="'0.615em'"
+>
+<div page-body 
+    class="body-container body"
+    fxLayoutAlign="center"
+>
+  <div
+    fxFlex="55"
+    fxLayout="row wrap"
+    fxLayoutAlign="space-between center"
+  >
+<ng-container *ngFor="let item of groups; let i=index">
+ 
+  <div fxFlex="45"  class="body-box" style="cursor:pointer" fxLayout="column" >
+    <div class="body-box-upper"  >
+  <div style="margin-bottom: 2em;" fxLayout="row" fxLayoutAlign="start center" >
+    <div  class="body-app-icon" (click)="goToAdminSection(item)">
+    <em  class="icomoon {{item.icon}} body-logo"></em>
+  </div>
+  <div fxFlex="100" fxLayout="row" >
+    <div fxFlex="90" fxLayoutAlign="start center"  (click)="goToAdminSection(item)">
+    <label style="cursor:pointer" class="body-appname">{{item.name}}</label></div>
+    <div fxFlex="10"  style="margin-top:-3em;">
+    <bntv-mat-button         
+    [type]="'icon'"
+    [iconType]="'fontset'"
+    [fontSet]="'icomoon'"
+    [iconSize]="'1em'"
+    [fontSize]="'1.34em'"
+    [iconName]="'more_vertical'"
+    [tooltip]="'ACTIONS' | translate"
+    [matMenuTriggerFor]="menu.childMenu"
+>
+</bntv-mat-button>
+<bntv-menu
+#menu
+[list]="item.menuList"
+(resultAction)="navigateLink($event)"
+></bntv-menu>
+</div>
+</div>
+  </div>
+  <span  (click)="goToAdminSection(item)" class="body-desc">{{item.description}}</span>
+</div>
+  <!-- <bntv-divider></bntv-divider> -->
+  <ng-container [ngTemplateOutlet]="highLights" [ngTemplateOutletContext]="{
+    items: item.points,
+    parent:item
+
+  }"></ng-container>
+</div>
+
+</ng-container>
+</div>
+</div>
+</bntv-page>
+<ng-template #highLights let-items="items" let-parent="parent">
+   <div fxLayout="row wrap" fxLayoutAlign="center">
+    <ng-container *ngFor="let item of items; let i=index; let odd = odd;">
+    <div fxFlex="45.5" [ngClass]="{'body-box-points' : !odd}" fxLayoutAlign="space-between">
+      <label class="body-box-points-label">{{ item.name | translate}}</label>
+      <div fxLayout="row" fxLayoutAlign="center" class="body-box-points-count">
+      <label [style.color]="'#5c5c63'" class="">{{ item.value }}</label>
+    </div>
+  </div>
+</ng-container>
+   </div>
+</ng-template>
+

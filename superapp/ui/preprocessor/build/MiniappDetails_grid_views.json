@@ -1,0 +1,67 @@
+{
+  "tileConfig": {
+    "title": {
+      "key": "name",
+      "displayName": "NAME",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappDetails"
+    },
+    "subTitle": {
+      "key": "description",
+      "displayName": "DESCRIPTION",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappDetails"
+    },
+    "fields": [
+      {
+        "key": "iconUrl",
+        "displayName": "ICON URL",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappDetails"
+      },
+      {
+        "key": "version",
+        "displayName": "VERSION",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappDetails"
+      },
+      {
+        "key": "applicationKey",
+        "displayName": "APPLICATION KEY",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappDetails"
+      },
+      {
+        "key": "tagging",
+        "displayName": "TAGGING",
+        "type": "String",
+        "columnType": "textfield",
+        "entityName": "MiniappDetails"
+      }
+    ]
+  },
+  "splitViewConfig": {
+    "title": {
+      "key": "name",
+      "displayName": "NAME",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappDetails"
+    },
+    "subTitle": {
+      "key": "description",
+      "displayName": "DESCRIPTION",
+      "type": "String",
+      "columnType": "textfield",
+      "entityName": "MiniappDetails"
+    },
+    "countUrl": null,
+    "dataUrl": null,
+    "apiOptions": null
+  }
+}

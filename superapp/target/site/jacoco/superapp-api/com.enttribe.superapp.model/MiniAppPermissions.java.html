@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MiniAppPermissions.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">MiniAppPermissions.java</span></div><h1>MiniAppPermissions.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.FilterDefs;
+import org.hibernate.annotations.Filters;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.envers.Audited;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.Date;
+import java.util.Set;
+
+// @Audited
+@JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
+@Entity 
+<span class="nc" id="L26">@Setter</span>
+@Getter 
+<span class="nc" id="L28">@NoArgsConstructor </span>
+<span class="nc" id="L29">@AllArgsConstructor</span>
+@Table(name = &quot;MINIAPP_PERMISSIONS&quot;)
+@Filters({
+    @Filter(name = &quot;idEqFilter&quot;, condition = &quot;ID = :id&quot;),
+    @Filter(name = &quot;idNEqFilter&quot;, condition = &quot;ID &lt;&gt; :id&quot;),
+    @Filter(name = &quot;idInFilter&quot;, condition = &quot;ID in (:ids)&quot;),
+    @Filter(name = &quot;idNInFilter&quot;, condition = &quot;ID not in (:ids)&quot;),
+    @Filter(name = &quot;nameEqFilter&quot;, condition = &quot;NAME = :name&quot;),
+    @Filter(name = &quot;nameNEqFilter&quot;, condition = &quot;NAME &lt;&gt; :name&quot;),
+    @Filter(name = &quot;nameInFilter&quot;, condition = &quot;NAME in (:names)&quot;),
+    @Filter(name = &quot;nameNInFilter&quot;, condition = &quot;NAME not in (:names)&quot;),
+    @Filter(name = &quot;descriptionEqFilter&quot;, condition = &quot;DESCRIPTION = :description&quot;),
+    @Filter(name = &quot;descriptionNEqFilter&quot;, condition = &quot;DESCRIPTION &lt;&gt; :description&quot;),
+    @Filter(name = &quot;descriptionInFilter&quot;, condition = &quot;DESCRIPTION in (:descriptions)&quot;),
+    @Filter(name = &quot;descriptionNInFilter&quot;, condition = &quot;DESCRIPTION not in (:descriptions)&quot;),
+    @Filter(name = &quot;deletedEqFilter&quot;, condition = &quot;DELETED = :deleted&quot;),
+    @Filter(name = &quot;deletedNEqFilter&quot;, condition = &quot;DELETED &lt;&gt; :deleted&quot;),
+    @Filter(name = &quot;deletedInFilter&quot;, condition = &quot;DELETED in (:deleteds)&quot;),
+    @Filter(name = &quot;deletedNInFilter&quot;, condition = &quot;DELETED not in (:deleteds)&quot;),
+    @Filter(name = &quot;customerIdEqFilter&quot;, condition = &quot;CUSTOMER_ID = :customerId&quot;),
+    @Filter(name = &quot;customerIdNEqFilter&quot;, condition = &quot;CUSTOMER_ID &lt;&gt; :customerId&quot;),
+    @Filter(name = &quot;customerIdInFilter&quot;, condition = &quot;CUSTOMER_ID in (:customerIds)&quot;),
+    @Filter(name = &quot;customerIdNInFilter&quot;, condition = &quot;CUSTOMER_ID not in (:customerIds)&quot;),
+    @Filter(name = &quot;createdTimeEqFilter&quot;, condition = &quot;CREATED_TIME = :createdTime&quot;),
+    @Filter(name = &quot;createdTimeNEqFilter&quot;, condition = &quot;CREATED_TIME &lt;&gt; :createdTime&quot;),
+    @Filter(name = &quot;createdTimeInFilter&quot;, condition = &quot;CREATED_TIME in (:createdTimes)&quot;),
+    @Filter(name = &quot;createdTimeNInFilter&quot;, condition = &quot;CREATED_TIME not in (:createdTimes)&quot;),
+    @Filter(name = &quot;modifiedTimeEqFilter&quot;, condition = &quot;MODIFIED_TIME = :modifiedTime&quot;),
+    @Filter(name = &quot;modifiedTimeNEqFilter&quot;, condition = &quot;MODIFIED_TIME &lt;&gt; :modifiedTime&quot;),
+    @Filter(name = &quot;modifiedTimeInFilter&quot;, condition = &quot;MODIFIED_TIME in (:modifiedTimes)&quot;),
+    @Filter(name = &quot;modifiedTimeNInFilter&quot;, condition = &quot;MODIFIED_TIME not in (:modifiedTimes)&quot;),
+    @Filter(name = &quot;creatorEqFilter&quot;, condition = &quot;CREATOR = :creator&quot;),
+    @Filter(name = &quot;creatorNEqFilter&quot;, condition = &quot;CREATOR &lt;&gt; :creator&quot;),
+    @Filter(name = &quot;creatorInFilter&quot;, condition = &quot;CREATOR in (:creators)&quot;),
+    @Filter(name = &quot;creatorNInFilter&quot;, condition = &quot;CREATOR not in (:creators)&quot;),
+    @Filter(name = &quot;lastModifierEqFilter&quot;, condition = &quot;LAST_MODIFIER = :lastModifier&quot;),
+    @Filter(name = &quot;lastModifierNEqFilter&quot;, condition = &quot;LAST_MODIFIER &lt;&gt; :lastModifier&quot;),
+    @Filter(name = &quot;lastModifierInFilter&quot;, condition = &quot;LAST_MODIFIER in (:lastModifiers)&quot;),
+    @Filter(name = &quot;lastModifierNInFilter&quot;, condition = &quot;LAST_MODIFIER not in (:lastModifiers)&quot;)
+})
+@FilterDefs({
+    @FilterDef(name = &quot;idEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;idNEqFilter&quot;, parameters = @ParamDef(name = &quot;id&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;idInFilter&quot;, parameters = @ParamDef(name = &quot;ids&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;idNInFilter&quot;, parameters = @ParamDef(name = &quot;ids&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;nameEqFilter&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;nameNEqFilter&quot;, parameters = @ParamDef(name = &quot;name&quot;, type = String.class)),
+    @FilterDef(name = &quot;nameInFilter&quot;, parameters = @ParamDef(name = &quot;names&quot;, type = String.class)),
+    @FilterDef(name = &quot;nameNInFilter&quot;, parameters = @ParamDef(name = &quot;names&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionEqFilter&quot;, parameters = @ParamDef(name = &quot;description&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionNEqFilter&quot;, parameters = @ParamDef(name = &quot;description&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionInFilter&quot;, parameters = @ParamDef(name = &quot;descriptions&quot;, type = String.class)),
+    @FilterDef(name = &quot;descriptionNInFilter&quot;, parameters = @ParamDef(name = &quot;descriptions&quot;, type = String.class)),
+    @FilterDef(name = &quot;deletedEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;deletedNEqFilter&quot;, parameters = @ParamDef(name = &quot;deleted&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;deletedInFilter&quot;, parameters = @ParamDef(name = &quot;deleteds&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;deletedNInFilter&quot;, parameters = @ParamDef(name = &quot;deleteds&quot;, type = Boolean.class)),
+    @FilterDef(name = &quot;customerIdEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customerIdNEqFilter&quot;, parameters = @ParamDef(name = &quot;customerId&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customerIdInFilter&quot;, parameters = @ParamDef(name = &quot;customerIds&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;customerIdNInFilter&quot;, parameters = @ParamDef(name = &quot;customerIds&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;creatorEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;creatorNEqFilter&quot;, parameters = @ParamDef(name = &quot;creator&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;creatorInFilter&quot;, parameters = @ParamDef(name = &quot;creators&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;creatorNInFilter&quot;, parameters = @ParamDef(name = &quot;creators&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;lastModifierEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;lastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;lastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifiers&quot;, type = Integer.class)),
+    @FilterDef(name = &quot;lastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifiers&quot;, type = Integer.class))
+})
+public class MiniAppPermissions extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = &quot;ID&quot;)
+<span class="nc" id="L104">    private Integer id;</span>
+
+    @NotNull
+    @Size(max = 50)
+    @Column(name = &quot;NAME&quot;)
+<span class="nc" id="L109">    private String name;</span>
+
+    @Size(max = 255)
+    @Column(name = &quot;DESCRIPTION&quot;)
+<span class="nc" id="L113">    private String description;</span>
+
+<span class="nc" id="L115">    @NotNull</span>
+    @Column(name = &quot;DELETED&quot;)
+<span class="nc" id="L117">    private Boolean deleted = false;</span>
+
+    @Column(name = &quot;CUSTOMER_ID&quot;)
+<span class="nc" id="L120">    private Integer customerId;  </span>
+
+    @JsonIgnoreProperties({&quot;miniAppPermissions&quot;,&quot;miniAppDetails&quot;})
+    @Basic   
+    @ManyToMany(mappedBy = &quot;miniAppPermissions&quot;,fetch = FetchType.EAGER)
+<span class="nc" id="L125">    private Set&lt;MiniappDetails&gt; miniAppDetails; </span>
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

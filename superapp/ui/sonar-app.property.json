@@ -1,0 +1,9 @@
+[
+  {
+    "sonar.projectKey": "visionwaves-app:visionwaves",
+    "sonar.projectName": "visionwaves",
+    "sonar.projectDescription": "Front-end component visionwaves Application",
+    "sonar.sources": "apps/consoel,libs/",
+    "sonar.exclusions": "**/*.spec.ts"
+  }
+]

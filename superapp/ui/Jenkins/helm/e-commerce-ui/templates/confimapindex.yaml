@@ -1,0 +1,13 @@
+{{- if .Values.configMap.createIndexhtmlConfigmap -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-index-cm"
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- if .Values.virtualService.rewriteForSlash }}
+  {{ (.Files.Glob "configmapfiles/for-slash/index.html").AsConfig   | nindent 1 }}
+  {{- else }}
+  {{ (.Files.Glob "configmapfiles/for-fsapp/index.html").AsConfig   | nindent 1 }}
+  {{- end }}
+{{- end }}

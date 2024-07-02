@@ -1,0 +1,42 @@
+<wo-task-dashboard
+*ngIf=" appName && !isListView"
+[appName]="appName"
+[isListView]="isListView"
+[entityType]="entityType"
+[loadingType]="'external'"
+[basePath]="basePath"
+[listPath]="'task_dashboard'"
+[title]="title"
+[fromDashboard]="fromDashboard"
+[isDashboardIconVisible]="isDashboardIconVisible"
+[addWorkorderListToggelVisible]="addWorkorderListToggelVisible"
+[isAdHocProject]="isAdHocProject"
+[adHocTaskAgGridName]="adHocTaskAgGridName"
+[agGridName]="agGridName"
+(globalSearchOnEnterEventEmit)="globalSearchClick($event)"
+(globalSearchOnClearEventEmit)="globalSearchClearClick($event)"
+
+ >
+ </wo-task-dashboard>
+          
+   
+<app-task-list
+*ngIf="appName && isListView"
+[appName]="appName"
+[entityType]="entityType"
+[loadingType]="'external'"
+[basePath]="basePath"
+[listPath]="'task_dashboard'"
+[title]="title"
+[fromDashboard]="fromDashboard"
+[isDashboardIconVisible]="isDashboardIconVisible"
+(dashboardClicked)="viewTaskList($event)"
+(globalSearchOnEnterEventEmit)="globalSearchClick($event)"
+(globalSearchOnClearEventEmit)="globalSearchClearClick($event)"
+[addWorkorderListToggelVisible]="addWorkorderListToggelVisible"
+[isAdHocProject]="isAdHocProject"
+[adHocTaskAgGridName]="adHocTaskAgGridName"
+[agGridName]="agGridName"
+
+></app-task-list>
+

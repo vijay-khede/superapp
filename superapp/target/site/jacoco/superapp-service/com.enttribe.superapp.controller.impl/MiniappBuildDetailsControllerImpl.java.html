@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MiniappBuildDetailsControllerImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.controller.impl</a> &gt; <span class="el_source">MiniappBuildDetailsControllerImpl.java</span></div><h1>MiniappBuildDetailsControllerImpl.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.controller.impl;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
+import com.enttribe.commons.io.excel.ExcelWriter;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import com.enttribe.commons.spring.rest.ResponseBuilder;
+import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotEmpty;
+import com.enttribe.product.audit.utils.ActionType;
+import com.enttribe.product.audit.utils.Auditable;
+import org.hibernate.envers.Audited;
+import lombok.extern.slf4j.Slf4j;
+import com.enttribe.superapp.controller.MiniappBuildDetailsController;
+import com.enttribe.superapp.model.MiniappBuildDetails;
+import com.enttribe.superapp.service.MiniappBuildDetailsService;
+
+/**
+*
+This class represents the implementation of the MiniappBuildDetailsController interface. It is annotated with
+the Spring annotations @RestController, @RequestMapping and @Primary to indicate that it is a
+Spring-managed bean and should be used as the primary implementation of the MiniappBuildDetailsController.
+It is also annotated with @Api to provide metadata for the Swagger documentation.
+The class also uses Lombok's @Slf4j annotation to automatically generate a logger field named &quot;log&quot;
+that is used to log method calls and results.
+The class fields include an instance of the MiniappBuildDetailsService bean, which is injected by Spring using
+the @Autowired annotation.
+The class implements the following methods:
+create(MiniappBuildDetails MiniappBuildDetails): creates an MiniappBuildDetails and returns the newly created MiniappBuildDetails.
+count(String filter): returns the number of MiniappBuildDetails that match the specified filter.
+search(String filter, Integer offset, Integer size, String orderBy, String orderType): returns
+a list of MiniappBuildDetails that match the specified filter, sorted according to the specified orderBy
+and orderType.
+update(MiniappBuildDetails MiniappBuildDetails): updates an MiniappBuildDetails and returns the updated MiniappBuildDetails.
+importData(MultipartFile excelFile): importing data from excel sheet
+export(String filter, Integer offset, Integer size, String orderBy, String orderType): export the data to excel sheet
+downloadTemplate(String fileName): download excel sheet template
+auditHistory(int id, Integer limit, Integer skip): return AuditHistory of MiniappBuildDetails with id and limit and skip
+*
+**/
+
+@Primary
+@RestController
+@RequestMapping(&quot;/MiniappBuildDetails&quot;)
+<span class="nc" id="L53">@Slf4j</span>
+<span class="nc" id="L54">public class MiniappBuildDetailsControllerImpl implements MiniappBuildDetailsController {</span>
+
+	@Autowired
+	private MiniappBuildDetailsService miniappBuildDetailsService;
+
+	
+	@Override
+	@Auditable(actionType = ActionType.CREATE, actionName = &quot;CREATE&quot;)
+	public MiniappBuildDetails create(MiniappBuildDetails miniappBuildDetails) {
+<span class="nc" id="L63">	return miniappBuildDetailsService.create(miniappBuildDetails);</span>
+	}
+
+	@Override
+	public Long count(String filter) {
+<span class="nc" id="L68">		return miniappBuildDetailsService.count(filter);</span>
+	}
+
+	@Override
+	public List&lt;MiniappBuildDetails&gt; search(String filter, Integer offset, Integer size, String orderBy, String orderType) {
+<span class="nc" id="L73">		return miniappBuildDetailsService.search(filter, offset, size, orderBy, orderType);</span>
+	}
+
+	@Override
+	@Auditable(actionType = ActionType.UPDATE, actionName = &quot;UPDATE&quot;)
+	public MiniappBuildDetails update(MiniappBuildDetails miniappBuildDetails) {
+<span class="nc" id="L79">		return miniappBuildDetailsService.update(miniappBuildDetails);</span>
+	}
+
+	@Override
+	public Optional&lt;MiniappBuildDetails&gt; findById(Integer id) {
+<span class="nc" id="L84">		return miniappBuildDetailsService.findById(id);</span>
+	}
+
+	@Override
+	public List&lt;MiniappBuildDetails&gt; findAllById(List&lt;Integer&gt; id) {
+<span class="nc" id="L89">		return miniappBuildDetailsService.findAllById(id);</span>
+	}
+
+	@Override
+	@Auditable(actionType = ActionType.DELETE, actionName = &quot;DELETE&quot;)
+	public void deleteById(Integer id) {
+<span class="nc" id="L95">	miniappBuildDetailsService.softDelete(id);</span>
+<span class="nc" id="L96">	}</span>
+  
+	@Override
+	@Auditable(actionType = ActionType.DELETE, actionName = &quot;DELETE&quot;)
+	public void bulkDelete(List&lt;Integer&gt; list) {
+<span class="nc" id="L101">	miniappBuildDetailsService.softBulkDelete(list);</span>
+<span class="nc" id="L102">	}</span>
+
+	@Override
+	public String importData(MultipartFile excelFile) throws IOException,InstantiationException, ClassNotFoundException  {
+<span class="nc" id="L106">		return miniappBuildDetailsService.importData(excelFile);</span>
+	}
+
+	@Override
+	public ResponseEntity&lt;byte[]&gt; export(String filter, Integer offset, Integer size, String orderBy, String orderType)  throws IOException {
+<span class="nc" id="L111">		log.info(&quot;going to get list&quot;) ;</span>
+<span class="nc" id="L112">		List&lt;MiniappBuildDetails&gt; result = miniappBuildDetailsService.search(filter, 0, 10000000, orderBy, orderType);</span>
+<span class="nc" id="L113">		log.info(&quot;size of the list is :{},&quot;,result.size());</span>
+<span class="nc" id="L114">		byte[] workBook = miniappBuildDetailsService.export(result);</span>
+<span class="nc" id="L115">		String fileName=&quot;MiniappBuildDetails.xlsx&quot;;</span>
+<span class="nc" id="L116">		return ResponseBuilder.toResponse(workBook, fileName);</span>
+	}
+  
+	@Override
+	public ResponseEntity downloadTemplate(String fileName) throws IOException {
+<span class="nc" id="L121">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/&quot;+fileName);</span>
+<span class="nc" id="L122">		log.info(&quot;resourceAsStream :{}&quot; ,resourceAsStream.available());</span>
+<span class="nc" id="L123">		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream);</span>
+<span class="nc" id="L124">		try (ExcelWriter excelWriter = new ExcelWriter(xssfWorkbook)) {</span>
+<span class="nc" id="L125">			byte[] workBook = excelWriter.toByteArray();</span>
+<span class="nc" id="L126">			return ResponseBuilder.toResponse(workBook, fileName);</span>
+		}
+	}
+    
+	@Override
+	public String auditHistory(int id, Integer limit, Integer skip) {
+<span class="nc" id="L132">		return miniappBuildDetailsService.auditHistory(id,limit,skip);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

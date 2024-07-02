@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ExcelUtils.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.util.report</a> &gt; <span class="el_source">ExcelUtils.java</span></div><h1>ExcelUtils.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.util.report;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import com.google.common.io.Resources;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.Charsets;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import com.enttribe.commons.Symbol;
+import com.enttribe.commons.io.excel.Excel;
+import com.enttribe.commons.io.excel.ExcelRow;
+import com.enttribe.commons.lang.NumberUtils;
+import com.enttribe.commons.lang.StringUtils;
+
+
+/**
+ * Utility class for handling Excel-related operations, such as parsing JSON, validating table templates, and invoking getters and setters.
+ */
+<span class="nc" id="L30">@Slf4j</span>
+<span class="nc" id="L31">public class ExcelUtils {</span>
+	
+		private static final String DISPLAY_NAME = &quot;displayName&quot;;
+		private static final String EXCEPTION_MESS = &quot;An error occurred while performing an operation: {}&quot;;
+	/**
+	   * Retrieves the URL of a resource given its path.
+	   *
+	   * @param path The path to the resource.
+	   * @return The URL of the resource.
+	   * @throws IOException If an I/O error occurs while retrieving the resource.
+	   */
+  public URL getResource(String path) throws IOException {
+<span class="nc" id="L43">    ClassLoader classLoader = getClass().getClassLoader();</span>
+<span class="nc" id="L44">    log.info(&quot;path is :{}&quot;, path);</span>
+<span class="nc" id="L45">    return classLoader.getResource(path);</span>
+  	
+   }
+  
+    /**
+   * Parses the mapped JSON data to populate the provided maps.
+   *
+   * @param tableColumn           The map to store table and column mappings.
+   * @param identityColumnMapping The map to store identity column mappings.
+   * @param templateHeaders       The map to store template and header mappings.
+   * @throws IOException If an I/O error occurs while parsing the JSON data.
+   */
+   public static void parseMappeddJson(Map&lt;String, List&lt;String&gt;&gt; tableColumn,
+      Map&lt;String, String&gt; identityColumnMapping,Map&lt;String ,List&lt;String&gt;&gt; templateHeaders) throws IOException {
+<span class="nc" id="L59">    URL url  = new ExcelUtils().getResource(&quot;MappedJson.json&quot;);</span>
+<span class="nc" id="L60">    String json = Resources.toString(url, Charsets.UTF_8);</span>
+<span class="nc" id="L61">    log.info(&quot;parseMappeddJson json is :{}&quot;, json);</span>
+<span class="nc" id="L62">    JSONObject jsonObject = new JSONObject(json);</span>
+<span class="nc" id="L63">    JSONArray jsonArray = jsonObject.getJSONArray(&quot;tables&quot;);</span>
+<span class="nc" id="L64">    log.info(&quot;jsonArray   is :{}&quot;, jsonArray.toString());</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">   for(int i=0;i&lt;jsonArray.length();i++)</span>
+	{
+<span class="nc" id="L67">		Object tableObj=jsonArray.get(i);</span>
+   // for (Object tableObj : jsonArray) {
+<span class="nc" id="L69">      JSONObject table = (JSONObject) tableObj;</span>
+<span class="nc" id="L70">      String jsontableName = table.getString(&quot;name&quot;);</span>
+<span class="nc" id="L71">      String tableName = table.getString(&quot;name&quot;);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">      if (StringUtils.isNotEmpty(jsontableName)) {</span>
+<span class="nc" id="L73">        JSONArray columnArray = table.getJSONArray(&quot;fields&quot;);</span>
+<span class="nc" id="L74">        List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L75">        List&lt;String&gt; headers = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for(int j=0;j&lt;columnArray.length();j++)</span>
+    	{
+<span class="nc" id="L78">    		Object column=columnArray.get(j);</span>
+      //  for (Object column : columnArray) {
+<span class="nc" id="L80">          JSONObject columns = (JSONObject) column;</span>
+<span class="nc" id="L81">          JSONObject properties = null;</span>
+<span class="nc bnc" id="L82" title="All 4 branches missed.">          if (columns.has(&quot;identityColumn&quot;) &amp;&amp; Boolean.TRUE.equals(columns.get(&quot;identityColumn&quot;))) {</span>
+<span class="nc" id="L83">            identityColumnMapping.put(jsontableName, columns.getString(&quot;name&quot;));</span>
+<span class="nc" id="L84">            columnNames.add(columns.getString(&quot;name&quot;));</span>
+<span class="nc" id="L85">            headers.add(columns.getString(DISPLAY_NAME));</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">          } else if (columns.has(&quot;properties&quot;)) {</span>
+<span class="nc" id="L87">            properties = columns.getJSONObject(&quot;properties&quot;);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            if (!(columns.getString(DISPLAY_NAME).equalsIgnoreCase(&quot;id&quot;)</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">                || properties.has(&quot;suppress&quot;))) {</span>
+<span class="nc" id="L90">              columnNames.add(columns.getString(&quot;name&quot;)); </span>
+<span class="nc" id="L91">              headers.add(columns.getString(DISPLAY_NAME));</span>
+            }
+<span class="nc bnc" id="L93" title="All 2 branches missed.">          } else if (!(columns.getString(DISPLAY_NAME).equalsIgnoreCase(&quot;id&quot;))) {</span>
+<span class="nc" id="L94">            columnNames.add(columns.getString(&quot;name&quot;));</span>
+<span class="nc" id="L95">            headers.add(columns.getString(DISPLAY_NAME));</span>
+<span class="nc" id="L96">            log.info(&quot;Column Names   is :{}&quot;, columns.getString(&quot;name&quot;));</span>
+          }
+        }
+<span class="nc" id="L99">        tableColumn.put(jsontableName, columnNames);//tableName and columns</span>
+<span class="nc" id="L100">        templateHeaders.put(tableName, headers);//template and Headers</span>
+      }
+    }
+<span class="nc" id="L103">  }</span>
+
+ /**
+    * Validates if the table template headers match the provided column names.
+    *
+    * @param sheet       The Excel sheet to validate.
+    * @param columnNames The list of column names to validate against.
+    * @return {@code true} if the headers match, {@code false} otherwise.
+    */
+  public static boolean validateTableTemplateHeader(Excel sheet, List&lt;String&gt; columnNames) {
+<span class="nc" id="L113">    Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L114">    boolean flag = true;</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">    while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L116">      ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L117">      int index = -1;</span>
+<span class="nc bnc" id="L118" title="All 2 branches missed.">      for (String header : columnNames) {</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        if (!header.equalsIgnoreCase(excelRow.getString(++index))) {</span>
+<span class="nc" id="L120">          flag = false;</span>
+        }
+<span class="nc" id="L122">      }</span>
+<span class="nc" id="L123">      return flag;</span>
+    }
+<span class="nc" id="L125">    return false;</span>
+  }
+  
+   /**
+   * Invokes the getter method of an object given its variable name and identity column mapping.
+   *
+   * @param obj                 The object to invoke the getter method on.
+   * @param variableName        The variable name of the property to retrieve.
+   * @param identityColumnMapping The map to store identity column mappings.
+   * @return The result of invoking the getter method, or &quot;Object Not Found&quot; if not found.
+   * @throws IntrospectionException If an introspection error occurs while invoking the getter method.
+   */
+   public static Object invokeGetter(Object obj, String variableName,
+      Map&lt;String, String&gt; identityColumnMapping) throws IntrospectionException {
+<span class="nc" id="L139">    PropertyDescriptor pd = new PropertyDescriptor(variableName, obj.getClass());</span>
+<span class="nc" id="L140">    Method getter = pd.getReadMethod();</span>
+<span class="nc" id="L141">    Class&lt;?&gt; returnType = getter.getReturnType();</span>
+<span class="nc" id="L142">    String name = returnType.getName();</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">    if (name.contains(&quot;com.enttribe.superapp.model&quot;)) {</span>
+      try {
+<span class="nc" id="L145">        String identityColumnName = identityColumnMapping.get(StringUtils.substringAfterLast(name, &quot;.&quot;));</span>
+<span class="nc" id="L146">        Object newInstance = getter.invoke(obj);</span>
+<span class="nc" id="L147">        PropertyDescriptor psd = new PropertyDescriptor(identityColumnName, newInstance.getClass());</span>
+<span class="nc" id="L148">        Method declaredMethod = psd.getReadMethod();</span>
+<span class="nc" id="L149">        Object f = declaredMethod.invoke(newInstance);   </span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">      if (f == null) {</span>
+<span class="nc" id="L151">          f = Symbol.HYPHEN;</span>
+        }
+
+<span class="nc" id="L154">        return f;</span>
+<span class="nc" id="L155">      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException</span>
+          | SecurityException e) {
+<span class="nc" id="L157">        log.error(EXCEPTION_MESS, e.getMessage(), e);</span>
+<span class="nc" id="L158">      }</span>
+    } else {
+      try {
+<span class="nc" id="L161">        Method getters = pd.getReadMethod();</span>
+<span class="nc" id="L162">        Object f = getters.invoke(obj);</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (f == null) {</span>
+<span class="nc" id="L164">          f = Symbol.HYPHEN;</span>
+        }
+<span class="nc" id="L166">        return f;</span>
+<span class="nc" id="L167">      } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {</span>
+<span class="nc" id="L168">        log.error(EXCEPTION_MESS, e.getMessage(), e);</span>
+      }
+    }
+<span class="nc" id="L171">    return &quot;Object Not Found&quot;;</span>
+  }
+
+  /**
+    * Invokes the setter method of an object given its property name and variable value.
+    *
+    * @param objects       The object to invoke the setter method on.
+    * @param propertyName  The name of the property to set.
+    * @param variableValue The value to set for the property.
+    * @throws InstantiationException If an instantiation error occurs while invoking the setter method.
+    * @throws ClassNotFoundException If the specified class is not found while invoking the setter method.
+    */
+  public static void invokeSetter(Object objects, String propertyName, String variableValue)
+    throws InstantiationException, ClassNotFoundException {
+    try {
+<span class="nc" id="L186">      PropertyDescriptor pd = new PropertyDescriptor(propertyName, objects.getClass());</span>
+<span class="nc" id="L187">      Method setter = pd.getWriteMethod();</span>
+<span class="nc" id="L188">      castParameters(objects, setter, variableValue);</span>
+<span class="nc" id="L189">    } catch (IntrospectionException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {</span>
+<span class="nc" id="L190">      log.error(EXCEPTION_MESS, e.getMessage(), e);</span>
+<span class="nc" id="L191">    }</span>
+<span class="nc" id="L192">  }</span>
+
+ /**
+   * Casts and sets the parameters of an object for a setter method given its variable value.
+   *
+   * @param obj           The object to set the parameter for.
+   * @param setter        The setter method to invoke.
+   * @param variableValue The value to set for the parameter.
+   * @throws IllegalAccessException    If an illegal access occurs while invoking the setter method.
+   * @throws IllegalArgumentException  If an illegal argument occurs while invoking the setter method.
+   * @throws InvocationTargetException If an invocation target error occurs while invoking the setter method.
+   * @throws InstantiationException    If an instantiation error occurs while invoking the setter method.
+   * @throws ClassNotFoundException  If the specified class is not found while invoking the setter method.
+   */
+  public static void castParameters(Object obj, Method setter, String variableValue)
+      throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+      InstantiationException, ClassNotFoundException {
+<span class="nc" id="L209">    Class&lt;?&gt;[] parameterTypes = setter.getParameterTypes();</span>
+<span class="nc" id="L210">    String name = parameterTypes[0].getName();</span>
+<span class="nc" id="L211">    log.info(&quot;name is: {}&quot;, name);</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">    if (name.contains(&quot;Long&quot;)) {</span>
+<span class="nc" id="L213">      Long value = NumberUtils.toLong(variableValue);</span>
+<span class="nc" id="L214">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L215" title="All 2 branches missed.">    } else if (name.contains(&quot;Date&quot;)) {</span>
+<span class="nc" id="L216">      Timestamp ts = new Timestamp(Long.parseLong(variableValue));</span>
+<span class="nc" id="L217">      Date date = new Date(ts.getTime());</span>
+<span class="nc" id="L218">      setter.invoke(obj, date);</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">    } else if (name.contains(&quot;Integer&quot;)) {</span>
+<span class="nc" id="L220">      Integer value = Integer.parseInt(variableValue);</span>
+<span class="nc" id="L221">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">    } else if (name.contains(&quot;Boolean&quot;)) {</span>
+<span class="nc" id="L223">      Boolean value = Boolean.parseBoolean(variableValue);</span>
+<span class="nc" id="L224">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">    } else if (name.contains(&quot;Double&quot;)) {</span>
+<span class="nc" id="L226">      Double value = Double.valueOf(variableValue);</span>
+<span class="nc" id="L227">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">    } else if (name.contains(&quot;String&quot;)) {</span>
+<span class="nc" id="L229">      String value = String.valueOf(variableValue);</span>
+<span class="nc" id="L230">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">    } else if (name.contains(&quot;Float&quot;)) {</span>
+<span class="nc" id="L232">      Float value = Float.valueOf(variableValue);</span>
+<span class="nc" id="L233">      setter.invoke(obj, value);</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">    } else if (name.contains(&quot;com.enttribe.superapp.model&quot;)) {</span>
+<span class="nc" id="L235">      Class&lt;?&gt; cls = Class.forName(name);</span>
+      try {
+<span class="nc" id="L237">        Method declaredMethod = cls.getDeclaredMethod(&quot;setId&quot;, Integer.class);</span>
+<span class="nc" id="L238">        Object newInstance = cls.getConstructor().newInstance();</span>
+<span class="nc" id="L239">        declaredMethod.invoke(newInstance, Integer.parseInt(variableValue));</span>
+<span class="nc" id="L240">        setter.invoke(obj, newInstance);</span>
+<span class="nc" id="L241">      } catch (NoSuchMethodException e) {</span>
+<span class="nc" id="L242">        log.error(EXCEPTION_MESS, e.getMessage(), e);</span>
+<span class="nc" id="L243">        log.error(&quot;NoSuchMethodException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L244">      } catch (SecurityException e) {</span>
+<span class="nc" id="L245">         log.error(&quot;SecurityException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L246">      }</span>
+    }
+<span class="nc" id="L248">  }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

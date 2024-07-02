@@ -1,0 +1,44 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "noImplicitAny": false,
+    "strictNullChecks":false,
+    "noImplicitUseStrict": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strict": false,
+    "importHelpers": true,
+    "target": "es2020",
+    "module": "esnext",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2017",
+      "dom"
+    ],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "paths": {
+   //   "@enttribe/modules-custom-templates": [
+   //     "libs/modules/custom-templates/src/index.ts"
+   //   ]
+    }
+  },
+  "angularCompilerOptions": {
+    "strictTemplates": true,
+    "preserveWhitespaces": false,
+    "aotRemoveDecorators": false
+  },
+  "exclude": [
+    "node_modules",
+    "tmp"
+  ]
+}

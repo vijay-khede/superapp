@@ -1,0 +1,98 @@
+.top-card-main-container-one {
+  background-color: #fefefe;
+  border-radius: 0.5625em;
+  box-shadow: 0 0.1875em 0.625em rgb(0 0 0 / 0.2);
+}
+
+.graph-div {
+  align-self: flex-end;
+}
+
+.graph-div-one {
+  height: 2.5em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-two {
+  height: 2em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-three {
+  height: 3.2em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-four {
+  height: 2.5em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-five {
+  height: 3.2em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-six {
+  height: 2.5em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ffd5b7;
+}
+
+.graph-div-seven {
+  height: 2.99em;
+  width: 0.8em;
+  border-radius: 2em;
+  background-color: #ed7117;
+}
+
+.m-b-md {
+  margin-bottom: 1.5em !important;
+}
+.main-container-two {
+  background-color: #fefefe;
+  padding: 0 2em;
+  border-radius: 0.5625em;
+  box-shadow: 0 0.1875em 0.625em rgb(0 0 0 / 0.2);
+}
+
+.centered-element-center {
+  position: relative;
+  height: 100%;
+}
+
+.centered-element-center::after {
+  content: "";
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  right: 0;
+  height: 152%;
+  width: 1px;
+  background-color: #eb7118;
+}
+
+.p-all-lg {
+  padding: 1em !important;
+}
+
+bntv-icon {
+  font-size: 1.67em;
+}
+
+::ng-deep {
+  .mat-form-field-wrapper {
+    padding-bottom: 0em;
+  }
+}

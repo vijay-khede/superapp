@@ -1,0 +1,12 @@
+2024-06-26 21:52:39,745 INFO o.h.v.i.u.Version [background-preinit] X-Correlation-ID= HV000001: Hibernate Validator 8.0.1.Final
+2024-06-26 21:52:41,329 INFO o.a.j.l.DirectJDKLog [main] X-Correlation-ID= Initializing ProtocolHandler ["http-nio-8081"]
+2024-06-26 21:52:41,331 INFO o.a.j.l.DirectJDKLog [main] X-Correlation-ID= Starting service [Tomcat]
+2024-06-26 21:52:41,331 INFO o.a.j.l.DirectJDKLog [main] X-Correlation-ID= Starting Servlet engine: [Apache Tomcat/10.1.19]
+2024-06-26 21:52:41,359 INFO o.a.j.l.DirectJDKLog [main] X-Correlation-ID= Initializing Spring embedded WebApplicationContext
+2024-06-26 21:52:41,687 INFO o.h.j.i.u.LogHelper [main] X-Correlation-ID= HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-06-26 21:52:41,715 INFO o.h.Version [main] X-Correlation-ID= HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-06-26 21:52:41,732 INFO o.h.c.i.RegionFactoryInitiator [main] X-Correlation-ID= HHH000026: Second-level cache disabled
+2024-06-26 21:52:41,770 INFO o.h.e.b.i.EnversServiceImpl [main] X-Correlation-ID= Envers integration enabled? : true
+2024-06-26 21:52:41,879 WARN o.h.e.j.d.i.DialectFactoryImpl [main] X-Correlation-ID= HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-06-26 21:52:42,045 INFO o.h.e.c.i.m.AuditMetadataGenerator [main] X-Correlation-ID= Adding properties for entity: com.enttribe.superapp.model.MiniappDetails
+2024-06-26 21:52:42,051 INFO o.a.j.l.DirectJDKLog [main] X-Correlation-ID= Stopping service [Tomcat]

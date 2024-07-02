@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.enttribe.platform</groupId>
+    <artifactId>enttribe-parent</artifactId>
+    <version>4.0.0</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+  <groupId>com.enttribe.superapp</groupId>
+  <artifactId>superapp</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  
+  <properties>
+	 <sonar.maven.plugin.version>3.9.0.2155</sonar.maven.plugin.version>
+	<jacoco.version>0.8.8</jacoco.version>
+	<jacoco.outputDir>${project.basedir}/../target/site/jacoco</jacoco.outputDir>
+	<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+  </properties>
+
+  <name>superapp</name>
+    <dependencies> 
+
+     <dependency>
+      <groupId>com.enttribe.platform</groupId>
+      <artifactId>document-management-api</artifactId>
+      <version>4.0.0</version>
+  <exclusions>
+      <exclusion>
+      <groupId>com.enttribe.platform</groupId>
+         <artifactId>um-api</artifactId>
+          </exclusion>
+      <exclusion>
+                        <groupId>com.enttribe.commons</groupId>
+                 <artifactId>core-utility</artifactId>
+                </exclusion>
+          </exclusions>
+    </dependency>
+
+  <dependency>
+      <groupId>com.enttribe.platform</groupId>
+      <artifactId>base-utility-api</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+
+  </dependencies>
+  <build>
+	<plugins>
+		<plugin>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>${sonar.maven.plugin.version}</version>
+		</plugin>
+		 <plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>prepare-and-report</id>
+					<goals>
+						<goal>prepare-agent</goal>
+						<goal>report</goal>
+					</goals>
+				</execution>
+				<execution>
+					<id>report-aggregate</id>
+					<phase>verify</phase>
+					<goals>
+						<goal>report-aggregate</goal>
+					</goals>
+					<configuration>
+							<outputDirectory>${jacoco.outputDir}</outputDirectory>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
+  </build>
+
+  <modules>
+    <module>superapp-api</module>
+    <module>superapp-service</module>
+     <module>superapp-app</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>internal-repository</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <releases>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+    </repository>
+    <repository>
+ 
+  <id>reposilite-repository-releases</id>
+  <name>Reposilite Repository</name>
+  <url>https://artifact.visionwaves.com/releases</url>
+		</repository>
+  </repositories>
+
+</project>

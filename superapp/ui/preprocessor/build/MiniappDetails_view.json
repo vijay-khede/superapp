@@ -1,0 +1,65 @@
+{
+  "pageType": "section",
+  "sectionDetails": {
+    "infoSection": {
+      "title": "heading",
+      "subTitle": "subheading",
+      "fields": [
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.NAME",
+          "key": "name",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.DESCRIPTION",
+          "key": "description",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.ICONURL",
+          "key": "iconUrl",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.VERSION",
+          "key": "version",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.APPLICATIONKEY",
+          "key": "applicationKey",
+          "type": "textfield"
+        },
+        {
+          "label": "SUPERAPP_APP_NAME.MINIAPPDETAILS.TAGGING",
+          "key": "tagging",
+          "type": "textfield"
+        }
+      ]
+    },
+    "tabSection": [
+      {
+        "name": "HostingDetails",
+        "displayName": "HOSTING DETAILS",
+        "componentName": "hosting-details",
+        "selected": false,
+        "uiorder": 1,
+        "type": "grid",
+        "isDisable": false,
+        "gridName": "HostingDetails superapp",
+        "agGridConfig": {}
+      },
+      {
+        "name": "MiniappBuildDetails",
+        "displayName": "MINIAPP BUILD DETAILS",
+        "componentName": "miniapp-build-details",
+        "selected": false,
+        "uiorder": 1,
+        "type": "grid",
+        "isDisable": false,
+        "gridName": "MiniappBuildDetails superapp",
+        "agGridConfig": {}
+      }
+    ]
+  }
+}

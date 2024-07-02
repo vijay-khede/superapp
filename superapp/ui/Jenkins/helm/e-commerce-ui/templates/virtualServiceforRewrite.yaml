@@ -1,0 +1,23 @@
+{{- if .Values.virtualService.rewriteForSlash -}}
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: rewriterule-for-slash
+spec:
+  gateways:
+    - {{ .Release.Name }}-gw
+  hosts:
+  - {{ .Values.gatewayServers.hosts }}
+  http:
+  - name: "reviews-v2-routes"
+    match:
+    - uri:
+        prefix: /
+    rewrite:
+      uri: {{ .Values.virtualService.context }}/
+    route:
+    - destination:
+        host: {{ include "administration-ui.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+        port:
+          number: {{ .Values.service.port }}
+{{- end }}

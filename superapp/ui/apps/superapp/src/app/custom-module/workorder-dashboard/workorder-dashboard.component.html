@@ -1,0 +1,32 @@
+<wo-mgmt-site-workorder-dashboard
+id="workorder-dashboard"
+*ngIf="appName   && title && agGridName"
+[appName]="appName"
+[entityType]="entityType"
+[loadingType]="'external'"
+[isListShow]="isListShow"
+[basePath]="basePath"
+[listPath]="'workorder_dashboard'"
+[title]="title"
+[isDashboardIconVisible]="isDashboardIconVisible"
+[fromDashboard]="fromDashboard"
+[agGridName]="agGridName"
+[entityTypeList]="entityTypeList"
+[selectedEntity]="selectedEntity"
+[dashboardTitle]="dashboardTitle"
+[workorderListTitle]="workorderListTitle"
+[addWorkorderVisible]="addWorkorderVisible"
+[entityTypeListVisible]="entityTypeListVisible"
+(globalSearchOnEnterEventEmit)="globalSearchClick($event)"
+(globalSearchOnClearEventEmit)="globalSearchClearClick($event)"
+[addWorkorderListToggelVisible]="addWorkorderListToggelVisible"
+  [isAdHocProject]="isAdHocProject"
+  [addAdhocWorkorderVisible]="addAdhocWorkorderVisible"
+  [adhocWorkorderentityTypeList]="adhocWorkorderentityTypeList"
+  [adhocWorkorderHeaderTitle]="adhocWorkorderHeaderTitle"
+  [isScopeFieldVisible]="isScopeFieldVisible"
+  [adHocWorkorderAgGridName]="adHocWorkorderAgGridName"
+></wo-mgmt-site-workorder-dashboard>
+
+
+

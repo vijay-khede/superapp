@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.enttribe.superapp</groupId>
+    <artifactId>superapp</artifactId>
+    <version>1.0.0</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+  <groupId>com.enttribe.superapp-app</groupId>
+  <artifactId>superapp-app</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <name>superapp-app</name>
+<properties>
+		<outputDirectory>${project.basedir}/target/docker/</outputDirectory>
+	</properties>
+
+  <repositories>
+    <repository>
+      <id>internal-repository</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <releases>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+  
+   <dependencies>
+  
+  	<dependency>
+      <groupId>com.enttribe.superapp</groupId>
+      <artifactId>superapp-api</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.enttribe.superapp</groupId>
+      <artifactId>superapp-service</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+  
+  </dependencies> 
+  
+
+  
+  
+  <build>
+    <plugins>	
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!-- Automation for client purpose (Variable) -->
+							<outputDirectory>${project.basedir}/target/docker/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<includeScope>runtime</includeScope>
+							<!-- useBaseVersion=false makes the jar names match those that maven-jar-plugin 
+								puts in the manifest classpath -->
+							<useBaseVersion>false</useBaseVersion>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/target/docker/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>com.enttribe.superapp.Application</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+					<!-- Automation for client purpose (Variable) 
+					<outputDirectory>target</outputDirectory> -->
+					<outputDirectory>${project.basedir}/target/docker/</outputDirectory>
+					 <excludes>
+                    <exclude>**/application.properties</exclude>
+					<exclude>**/config.properties</exclude>
+					<exclude>**/run.sh</exclude>
+					<exclude>**/log4j2.xml</exclude>
+					<exclude>**/Dockerfile</exclude>
+
+                </excludes>
+				</configuration>
+			</plugin>
+<plugin>
+      <groupId>nl.geodienstencentrum.maven</groupId>
+      <artifactId>schemaspy-maven-plugin</artifactId>
+      <version>5.2.0</version>
+      <configuration>
+       <argLine>-Duser.timezone=UTC</argLine>
+        <databaseType>mysql</databaseType>
+        <database>generatedapps</database>
+        <host>localhost</host>
+        <port>3306</port>
+        <user>console</user>
+        <password>Volkinno1!</password>
+        <schema>generatedapps</schema>
+        <outputDirectory>${project.basedir}/../doc/</outputDirectory>
+        <pathToDrivers>${project.basedir}/../configuration/schema-spy/mysql-connector-java-8.0.28.jar</pathToDrivers>
+      </configuration>
+</plugin> 
+       <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>3.8.1</version>
+              <configuration>
+                             <source>17</source>
+              </configuration>
+     </plugin> 
+<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<resources>
+						<resource>
+							<directory>${project.basedir}/target/docker/</directory>
+							<includes>
+								<include>application.properties</include>
+								<include>config.properties</include>
+							</includes>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

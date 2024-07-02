@@ -1,0 +1,696 @@
+<bntv-page fxFill [style.width]="'100%'" [pageInfo]="pageInfo" [actions]="pageActions"
+  (actionPage)="actionPage($event)">
+
+  <div page-body fxFlex="100" class="body-container">
+    <div *ngIf="!isListView" style="height: 100%; overflow: scroll;">
+      
+        <ng-container *ngTemplateOutlet="programDashboard"></ng-container>
+          
+    </div>
+    <app-program-list *ngIf="isListView"
+    [isDashboardIconVisible]="isDashboardIconVisible"
+    [fromDashboard]="fromDashboard"
+    [appName]="appName"
+    [basePath]="basePath"
+    [listPath]="listPath"
+    (dashboardClicked)="viewProgramList($event)"
+
+    [adhocWorkorderHeaderTitle]="adhocWorkorderHeaderTitle"
+    [adhocWorkorderScopeHeaderTitle]="adhocWorkorderScopeHeaderTitle"
+    [title]="title"
+    [isScopeFieldVisible]="isScopeFieldVisible"
+    [entityType]="entityType"
+    [isAdhocWorkorderAddVisible]="isAdhocWorkorderAddVisible"
+    [isScopeAdhocWorkorderAddVisible]="isScopeAdhocWorkorderAddVisible"
+    >
+    </app-program-list>
+
+  </div>
+</bntv-page>
+
+
+<ng-template #programDashboard>
+    <div fxLayout="column" fxFlex="100" fxLayoutAlign="space-between">
+        <div style="
+              border-radius: 0.5625em;
+              box-shadow: 0 0.1875em 0.625em rgba(0, 0, 0, 0.2);height: 11em; padding: 1em; background-color: white;" fxLayout="column">
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="100" >
+                <span fxFlex="30" style="place-content: start;display: flex; font-size:2em" class=" p-b-sm p-t-sm" > {{selectedProgram?.name}}</span> 
+                <div fxLayout="row" fxFlex="50" fxLayoutAlign="space-between end" >  
+                <bntv-select-box
+                fxFlex="22"
+                [label]="'STATE'| translate"
+                [(data)]="selectedState"
+                [displayExpression]="'$displayName'"
+                [itemList]="stateList"
+                [isMultipleSelect]="false"
+                (onchange)="getCityList($event)"
+              ></bntv-select-box>  
+                <bntv-select-box
+                fxFlex="22"
+                class="position"
+                [label]="'CITY' | translate"
+                [displayExpression]="'$geoName'"
+                [disabled]="!selectedState"
+                [(data)]="selectedCity"
+                [itemList]="cityList"
+                (onchange)="getProgramDashboardApiData()"
+                >
+                </bntv-select-box>
+                <bntv-select-box
+                fxFlex="22"
+                class="position"
+                [label]="''"
+                [value]="'value'"
+                [(data)]="selectedYear"
+                [itemList]="yearList"
+                [displayExpression]="'$label'">
+                </bntv-select-box>
+                <bntv-select-box
+                fxFlex="22"
+                class="position"
+                [label]="''"
+                [displayExpression]="'$referenceId'"
+                [(data)]="selectedProgram"
+                [itemList]="programList"
+                (onchange)="getProgramDashboardApiData()"
+                >
+                </bntv-select-box>
+                <bntv-mat-button 
+                style="margin-bottom: 1.8em;"
+                [type]="'icon-stroked'" 
+                [width]="'100%'" 
+                [iconType]="'fontset'"
+                  [fontSet]="'icomoon'" 
+                  [iconName]="'List'" 
+                  [appTippyTitle]="'VIEW_PROGRAM_LIST' | translate" 
+                  (clickButton)="isListView=!isListView">
+                </bntv-mat-button>
+            </div>
+            </div>
+            <div  fxLayout="row" fxLayoutAlign="space-between start" fxFlex="100">
+                <div fxLayout="row" fxFlex="40" fxLayoutGap="1em">
+                    <div class="other-property" *ngIf="selectedProgram?.plannedEndDate || selectedProgram?.actualEndDate">
+                        <h2 class="h2-div">
+                            {{'ESTIMATED_COMPLETION_DATE' | translate}} - {{ selectedProgram.actualEndDate?selectedProgram.actualEndDate:selectedProgram.plannedEndDate | formatDateTime}}
+                        </h2>
+                        </div>
+                        <div  class="other-property" *ngIf="selectedProgram?.plannedStartDate">
+                        <h2 class="h2-div">
+                            {{'START_DATE' | translate}} - {{ selectedProgram.plannedStartDate | formatDateTime }}
+                        </h2>
+                        </div>
+                        <div class="other-property" *ngIf="selectedProgram?.sponsor?.firstName">
+                        <h2 class="h2-div">
+                            {{'SPONSER' | translate}} - {{ selectedProgram?.sponsor?.firstName }}
+                        </h2>
+                        </div>
+                </div>
+                <div fxLayout="row" fxFlex="58" fxLayoutAlign="space-between center" style="margin-top:.3em">
+                   <span fxFlex="15" style="color:#adacac">{{'YTG - YEAR_TO_GO' | translate}}</span>
+                   <span fxFlex="19" style="color:#adacac">{{'ITD - INCEPTION_TO_DATE'  | translate}}</span>
+                   <span fxFlex="16" style="color:#adacac">{{'YTD - YEAR_TO_DATE'  | translate}}</span>
+                   <span fxFlex="21" style="color:#adacac">{{'T30D - TRAILING_THIRTY_DAYS'  | translate}}</span>
+                   <span fxFlex="35" style="color:#adacac">{{'PROJECTED* - AVAILABLE_FACILITIES_ONLY'  | translate}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between"  style="margin: 0em 1em;">
+            <div class="left-part-card " fxLayout="row wrap" fxFlex="69.6" fxLayoutAlign="space-between center">
+          
+                <div class="main-container-one" fxFlex="49" fxFlex.lt-sm="100%" fxFlex.lt-md="100%">
+                  
+                  <div fxLayout="column">
+            
+                    <div>
+                      <span style="place-content: center;display: flex;" class="h2 p-b-sm p-t-sm" > {{programDashboardData?.revenueCard?.name}}</span>
+                    </div>
+            
+            
+                    <div fxLayout="row" fxLayoutAlign="space-around start">
+                      <div class="inner-data-card" fxLayout="column" fxLayoutAlign="space-between center" *ngFor="let obj of programDashboardData?.revenueCard?.values; let i=index"  [ngClass]="{'centered-element': i!==((programDashboardData.revenueCard?.values).length)-1 }">
+                        <div fxLayoutAlign="space-between center" fxLayout="column">
+            
+                          <div>
+                            <span style="font-size:0.9em;">{{obj.name}}</span>
+                            <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                          </div>
+            
+            
+                          <div >
+                            <div class="amount-text">
+                              <span style="font-size:1.3em;" [ngStyle]="{'color':obj.color}">{{obj.amount}}</span>
+                              <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{obj.amountText}}</span>
+                            </div>
+
+                            <div>
+                              <div style="text-align: center;">
+                                <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.status}}</span>
+                                <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.statusAmount}}</span>
+                                <span style="font-size:0.9em;color:#636e71">{{obj.statusAmountText}}</span>
+                              </div>
+                            </div>
+                          </div>
+
+
+                        </div>
+                        <div class="centered-element" *ngIf="i<=((programDashboardData?.revenueCard?.values).length)-1"></div>
+                      </div>
+                    </div>
+                  </div>
+            
+                </div>
+
+                <div class="main-container-one" fxFlex="49" fxFlex.lt-sm="100%" fxFlex.lt-md="100%">
+                  
+                    <div fxLayout="column">
+              
+                      <div>
+                        <span style="place-content: center;display: flex;" class="h2 p-b-sm p-t-sm" > {{programDashboardData?.budgetCard?.name}}</span>
+                      </div>
+              
+              
+                      <div fxLayout="row" fxLayoutAlign="space-around start">
+                        <div class="inner-data-card" fxLayout="column" fxLayoutAlign="space-between center" *ngFor="let obj of programDashboardData?.budgetCard?.values; let i=index"  [ngClass]="{'centered-element': i!==((programDashboardData?.budgetCard?.values).length)-1 }">
+                          <div fxLayoutAlign="space-between center" fxLayout="column">
+              
+                            <div>
+                              <span style="font-size:0.9em;">{{obj.name}}</span>
+                              <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                            </div>
+              
+              
+                            <div >
+                              <div class="amount-text">
+                                <span style="font-size:1.3em;" [ngStyle]="{'color':obj.color}">{{obj.amount}}</span>
+                                <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{obj.amountText}}</span>
+                              </div>
+  
+                              <div>
+                                <div style="text-align: center;">
+                                  <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.status}}</span>
+                                  <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.statusAmount}}</span>
+                                  <span style="font-size:0.9em;color:#636e71">{{obj.statusAmountText}}</span>
+                                </div>
+                              </div>
+                            </div>
+  
+  
+                          </div>
+                          <div class="centered-element" *ngIf="i<=((programDashboardData?.budgetCard?.values).length)-1"></div>
+                        </div>
+                      </div>
+                    </div>
+              
+                </div>
+
+                <div class="main-container-one" fxFlex="49" fxFlex.lt-sm="100%" fxFlex.lt-md="100%">
+                  
+                    <div fxLayout="column">
+              
+                      <div>
+                        <span style="place-content: center;display: flex;" class="h2 p-b-sm p-t-sm" > {{programDashboardData?.profitcard?.name}}</span>
+                      </div>
+              
+              
+                      <div fxLayout="row" fxLayoutAlign="space-around start">
+                        <div class="inner-data-card" fxLayout="column" fxLayoutAlign="space-between center" *ngFor="let obj of programDashboardData?.profitcard?.values; let i=index"  [ngClass]="{'centered-element': i!==((programDashboardData?.profitcard?.values).length)-1 }">
+                          <div fxLayoutAlign="space-between center" fxLayout="column">
+              
+                            <div>
+                              <span style="font-size:0.9em;">{{obj.name}}</span>
+                              <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                            </div>
+              
+              
+                            <div >
+                              <div class="amount-text">
+                                <span style="font-size:1.3em;" [ngStyle]="{'color':obj.color}">{{obj.amount}}</span>
+                                <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{obj.amountText}}</span>
+                              </div>
+  
+                              <div>
+                                <div style="text-align: center;">
+                                  <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.status}}</span>
+                                  <span [ngClass]="getUpClass(obj.status)" style="font-size:0.9em;">{{obj.statusAmount}}</span>
+                                  <span style="font-size:0.9em;color:#636e71">{{obj.statusAmountText}}</span>
+                                </div>
+                              </div>
+                            </div>
+  
+  
+                          </div>
+                          <div class="centered-element" *ngIf="i<=((programDashboardData?.revenueAnalysis?.values).length)-1"></div>
+                        </div>
+                      </div>
+                    </div>
+              
+                </div>
+
+                <div class="main-container-one" fxFlex="49" fxFlex.lt-sm="100%" fxFlex.lt-md="100%">
+                  
+                    <div fxLayout="column">
+              
+                      <div>
+                        <span style="place-content: center;display: flex;" class="h2 p-b-sm p-t-sm" > {{ programDashboardData?.rolloutCompletionCard?.name}}</span>
+                      </div>
+              
+            
+                        <div  class="inner-data-card" fxLayout="row" fxLayoutAlign="space-around start" >
+                            <div fxLayoutAlign="space-between center" fxLayout="column" class="roll-centered-element">
+                
+                            <div>
+                                <span style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[0].name}}</span>
+                                <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                            </div>
+                
+                
+                            <div >
+                                <div class="amount-text">
+                                <span style="font-size:1.3em;" [ngStyle]="{'color':programDashboardData?.rolloutCompletionCard?.values[0].color}">{{getHasValue(selectedProgram?.actualRolloutTarget) ? selectedProgram?.actualRolloutTarget : 0 }}</span>
+                                <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{programDashboardData?.rolloutCompletionCard?.values[0].amountText}}</span>
+                                </div>
+
+                                <div>
+                                <div style="text-align: center;">
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[0].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[0].status}}</span>
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[0].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[0].statusAmount}}</span>
+                                    <span style="font-size:0.9em;color:#636e71">{{programDashboardData?.rolloutCompletionCard?.values[0].statusAmountText}}</span>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            </div>
+
+                            <div fxLayoutAlign="space-between center" fxLayout="column" class="roll-centered-element">
+                
+                            <div>
+                                <span style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[1].name}}</span>
+                                <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                            </div>
+                
+                
+                            <div >
+                                <div class="amount-text">
+                                <span style="font-size:1.3em;" [ngStyle]="{'color':programDashboardData?.rolloutCompletionCard?.values[1].color}">{{getHasValue(selectedProgram?.plannedRolloutTarget) ? selectedProgram?.plannedRolloutTarget : 0}}</span>
+                                <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{programDashboardData?.rolloutCompletionCard?.values[1].amountText}}</span>
+                                </div>
+
+                                <div>
+                                <div style="text-align: center;">
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[1].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[1].status}}</span>
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[1].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[1].statusAmount}}</span>
+                                    <span style="font-size:0.9em;color:#636e71">{{programDashboardData?.rolloutCompletionCard?.values[1].statusAmountText}}</span>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            </div>
+
+                            <div fxLayoutAlign="space-between center" fxLayout="column">
+                
+                            <div>
+                                <span style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[2].name}}</span>
+                                <hr style="border-top: 1px solid #eb7118;width:70%; margin-top:0.3em; display: block; margin: 0 auto;" >
+                            </div>
+                
+                
+                            <div >
+                                <div class="amount-text">
+                                <span style="font-size:1.3em;" [ngStyle]="{'color':programDashboardData?.rolloutCompletionCard?.values[2].color}">{{getHasValue(selectedProgram?.plannedWorkCompletionTarget)? selectedProgram?.plannedWorkCompletionTarget : 0}}</span>
+                                <span style="font-size:0.6em; padding-left:0.4em; color:#636e71" >{{programDashboardData?.rolloutCompletionCard?.values[2].amountText}}</span>
+                                </div>
+
+                                <div>
+                                <div style="text-align: center;">
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[2].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[2].status}}</span>
+                                    <span [ngClass]="getUpClass(programDashboardData?.rolloutCompletionCard?.values[2].status)" style="font-size:0.9em;">{{programDashboardData?.rolloutCompletionCard?.values[2].statusAmount}}</span>
+                                    <span style="font-size:0.9em;color:#636e71">{{programDashboardData?.rolloutCompletionCard?.values[2].statusAmountText}}</span>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+              
+                </div>
+            
+            </div> 
+            <div fxLayout="column" fxFlex="29" fxFlex.lt-sm="100%" fxFlex.lt-md="100%" class="main-container-two" style="margin-top:1em">
+                    <div fxLayout="row" fxLayoutAlign="center center">
+                        <span style="text-align: center; padding-top: 1.2em; padding-bottom: 0.5em;place-content: center;display: flex;" class="h2 p-b-sm p-t-sm ">{{'PROJECTS' | translate}}</span> <span style="color:#adacac;margin-left:0.2em" > (ITD)</span>
+                    </div>
+                
+                    <div fxLayout="column" style="min-height:19em">
+                        <div fxLayout="row" fxLayoutAlign="space-between center">
+                            <div fxFlex="24">
+                                <span></span>
+                            </div>
+    
+                            <div class="centered-element-center" fxLayout="column" fxFlex="20"
+                                fxLayoutAlign="space-between center">
+                                <span style="font-size: 1em;color:'#252525'">{{'ON_TIME_HEADER' | translate}}</span>
+                                <span style="font-size: 0.78em;" style="font-size: 0.9em;">({{'BLOCKERS' | translate
+                                    }})</span>
+                                    <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+                            </div>
+    
+                            <div class="centered-element-center" fxLayout="column" fxFlex="20"
+                                fxLayoutAlign="space-between center">
+                                <span style="font-size: 1em;color:'#e42006'">{{'DELAYED_HEADER' | translate}}</span>
+                                <span style="font-size: 0.78em;" style="font-size: 0.9em;">({{'BLOCKERS' | translate
+                                    }})</span>
+                                    <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+                            </div>
+    
+                            <div style="text-align:center" fxLayout="column" fxFlex="30"
+                                fxLayoutAlign="space-between center">
+                                <span style="font-size: 1em; color:'#5d8b70'">{{'AHEAD_OF_SCHEDULE' | translate}}</span>
+                                <span style="font-size: 0.9em;">({{'BLOCKERS' | translate }})</span>
+                                <hr style="border-top: 1px solid #eb7118;width:40%; margin-top:0.3em;" >
+    
+                            </div>
+                        </div>
+                        <div fxLayout="column" fxLayoutAlign="space-between">
+                            <div fxLayout="column" *ngIf="getHasValue(projectCard)">
+                                <div fxLayout="column" fxLayoutAlign="space-between" fxFlex="100" style="margin-top:0.5em"
+                                *ngFor="let item of  projectCard">
+                                <div style="padding-bottom: 0.8em;" fxLayout="row">
+                                    <div fxFlex="26">
+                                        <span style="color:'#252525'">{{item.projectStatus | translate}}</span>
+                                    </div>
+        
+                                    <div class="centered-element-center" fxLayout="column" fxFlex="20"
+                                        fxLayoutAlign="space-between center">
+                                        <span style="font-size: 1.8em;" class="orange-color">{{item.onTime.count}}</span>
+                                        <span style="font-size: 0.78em;" class="red-color">{{item.onTime.blockers}}</span>
+                                    </div>
+        
+                                    <div class="centered-element-center" fxLayout="column" fxFlex="22"
+                                        fxLayoutAlign="space-between center">
+                                        <span style="font-size: 1.8em;" class="orange-color">{{item.delayed.count}}</span>
+                                        <span style="font-size: 0.78em;" class="red-color">{{item.delayed.blockers}}</span>
+                                    </div>
+        
+                                    <div fxLayout="column" fxFlex="30" fxLayoutAlign="space-between center">
+                                        <span style="font-size: 1.8em;"
+                                            class="green-color">{{item.aheadOfSchedule.count}}</span>
+                                        <span style="font-size: 0.78em;"
+                                            class="red-color">{{item.aheadOfSchedule.blockers}}</span>
+                                    </div>
+                                </div>
+        
+                                </div>
+                            </div>
+
+                            <div class="no-data-style h3" fxLayout="column"  *ngIf="!getHasValue(projectCard)">
+                                {{"NO_DATA_TO_DISPLAY" | translate}}
+                            </div>
+                        </div >
+
+                    </div>
+            </div>
+        </div>
+        
+        <div fxLayout="column" fxFlex="100" fxLayoutAlign="space-evenly" style="margin: 1em;">
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div class="h1" style="color:#000">{{'CHARGING_STATION' | translate}}</div>
+                <span style="color:#252525"> ({{'INCEPTION_TO_DATE' | translate}})</span>
+            </div>
+                <bntv-card-layout [showHeader]="false" >
+                    <div content >
+                      <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between start">
+                        <div  class="centered-element" fxLayout="column" fxFlex="20" style="height:100%" fxLayoutAlign="center center">
+                            <div fxFlayout="column">
+                                <div style="text-align:center" class="h2">{{'PLANNING_STATE' | translate}}</div>
+                                <hr class="facility-hr" style="width: 60%;">
+                            </div>
+                            <div fxLayout="column"  fxFlex="100">
+                                <div fxLayout ="column" style="margin:2em 0em 3em 0em;" 
+                                *ngFor="let item of this.planningData?.planningState; let i= index"  >
+                                        <div fxLayout="column" fxLayoutAlign="space-between center">
+                                            <span style="font-size:2em" [ngStyle]="{'color': getColor(i)}">{{item.value1}}</span>
+                                            <span style="font-size:14px">{{item.key1}}</span>
+                                        </div>  
+                                </div>
+                        </div>
+                        </div>
+                        
+                        <div fxFlex="50">
+                            <div  fxLayout="row" fxLayoutAlign="space-between center">
+                                <div class="h2">
+                                    {{'CHARGING_STATION_CLASSIFICATION' | translate}}
+                                </div>
+                                
+
+
+                                <div >
+                                    <bntv-mat-button
+                                      [iconLeftAlign]="true"
+                                      [type]="'icon-stroked'"
+                                      [width]="'100%'"
+                                      [iconType]="'fontset'"
+                                      [fontSet]="'icomoon'"
+                                      [iconName]="'expand'"
+                                      [enableDebounce]="false"
+                                      (clickButton)="buttonClick(occupancySubject, 'CHARGING_STATION_CLASSIFICATION')">
+                                    </bntv-mat-button>
+                                  </div>
+                            </div>
+                            
+                            <hr class="facility-hr" style="width: 100%;">
+                                <ng-container *ngTemplateOutlet="occupancySlotchart"></ng-container>     
+                        </div>
+    
+                        <div  class="centered-element-right" fxLayout="column" fxFlex="20" style="height:100%">
+                            <div style="text-align:center; padding-left:1em" class="h2">{{'MODE' | translate}}</div>
+                            <hr class="facility-hr" style="width: 60%;">
+                            <div  fxLayout ="column" fxLayoutAlign="space-between ">
+                                <div fxLayout="column" *ngFor="let item of modeWiseData?.modeWiseDistribution; let i= index" style="margin:2em 0em 0em 2em">
+                                    <div fxLayout="column" fxLayoutAlign="space-between center" style="padding-right:0.7em">
+                                        <p style="font-size:2em" [ngStyle]="{'color': getColor(i)}">{{item.y}}</p>
+                                        <p style="font-size:14px">{{item.name}}</p>
+                                    </div>  
+                                </div>
+    
+                            </div>
+                    </div>
+                    </div>
+                    </div>
+                </bntv-card-layout>
+        </div>
+        
+        <div fxLayout="column" fxFlex="100" fxLayoutAlign="space-between stretch" style="margin:0em 1em 1em 1em;">
+            <div fxLayout="row" fxLayoutAlign="space-between center">
+                <div header class="h1"  style="color:#000">{{'PROFIT' | translate}}</div>
+                <span style="color:#252525"> ({{'YEAR_TO_DATE' | translate}})</span>
+            </div>
+
+            <bntv-card-layout [showHeader]="false" fxLayoutAlign="space-between stretch">
+                <div content fxLayoutAlign="space-between stretch">
+                  <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-between stretch">
+                    
+                    <div class="centered-element-profitt" fxFlex="33" style="padding: 0em 1em 0em 2em;">
+                        <div fxLayout="row" fxLayoutAlign="space-between center">
+                            <div class="h2">
+                                {{'CHARGER_CAPACITY' | translate}}
+                            </div>
+
+                            <div>
+                                <bntv-mat-button
+                                  [iconLeftAlign]="true"
+                                  [type]="'icon-stroked'"
+                                  [width]="'100%'"
+                                  [iconType]="'fontset'"
+                                  [fontSet]="'icomoon'"
+                                  [iconName]="'expand'"
+                                  [enableDebounce]="false"
+                                  (clickButton)="buttonClick(chargerSubject, 'CHARGER_CAPACITY')">
+                                </bntv-mat-button>
+                              </div>
+                        </div>
+                        <hr class="facility-hr" style="width: 100%;">
+                       <div id="chart1">
+                            <ng-container *ngTemplateOutlet="chargerTypeChart"></ng-container>
+                        </div>
+                    </div>
+                    
+                    <div fxLayout="column" fxFlex="33" style="padding: 0em 1em 0em 2em;">
+                        <div fxLayout="row" fxLayoutAlign="space-between">
+                            <div  class="h2">{{'PRICING_MODEL' | translate}}</div>
+                            <bntv-mat-button
+                                [iconLeftAlign]="true"
+                                [type]="'icon-stroked'"
+                                [width]="'100%'"
+                                [height]="'85%'"
+                                [iconType]="'fontset'"
+                                [fontSet]="'icomoon'"
+                                [iconName]="'expand'"
+                                [enableDebounce]="false"
+                                (clickButton)="buttonClick(connectionColumnSubject, 'PRICING_MODEL')"
+            
+                            >
+                            </bntv-mat-button> 
+                        </div>   
+                        
+                            <hr class="facility-hr" style="width: 100%;">
+                            <ng-container *ngTemplateOutlet="connectionColumnchart"></ng-container>
+                    </div>
+                    
+                    <div  class="centered-element-right-profit" fxLayout="column" fxFlex="33" style="padding: 0em 0em 0em 2em;">
+                        <div  class="h2">{{'GEOGRAPHY' | translate}}</div>
+                        <hr class="facility-hr" style="width: 100%;">
+                        <div class="right-middle-content chart-container border-style">
+                            <ul *ngFor="let item of geographyData?.geography let i=index" [hidden]="i >=visibleGeopraphyItems">
+                                <li class="list" fxFlex="row" fxLayoutAlign="space-between" class="list">
+                                    <p>{{item.key1}}</p>
+                                    <p [ngClass]="getClass(programDashboardData.geography[i].status)">
+                                        <span></span>
+                                        <span style="font-size: 15px;">{{programDashboardData.geography[i].status}}</span>
+                                        <span style="font-size: 13px;">{{item.value1}}</span>
+                                    </p>
+                                </li>
+                            </ul>
+                        </div>
+                        <a *ngIf="geographyData?.geography.length > 0"
+                  style="cursor: pointer; color: #3c74a1;; margin-left: 0.4em;text-decoration:underline;"
+                  (click)="toggleVisibleGeopraphyItems()">
+                  {{ showAllGeopraphyItems ? 'See less...' : 'See more...' }}
+                </a>
+
+                </div>
+                </div>
+                </div>
+            </bntv-card-layout>
+        </div>
+      
+        <div style="margin:0em 1em" fxLayout="row" fxFlex="100" fxLayoutAlign="space-between center">
+            <bntv-card-layout 
+              [showHeader]="true"  
+              fxFlex="30.3">
+                <div header class="h2">{{'TICKET_CLASSIFICATION' | translate}}</div>
+                <div fxLayout="row" header-right fxLayoutAlign="center center">
+
+                     <span style="color:#adacac">(YTD)</span>
+                     <span>
+                        <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(ticketSubject, 'TICKET_CLASSIFICATION')">
+                        </bntv-mat-button>
+                    </span>
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="ticketClassificationChart"></ng-container>
+                </div>
+            </bntv-card-layout>
+
+            <bntv-card-layout [showHeader]="true" fxFlex="30.3">
+                <div header class="h2">{{'PROJECT_COMPLETION_TREND' |  translate}}</div>
+                <div fxLayout="row" header-right fxLayoutAlign="center center"> 
+                    <span style="color:#adacac">(YTD)</span>
+                    <span>
+                        <bntv-mat-button
+                        [iconLeftAlign]="true"
+                        [type]="'icon-stroked'"
+                        [width]="'100%'"
+                        [height]="'85%'"
+                        [iconType]="'fontset'"
+                        [fontSet]="'icomoon'"
+                        [iconName]="'expand'"
+                        [enableDebounce]="false"
+                        (clickButton)="buttonClick(monthlyProjectSubject, 'PROJECT_COMPLETION_TREND')">
+                        </bntv-mat-button>
+                    </span>
+                </div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="monthlyProjectChart"></ng-container>
+                </div>
+            </bntv-card-layout>
+
+            <bntv-card-layout [showHeader]="true" fxFlex="37.3">
+                <div header class="h1">{{'INSIGHTS' | translate}}</div>
+                <div content>
+                    <ng-container *ngTemplateOutlet="insightsContent">
+                    </ng-container>              
+                </div>
+            </bntv-card-layout>
+
+        </div>
+
+    </div>
+    
+    
+    
+
+<ng-template #occupancySlotchart>
+    <bntv-chart [options]="occupancySubject" *ngIf="occupancySubject">
+    </bntv-chart>
+</ng-template>
+<ng-template #connectionColumnchart>
+    <div style="margin-top:2em">
+    <bntv-chart [options]="connectionColumnSubject" *ngIf="connectionColumnSubject">
+    </bntv-chart>
+</div>
+</ng-template>
+<ng-template #chargerTypeChart>
+    <bntv-chart [options]="chargerSubject" *ngIf="chargerSubject" >
+    </bntv-chart>
+
+</ng-template>
+<ng-template #ticketClassificationChart>
+    <bntv-chart [options]="ticketSubject" *ngIf="ticketSubject">
+    </bntv-chart>
+</ng-template>
+<ng-template #insightsContent>
+    <div class="insights-card chart-container border-style" >
+      <div class="insights-inner-card" fxLayout="row" *ngFor="let item of insigtsCardData, let i=index" [hidden]="i >=visibleItems">
+          <div fxLayout="column" fxFlexFill>
+              
+              <div fxLayout="row" fxLayoutAlign="space-between center" > 
+                  <div fxLayout="row">
+                      <span class="inner-circle outer-circle" style="margin-top: 0.18em;">
+                      </span>
+                      <p style="color:#7d7d7d; margin-left: 0.6em;">{{item.creatorName}}</p>
+                  </div>            
+                  <p>{{convertToTime(item.createdTime)}}</p>
+              </div>
+              <div fxLayout="row" style="margin-top: 0.3em;" >
+                <span style="margin-left: 1.8em;" fxLayout="row">
+                    <p>{{item.lhsBottomAction}}&nbsp;</p>
+                    <p>{{item.rhsBottomAction}}&nbsp;</p>
+                </span>
+              </div>
+          </div>
+
+  
+      </div>
+      <a 
+        style="cursor: pointer; color: #3c74a1;; margin-left: 0.4em;text-decoration:underline;"
+        (click)="toggleVisibleItems()">
+        {{ showAllItems ? 'See less...' : 'See more...' }}
+     </a>
+      
+  </div>
+</ng-template>
+
+<ng-template #monthlyProjectChart>
+    <bntv-chart [options]="monthlyProjectSubject" *ngIf="monthlyProjectSubject">
+    </bntv-chart>
+</ng-template>
+
+  
+
+
+</ng-template>

@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "administration-ui.fullname" . }}
+  labels:
+    {{- include "administration-ui.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      {{- include "administration-ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "administration-ui.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.containerPort }}
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.ports.containerPort }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.ports.containerPort }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          env:
+          - name: REALM_NAME 
+            value: "{{ .Values.env.realmName }}"
+          - name: KEYCLOAK_URL
+            value: "{{ .Values.env.keycloakUrl }}"
+          - name: UI_URL
+            value: "{{ .Values.env.uiUrl }}"
+          - name: KEYCLOAK_CLIENT
+            value: "{{ .Values.env.keycloakClient }}"
+          - name: UI_CHANGES
+            value: "{{ .Values.env.uiChanges }}"
+          resources:
+            limits:
+              cpu: {{ .Values.resourcesLimits.cpu }}
+              memory: {{ .Values.resourcesLimits.memory }}
+            requests:
+              cpu: {{ .Values.requestsResources.cpu }}
+              memory: {{ .Values.requestsResources.memory }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+          {{- if or .Values.nfs.asServer .Values.nfs.hostPath .Values.configMap.createNginxconfConfigmap}}
+          volumeMounts:
+          {{- if or .Values.nfs.asServer .Values.nfs.hostPath }}
+          - name: shared-vol1
+            mountPath: {{ .Values.volumeMounts.protectedPath }}
+          {{- end }}
+          {{- if .Values.configMap.createNginxconfConfigmap }}
+          - name: nginx-conf
+            mountPath: {{ .Values.volumeMounts.nginxConfPath }}
+            subPath: {{ .Values.volumeMounts.nginxConfsubPath }}
+          {{- end }}
+          {{- end }}
+        {{- if .Values.exporter.enable }}
+        - name: {{ .Values.exporter.name }}
+          image:  "{{ .Values.exporter.image.repository }}:{{ .Values.exporter.image.tag }}"
+          imagePullPolicy: {{ .Values.exporter.image.pullPolicy }}
+          ports:
+          - containerPort:  {{ .Values.exporter.ports.containerPort }}
+          readinessProbe:
+            tcpSocket:
+              port: {{ .Values.exporter.ports.containerPort }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+          env:
+          - name: SCRAPE_URI
+            value: "{{ .Values.exporter.env.scrapeUrl }}"
+          - name: NGINX_RETRIES
+            value: "{{ .Values.exporter.env.nginxRetries }}"
+          - name: TELEMETRY_PATH
+            value: "{{ .Values.exporter.env.telemetryPath }}"
+          resources:
+            limits:
+              cpu: {{ .Values.exporter.resources.limits.cpu }}
+              memory: {{ .Values.exporter.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.exporter.resources.requests.cpu }}
+              memory: {{ .Values.exporter.resources.requests.memory }}
+        {{- end }}
+      {{- if or .Values.nfs.asServer .Values.nfs.hostPath .Values.configMap.createNginxconfConfigmap}}
+      volumes:
+      {{- if .Values.nfs.asServer }}
+      - name: shared-vol1
+        nfs:
+          server: {{ .Values.volumes.nfsServerUrl }}
+          path: {{ .Values.volumes.nfsServerPath }}
+      {{- end }}
+      {{- if .Values.nfs.hostPath }}
+      - name: shared-vol1
+        hostPath:
+          path: {{ .Values.volumes.nfsHostPath }}
+      {{- end }}
+      {{- if .Values.configMap.createNginxconfConfigmap }}
+      - name: nginx-conf
+        configMap:
+          defaultMode: {{ .Values.configMap.defaultMode }}
+          name: {{ .Release.Name }}-cm
+      {{- end }}
+      {{- end }}

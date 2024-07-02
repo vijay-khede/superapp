@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.enttribe.superapp</groupId>
+    <artifactId>superapp</artifactId>
+    <version>1.0.0</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+  <artifactId>superapp-service</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  
+  <properties>
+	<jacoco.version>0.8.8</jacoco.version>
+	<jacoco.outputDir>${project.basedir}/../target/site/jacoco</jacoco.outputDir>
+	<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+  </properties>
+
+  <name>superapp-service</name>
+
+  <repositories>
+    <repository>
+      <id>internal-repository</id>
+      <url>https://repo.maven.apache.org/maven2</url>
+      <releases>
+        <updatePolicy>always</updatePolicy>
+      </releases>
+    </repository>
+  </repositories>
+
+  <dependencies>
+  
+          <dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>4.1.2</version> <!-- or the latest version -->
+</dependency>
+  
+  
+    <dependency>
+      <groupId>com.enttribe.superapp</groupId>
+      <artifactId>superapp-api</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+<!-- 
+<dependency>
+<groupId>com.enttribe.orchestrator</groupId>
+<artifactId>utility</artifactId>
+<version>3.0.1</version>
+</dependency>       -->
+
+	<dependency>
+			<groupId>com.github.javaparser</groupId>
+			<artifactId>javaparser-core</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+	
+
+
+    
+    	<dependency>
+                <groupId>com.enttribe.platform</groupId>
+                <artifactId>custom-annotation</artifactId>
+                <version>3.0.0</version>
+                <exclusions>
+				<exclusion>
+					<groupId>com.bootnext.platform</groupId>
+					<artifactId>custom-annotation</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+   </dependencies>
+    <build>
+    <plugins>
+     <plugin>
+             <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-javadoc-plugin</artifactId>
+             <version>3.5.0</version>
+             <executions>
+                 <execution>
+                      <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                 </execution>
+              </executions>
+           <configuration>
+			       <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
+                   <overWrite>false</overWrite>
+                   <docletArtifact>
+                             <groupId>nl.talsmasoftware</groupId>
+                             <artifactId>umldoclet</artifactId>
+                             <version>2.1.0</version>
+                     </docletArtifact>
+                    <additionalOptions>
+                    </additionalOptions>
+                    <doclint>none</doclint>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+		    <!--    <destDir>${project.basedir}/../../doc/Javadoc</destDir>-->
+		       <destDir>../doc/Javadoc</destDir>
+
+		</configuration>
+         </plugin> 
+    </plugins>
+  </build>
+  
+</project>
