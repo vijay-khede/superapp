@@ -1,11 +1,13 @@
 package com.enttribe.superapp.model;
 
-
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.sql.Date;
 
@@ -109,8 +112,8 @@ import lombok.Setter;
     @FilterDef(name = "buildInfoLastModifierNEqFilter", parameters = @ParamDef(name = "lastModifier", type = Integer.class)),
     @FilterDef(name = "buildInfoLastModifierInFilter", parameters = @ParamDef(name = "lastModifier", type = Integer.class)),
     @FilterDef(name = "buildInfoLastModifierNInFilter", parameters = @ParamDef(name = "lastModifier", type = Integer.class))
-}) 
-public class BuildInfo  extends BaseEntity {
+})
+public class BuildInfo  extends BaseEntity { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,11 +121,15 @@ public class BuildInfo  extends BaseEntity {
     private int buildNumber;
 
     @Basic
-    @Column(name = "STATUS", columnDefinition = "enum('PENDING','COMPLETED','FAILED') default 'PENDING'")
-    private String status ;
+    @Column(name = "STATUS", columnDefinition = "enum('NEW','FAIL','EXTRACT_CODE','INSTALL_DEPENDENCIES','BUILD','COMPLETED') default 'PENDING'")
+    private String status;
 
     @Column(name = "LOG_INFO")
     private String logInfo;
+    
+    @Size(max = 15)
+    @Column(name = "VERSION", length = 15)
+    private String version;
 
     @Column(name = "CUSTOMER_ID")
     private Integer customerId;
@@ -132,73 +139,11 @@ public class BuildInfo  extends BaseEntity {
     private boolean deleted;
    
     @ManyToOne
-    @JoinColumn(name = "APP_ID", referencedColumnName = "ID", nullable = false)
-    private MiniappDetails miniAppDetails; 
-    
-     @OneToOne(mappedBy = "buildInfo")
-     private BuildLogInfo buildLogInfo;
+    @JoinColumn(name = "APP_ID", referencedColumnName = "ID")
+    private MiniappDetails miniAppDetails;   
 
-    // @Override
-    // public int hashCode() {
-    //     final int prime = 31;
-    //     int result = 1;
-    //     result = prime * result + buildNumber;
-    //     result = prime * result + ((status == null) ? 0 : status.hashCode());
-    //     result = prime * result + ((logInfo == null) ? 0 : logInfo.hashCode());
-    //     result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-    //     result = prime * result + (deleted ? 1231 : 1237);
-    //     result = prime * result + ((miniAppDetails == null) ? 0 : miniAppDetails.hashCode());
-    //     result = prime * result + ((buildLogInfo == null) ? 0 : buildLogInfo.hashCode());
-    //     return result;
-    // }
-
-    // @Override
-    // public boolean equals(Object obj) {
-    //     if (this == obj)
-    //         return true;
-    //     if (obj == null)
-    //         return false;
-    //     if (getClass() != obj.getClass())
-    //         return false;
-    //     BuildInfo other = (BuildInfo) obj;
-    //     if (buildNumber != other.buildNumber)
-    //         return false;
-    //     if (status == null) {
-    //         if (other.status != null)
-    //             return false;
-    //     } else if (!status.equals(other.status))
-    //         return false;
-    //     if (logInfo == null) {
-    //         if (other.logInfo != null)
-    //             return false;
-    //     } else if (!logInfo.equals(other.logInfo))
-    //         return false;
-    //     if (customerId == null) {
-    //         if (other.customerId != null)
-    //             return false;
-    //     } else if (!customerId.equals(other.customerId))
-    //         return false;
-    //     if (deleted != other.deleted)
-    //         return false;
-    //     if (miniAppDetails == null) {
-    //         if (other.miniAppDetails != null)
-    //             return false;
-    //     } else if (!miniAppDetails.equals(other.miniAppDetails))
-    //         return false;
-    //     if (buildLogInfo == null) {
-    //         if (other.buildLogInfo != null)
-    //             return false;
-    //     } else if (!buildLogInfo.equals(other.buildLogInfo))
-    //         return false;
-    //     return true;
-    // }
-
-    // @Override
-    // public String toString() {
-    //     return "BuildInfo [buildNumber=" + buildNumber + ", status=" + status + ", logInfo=" + logInfo + ", customerId="
-    //             + customerId + ", deleted=" + deleted + ", miniAppDetails=" + miniAppDetails + ", buildLogInfo="
-    //             + buildLogInfo + "]";
-    // }
-
-   
+    @OneToOne
+    @JoinColumn(name = "SOURCE_CODE_ID", referencedColumnName = "ID")
+    private SourceCodeDetails sourceCodeDetails;
+       
 }

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>BuildInfo.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">BuildInfo.java</span></div><h1>BuildInfo.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
 
-
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
 import org.hibernate.envers.Audited;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +21,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.sql.Date;
 
@@ -33,10 +36,10 @@ import lombok.Setter;
 
 
 @Entity 
-<span class="nc" id="L36">@Setter</span>
+<span class="nc" id="L39">@Setter</span>
 @Getter 
-<span class="nc" id="L38">@NoArgsConstructor </span>
-<span class="nc" id="L39">@AllArgsConstructor</span>
+<span class="nc" id="L41">@NoArgsConstructor </span>
+<span class="nc" id="L42">@AllArgsConstructor</span>
 @Table(name = &quot;BUILD_INFO&quot;)
 @Filters({
     @Filter(name = &quot;buildInfoBuildNumberEqFilter&quot;, condition = &quot;BUILD_NUMBER = :buildNumber&quot;),
@@ -109,97 +112,39 @@ import lombok.Setter;
     @FilterDef(name = &quot;buildInfoLastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
     @FilterDef(name = &quot;buildInfoLastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
     @FilterDef(name = &quot;buildInfoLastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class))
-}) 
-public class BuildInfo  extends BaseEntity {
+})
+public class BuildInfo  extends BaseEntity { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = &quot;BUILD_NUMBER&quot;)
-<span class="nc" id="L118">    private int buildNumber;</span>
+<span class="nc" id="L121">    private int buildNumber;</span>
 
     @Basic
-    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;enum('PENDING','COMPLETED','FAILED') default 'PENDING'&quot;)
-<span class="nc" id="L122">    private String status ;</span>
+    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;enum('NEW','FAIL','EXTRACT_CODE','INSTALL_DEPENDENCIES','BUILD','COMPLETED') default 'PENDING'&quot;)
+<span class="nc" id="L125">    private String status;</span>
 
     @Column(name = &quot;LOG_INFO&quot;)
-<span class="nc" id="L125">    private String logInfo;</span>
+<span class="nc" id="L128">    private String logInfo;</span>
+    
+    @Size(max = 15)
+    @Column(name = &quot;VERSION&quot;, length = 15)
+<span class="nc" id="L132">    private String version;</span>
 
     @Column(name = &quot;CUSTOMER_ID&quot;)
-<span class="nc" id="L128">    private Integer customerId;</span>
+<span class="nc" id="L135">    private Integer customerId;</span>
 
     @NotNull
     @Column(name = &quot;DELETED&quot;,nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
-<span class="nc" id="L132">    private boolean deleted;</span>
+<span class="nc" id="L139">    private boolean deleted;</span>
    
     @ManyToOne
-    @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;, nullable = false)
-<span class="nc" id="L136">    private MiniappDetails miniAppDetails; </span>
-    
-     @OneToOne(mappedBy = &quot;buildInfo&quot;)
-<span class="nc" id="L139">     private BuildLogInfo buildLogInfo;</span>
+    @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;)
+<span class="nc" id="L143">    private MiniappDetails miniAppDetails;   </span>
 
-    // @Override
-    // public int hashCode() {
-    //     final int prime = 31;
-    //     int result = 1;
-    //     result = prime * result + buildNumber;
-    //     result = prime * result + ((status == null) ? 0 : status.hashCode());
-    //     result = prime * result + ((logInfo == null) ? 0 : logInfo.hashCode());
-    //     result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-    //     result = prime * result + (deleted ? 1231 : 1237);
-    //     result = prime * result + ((miniAppDetails == null) ? 0 : miniAppDetails.hashCode());
-    //     result = prime * result + ((buildLogInfo == null) ? 0 : buildLogInfo.hashCode());
-    //     return result;
-    // }
-
-    // @Override
-    // public boolean equals(Object obj) {
-    //     if (this == obj)
-    //         return true;
-    //     if (obj == null)
-    //         return false;
-    //     if (getClass() != obj.getClass())
-    //         return false;
-    //     BuildInfo other = (BuildInfo) obj;
-    //     if (buildNumber != other.buildNumber)
-    //         return false;
-    //     if (status == null) {
-    //         if (other.status != null)
-    //             return false;
-    //     } else if (!status.equals(other.status))
-    //         return false;
-    //     if (logInfo == null) {
-    //         if (other.logInfo != null)
-    //             return false;
-    //     } else if (!logInfo.equals(other.logInfo))
-    //         return false;
-    //     if (customerId == null) {
-    //         if (other.customerId != null)
-    //             return false;
-    //     } else if (!customerId.equals(other.customerId))
-    //         return false;
-    //     if (deleted != other.deleted)
-    //         return false;
-    //     if (miniAppDetails == null) {
-    //         if (other.miniAppDetails != null)
-    //             return false;
-    //     } else if (!miniAppDetails.equals(other.miniAppDetails))
-    //         return false;
-    //     if (buildLogInfo == null) {
-    //         if (other.buildLogInfo != null)
-    //             return false;
-    //     } else if (!buildLogInfo.equals(other.buildLogInfo))
-    //         return false;
-    //     return true;
-    // }
-
-    // @Override
-    // public String toString() {
-    //     return &quot;BuildInfo [buildNumber=&quot; + buildNumber + &quot;, status=&quot; + status + &quot;, logInfo=&quot; + logInfo + &quot;, customerId=&quot;
-    //             + customerId + &quot;, deleted=&quot; + deleted + &quot;, miniAppDetails=&quot; + miniAppDetails + &quot;, buildLogInfo=&quot;
-    //             + buildLogInfo + &quot;]&quot;;
-    // }
-
-   
+    @OneToOne
+    @JoinColumn(name = &quot;SOURCE_CODE_ID&quot;, referencedColumnName = &quot;ID&quot;)
+<span class="nc" id="L147">    private SourceCodeDetails sourceCodeDetails;</span>
+       
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

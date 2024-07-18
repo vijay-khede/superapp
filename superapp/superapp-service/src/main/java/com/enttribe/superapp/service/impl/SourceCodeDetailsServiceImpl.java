@@ -4,21 +4,26 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.enttribe.commons.io.excel.Excel;
 import com.enttribe.commons.io.excel.ExcelRow;
 import com.enttribe.commons.io.excel.ExcelWriter;
-import com.enttribe.commons.lang.StringUtils;
 import java.beans.IntrospectionException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
+
 import com.enttribe.superapp.repository.SourceCodeDetailsRepository;
 import com.enttribe.superapp.integration.service.DocumentIntegrationService;
 import com.enttribe.superapp.model.MiniappDetails;
@@ -28,8 +33,18 @@ import com.enttribe.superapp.service.SourceCodeDetailsService;
 import com.enttribe.superapp.service.generic.AbstractService;
 import com.enttribe.superapp.util.APIConstants;
 import com.enttribe.superapp.util.report.ExcelUtils;
-import com.enttribe.product.security.spring.userdetails.CustomerInfo;
-import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.enttribe.document.rest.IDocumentRest;  
+import com.enttribe.document.model.Document;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+
+
+
 
 /**
 *
@@ -59,10 +74,14 @@ public class SourceCodeDetailsServiceImpl extends AbstractService<SourceCodeDeta
 	@Autowired
 	private SourceCodeDetailsRepository sourceCodeDetailsRepository; 
 
-
    @Autowired
    private DocumentIntegrationService documentIntegrationService;
 	
+    @Autowired 
+	 private IDocumentRest documentRest; 
+
+	 @Autowired
+	 private RestTemplate restTemplate; 
 /**
 * This method is used to export the given list of SourceCodeDetails objects into an excel file.
 * It reads an excel template 'SourceCodeDetails.xlsx' from the resource folder 'templates/reports'
@@ -191,7 +210,7 @@ After all the data is written to the Excel document, the method returns the Exce
  * @return a list of SourceCodeDetails objects that have been saved to the database
  */
 
-	public List<SourceCodeDetails> saveData(Excel sheet, Map<String, String> columnMapping, List<String> columnNames) {
+	public List<SourceCodeDetails> saveData(Excel sheet, Map<String, String> columnMapping, List<String> columnNames) { 
 		Iterator<ExcelRow> rowIterator = sheet.iterator();
 		List<SourceCodeDetails> sourceCodeDetailss = new ArrayList<>();
 		rowIterator.next();
@@ -212,7 +231,8 @@ After all the data is written to the Excel document, the method returns the Exce
 	sourceCodeDetailss.add(sourceCodeDetails);
  	}
 		return sourceCodeDetailss;
-	}  
+	} 
+
 /**
 * This method is responsible for soft-deleting an SourceCodeDetails  record in the database.
 * The method takes in an int id which represents the id of the SourceCodeDetails  that needs to be soft-deleted.
@@ -252,15 +272,179 @@ After all the data is written to the Excel document, the method returns the Exce
  * @return The created vendor object.
  */ 
 	@Override
-	public SourceCodeDetails create(SourceCodeDetails sourceCodeDetails) {     
-        SourceCodeDetails sourceCodeDetails2 =  sourceCodeDetailsRepository.save(sourceCodeDetails); 
+	public SourceCodeDetails create(SourceCodeDetails sourceCodeDetails) { 
+		log.debug("you are here for update the sourceCodeDetails {}" , sourceCodeDetails.getSourceCodePath());
+        try {
+			// Extract the ID from SOURCE_CODE_PATH					
+			String sourceCodePath = sourceCodeDetails.getSourceCodePath();
+			JsonNode sourceCodePathNode = new ObjectMapper().readTree(sourceCodePath);
+			int documentId = sourceCodePathNode.get("ids").get(0).asInt();
+			log.debug(" create document id  1111" +  documentId);
+			// Call the API to get the list of document versions using the extracted document ID
+			List<Document> documents = documentRest.getDocumentAllVersions(documentId);
+			log.debug(" create documents ids d 2222" + documents.size());	
+			// Find the latest document version (assuming the list is sorted or the first element is the latest)
+			if (!documents.isEmpty()) {
+				Document latestDocument = documents.get(0);
+				// Set the path to SOURCE_CODE_MINIO_PATH 
+				log.debug(" create document path 3333" + latestDocument.getPath());
+				sourceCodeDetails.setSourceCodeMinioPath(latestDocument.getPath());
+		
+			} else {
+				throw new RuntimeException("No document versions found for ID: " + documentId);
+			}
+	
+			// Call the document integration service
+	
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("error in documentIntegrationService create  {}", e.getMessage());
+		}
+
+		log.debug(" you are here for create sourceCodeDetails " + sourceCodeDetails.getSourceCodePath());
+        SourceCodeDetails sourceCodeDetails2 =  sourceCodeDetailsRepository.save(sourceCodeDetails);  
 		try {
 		  documentIntegrationService.createFolderForEntity("SOURCE_CODE_DETAILS", sourceCodeDetails2.getId());
 		} catch (Exception e) {
 		  e.printStackTrace();
 		  log.error("error in documentIntegrationService create  {}", e.getMessage());
-		}  
+		 }
 		return sourceCodeDetails2;
-	}
+	}   
+
+	@Override
+	public SourceCodeDetails update(SourceCodeDetails entity) {           
+		log.debug("you are here for update the sourceCodeDetails {}" , entity.getSourceCodePath());
+	//below code for setting Set of Incidents from  
+     try {
+        // Extract the ID from SOURCE_CODE_PATH					
+        String sourceCodePath = entity.getSourceCodePath();
+        JsonNode sourceCodePathNode = new ObjectMapper().readTree(sourceCodePath);
+        int documentId = sourceCodePathNode.get("ids").get(0).asInt();
+		log.debug(" document id  1111" +  documentId);
+        // Call the API to get the list of document versions using the extracted document ID
+        List<Document> documents = documentRest.getDocumentAllVersions(documentId);
+        log.debug(" documents ids d 2222" + documents.size());
+        // Find the latest document version (assuming the list is sorted or the first element is the latest)
+        if (!documents.isEmpty()) {
+            Document latestDocument = documents.get(0);
+            // Set the path to SOURCE_CODE_MINIO_PATH
+			log.debug("document path 3333" + latestDocument.getPath());
+            entity.setSourceCodeMinioPath(latestDocument.getPath());
+    
+        } else {
+            throw new RuntimeException("No document versions found for ID: " + documentId);
+        }
+
+        // Call the document integration service
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        log.error("error in documentIntegrationService create  {}", e.getMessage());
+    }
+
+	return super.update(entity);
+	}     
+
+
+
+public void executeScript(String scriptPath, SourceCodeDetails sourceCodeDetails, boolean runUpgrade, boolean runOutdated,String appName) {
+    try {
+        // Construct the command to execute the script with necessary parameters
+        StringBuilder command = new StringBuilder(scriptPath);
+
+        if (runUpgrade) {
+            command.append(" -u");
+        }
+
+        if (runOutdated) {
+            command.append(" -o");
+        }
+
+        command.append(" ").append(sourceCodeDetails.getFlutterVersion())
+               .append(" ").append(sourceCodeDetails.getSourceCodeMinioPath())
+               .append(" ").append(appName);
+
+		// command.append(" ").append("3.16.9")
+        //        .append(" ").append("/Users/bootnext-mac-31/Documents/sendbox/web_proj.zip")
+        //        .append(" ").append("minio/SuperApp/Apps/Test/build.zip");  
+
+       log.info("complete command " + command.toString()); 
+        // Start the process without waiting for it to complete
+		Process process = Runtime.getRuntime().exec(command.toString());  
+     
+	  new Thread(() -> logStream(process.getInputStream(), "OUTPUT")).start();
+	  new Thread(() -> logStream(process.getErrorStream(), "ERROR")).start();
+
+	  process.getOutputStream().close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}  
+
+
+private void logStream(InputStream stream, String type) {
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            log.info("script logs : " + type + ": " + line);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+
+
+
+
+@Override
+    public String complileCode(int id, boolean runUpgrade, boolean runOutdated,int buildInfoId) {
+        try {
+            // Fetch SourceCodeDetails from repository
+            SourceCodeDetails sourceCodeDetails = sourceCodeDetailsRepository.findById(id).orElseThrow(() -> new RuntimeException("Source code details not found for id: " + id));
+            MiniappDetails miniappDetails = sourceCodeDetails.getMiniAppDetails();
+
+            // Prepare the payload
+            String payload = "{\"app_name\": \"" + miniappDetails.getName() + "\", " +
+                              "\"flutter_version\": \"" + sourceCodeDetails.getFlutterVersion() + "\", " + 
+							  "\"source_code_path\": \"" + sourceCodeDetails.getSourceCodeMinioPath() + "\", " + 
+							  "\"mini_app_details_id\": " + miniappDetails.getId() + ", " +
+							  "\"build_number\": " + buildInfoId + "}";
+            
+            // Prepare the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+			log.info("complileCode " + payload.toString() + headers.toString());
+            // Create the request entity
+            HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
+            
+            // Make the HTTP POST request
+            String url = "http://superapp-integration-service:8000/run-build-script/?run_pub_outdated=" + runOutdated + "&run_pub_upgrade=" + runUpgrade;
+            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
+            
+            // Return response body
+            return response.getBody();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }      
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

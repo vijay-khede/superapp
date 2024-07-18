@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.enttribe.commons.spring.rest.ResponseBuilder;
+import com.enttribe.orchestrator.utility.annotation.TriggerBPMN;
+
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotEmpty;
@@ -22,7 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 import com.enttribe.superapp.controller.MiniappDetailsController;
 import com.enttribe.superapp.model.MiniappDetails;
 import com.enttribe.superapp.service.MiniappDetailsService;
-import com.enttribe.platform.customannotation.annotation.GenericAnnotation; 
+import com.enttribe.platform.customannotation.annotation.GenericAnnotation;  
+
 
 /**
 *
@@ -58,7 +61,8 @@ public class MiniappDetailsControllerImpl implements MiniappDetailsController {
 	private MiniappDetailsService miniappDetailsService;
 	
 	@Override 
-	@Auditable(actionType = ActionType.CREATE, actionName = "CREATE")
+	@Auditable(actionType = ActionType.CREATE, actionName = "CREATE") 
+	@TriggerBPMN(entityName = "MiniappDetails", appName = "SUPERAPP_APP_NAME")
 	@GenericAnnotation(actionType="CREATE",uniqEntityId="id",annotationName = {"GlobleSearch"}, appName = "SUPERAPP_APP_NAME", entityName = "MiniappDetails",globalSearchData="name, applicationKey",searchTitle="tagging")
 	public MiniappDetails create(MiniappDetails miniappDetails) {
 	return miniappDetailsService.create(miniappDetails);

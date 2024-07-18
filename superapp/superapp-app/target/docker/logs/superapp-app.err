@@ -1,5 +1,14 @@
 OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
 OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify were deprecated in JDK 13 and will likely be removed in a future release.
-SLF4J(W): No SLF4J providers were found.
-SLF4J(W): Defaulting to no-operation (NOP) logger implementation
-SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+Jul 18, 2024 12:50:48 PM org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-8081"]
+Jul 18, 2024 12:50:48 PM org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Tomcat]
+Jul 18, 2024 12:50:48 PM org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/10.1.19]
+Jul 18, 2024 12:50:48 PM org.apache.catalina.core.ApplicationContext log
+INFO: Initializing Spring embedded WebApplicationContext
+Jul 18, 2024 12:50:54 PM org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-8081"]
+Jul 18, 2024 12:50:54 PM org.apache.catalina.core.StandardService stopInternal
+INFO: Stopping service [Tomcat]

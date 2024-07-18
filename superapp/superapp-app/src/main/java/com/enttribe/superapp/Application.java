@@ -1,5 +1,7 @@
 package com.enttribe.superapp;
 import com.enttribe.superapp.model.User;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,8 @@ import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+ 
+
 
 /**
  * The Application class is the entry point of the application.
@@ -66,7 +70,7 @@ public class Application implements WebMvcConfigurer {
      
   public static void main(String[] args) {
     ConfigUtils.setPropertiesFilePath("application.properties", "config.properties");
-    SpringApplication.run(Application.class, args);
+    SpringApplication.run(Application.class, args); 
   }
   
   /**
@@ -165,3 +169,4 @@ public class Application implements WebMvcConfigurer {
 	}
 
 }
+

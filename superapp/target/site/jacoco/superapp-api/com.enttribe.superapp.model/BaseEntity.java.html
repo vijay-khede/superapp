@@ -35,7 +35,7 @@ CreatedDate - This annotation is used to indicate that this field will be popula
 LastModifiedBy - This annotation is used to indicate that this field will be populated with the user that last modified this entity.
 LastModifiedDate - This annotation is used to indicate that this field will be populated with the date when this entity was last modified.
 */
-  
+
 @Getter
 <span class="nc" id="L40">@Setter</span>
 @EntityListeners(AuditingEntityListener.class)
@@ -52,7 +52,7 @@ LastModifiedDate - This annotation is used to indicate that this field will be p
   @CreatedDate
 <span class="nc" id="L53">  private Date createdTime;</span>
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.EAGER) 
   @JoinColumn(name = &quot;LAST_MODIFIER&quot;)
   @LastModifiedBy
 <span class="nc" id="L58">  private User lastModifier;</span>

@@ -1,270 +1,372 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MiniappDetailsServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.service.impl</a> &gt; <span class="el_source">MiniappDetailsServiceImpl.java</span></div><h1>MiniappDetailsServiceImpl.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.service.impl;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>MiniappDetailsServiceImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-service</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.service.impl</a> &gt; <span class="el_source">MiniappDetailsServiceImpl.java</span></div><h1>MiniappDetailsServiceImpl.java</h1><pre class="source lang-java linenums">	package com.enttribe.superapp.service.impl;
 
-import org.springframework.stereotype.Service;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
-import com.enttribe.commons.io.excel.Excel;
-import com.enttribe.commons.io.excel.ExcelRow;
-import com.enttribe.commons.io.excel.ExcelWriter;
-import com.enttribe.commons.lang.StringUtils;
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Optional;
-import com.enttribe.superapp.repository.MiniappDetailsRepository;
-import com.enttribe.superapp.integration.service.DocumentIntegrationService;
-import com.enttribe.superapp.model.MiniappDetails;
-import com.enttribe.superapp.repository.generic.GenericRepository;
-import com.enttribe.superapp.service.MiniappDetailsService;
-import com.enttribe.superapp.service.generic.AbstractService;
-import com.enttribe.superapp.util.APIConstants;
-import com.enttribe.superapp.util.report.ExcelUtils;
-import com.enttribe.product.security.spring.userdetails.CustomerInfo;
-import com.enttribe.core.generic.utils.ApplicationContextProvider;
+	import org.springframework.stereotype.Service;
+	import org.apache.commons.collections4.CollectionUtils;
+	import org.apache.poi.hpsf.NoFormatIDException;
+	import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+	import org.springframework.beans.factory.annotation.Autowired;
+	import org.springframework.web.multipart.MultipartFile;
+	import com.enttribe.commons.io.excel.Excel;
+	import com.enttribe.commons.io.excel.ExcelRow;
+	import com.enttribe.commons.io.excel.ExcelWriter;
+    import com.enttribe.document.rest.IDocumentRest;
 
-/**
-*
-This is a class named &quot;MiniappDetailsServiceImpl&quot; which is located in the package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an implementation of the &quot;MiniappDetailsService&quot; interface and it extends the &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD operations for entities. This class is annotated with @Service, indicating that it is a Spring Service bean.
-This class is using Lombok's @Slf4j annotation which will automatically generate an Slf4j based logger instance, so it is using the Slf4j API for logging.
-The class has a constructor which takes a single parameter of GenericRepository MiniappDetails and is used to call the superclass's constructor.
-This class have one public method public byte[] export(List of MiniappDetails  MiniappDetails) for exporting the MiniappDetails data into excel file by reading the template and mapping the MiniappDetails details into it.
-It's using Apache POI library for reading and writing excel files, and has methods for parsing the json files for column names and identities , and it also used 'ExcelUtils' for handling the excel operations.
-It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils' and 'APIConstants' from 'com.enttribe.superapp.util'
-*
-* */
+    import java.beans.IntrospectionException;
+	import java.io.IOException;
+	import java.io.InputStream;
+	import java.util.ArrayList;
+	import java.util.Arrays;
+	import java.util.HashMap;
+	import java.util.HashSet;
+	import java.util.Iterator;
+	import java.util.List;
+	import java.util.Map;
+	import lombok.extern.slf4j.Slf4j;
+	import java.util.Optional;
+    import java.util.UUID;
+    import java.util.stream.Collectors;
+    
+	import com.enttribe.superapp.repository.MiniAppPermissionsRepository;
+	import com.enttribe.superapp.repository.MiniappDetailsRepository;
+	import com.enttribe.superapp.repository.OrganisationRoleRepository;
+	import com.enttribe.superapp.integration.service.DocumentIntegrationService;
+	import com.enttribe.superapp.model.MiniAppPermissions;
+	import com.enttribe.superapp.model.MiniappDetails;
+	import com.enttribe.superapp.model.OrganisationRole;
+	import com.enttribe.superapp.repository.generic.GenericRepository;
+	import com.enttribe.superapp.service.MiniappDetailsService;
+	import com.enttribe.superapp.service.generic.AbstractService;
+	import com.enttribe.superapp.util.APIConstants;
+	import com.enttribe.superapp.util.report.ExcelUtils; 
+	import com.enttribe.document.model.Document;
+    
+	/**
+	*
+	This is a class named &quot;MiniappDetailsServiceImpl&quot; which is located in the package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an implementation of the &quot;MiniappDetailsService&quot; interface and it extends the &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD operations for entities. This class is annotated with @Service, indicating that it is a Spring Service bean.
+	This class is using Lombok's @Slf4j annotation which will automatically generate an Slf4j based logger instance, so it is using the Slf4j API for logging.
+	The class has a constructor which takes a single parameter of GenericRepository MiniappDetails and is used to call the superclass's constructor.
+	This class have one public method public byte[] export(List of MiniappDetails  MiniappDetails) for exporting the MiniappDetails data into excel file by reading the template and mapping the MiniappDetails details into it.
+	It's using Apache POI library for reading and writing excel files, and has methods for parsing the json files for column names and identities , and it also used 'ExcelUtils' for handling the excel operations.
+	It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils' and 'APIConstants' from 'com.enttribe.superapp.util'
+	*
+	* */
+    
+	@Service
+<span class="nc" id="L55">	@Slf4j</span>
+	public class MiniappDetailsServiceImpl extends AbstractService&lt;MiniappDetails&gt; implements MiniappDetailsService {
+    
+	/**
+	* Constructor for MiniappDetailsServiceImpl.
+	* @param repository The GenericRepository used to perform CRUD operations for MiniappDetails entities.
+	*/
+		public MiniappDetailsServiceImpl(GenericRepository&lt;MiniappDetails&gt; repository) {
+<span class="nc" id="L63">			super(repository,MiniappDetails.class);</span>
+<span class="nc" id="L64">		}</span>
+		
+		private static final String ENTITY_NAME = &quot;MiniappDetails&quot;; 
+		
+		@Autowired
+		private MiniappDetailsRepository miniappDetailsRepository; 
 
-@Service
-<span class="nc" id="L45">@Slf4j</span>
-public class MiniappDetailsServiceImpl extends AbstractService&lt;MiniappDetails&gt; implements MiniappDetailsService {
-
-/**
-* Constructor for MiniappDetailsServiceImpl.
-* @param repository The GenericRepository used to perform CRUD operations for MiniappDetails entities.
-*/
-	public MiniappDetailsServiceImpl(GenericRepository&lt;MiniappDetails&gt; repository) {
-<span class="nc" id="L53">		super(repository,MiniappDetails.class);</span>
-<span class="nc" id="L54">	}</span>
-	
-	private static final String ENTITY_NAME = &quot;MiniappDetails&quot;; 
-	
+    
 	@Autowired
-	private MiniappDetailsRepository miniappDetailsRepository; 
+	private DocumentIntegrationService documentIntegrationService;  
 
-
-   @Autowired
-   private DocumentIntegrationService documentIntegrationService;
-	
-/**
-* This method is used to export the given list of MiniappDetails objects into an excel file.
-* It reads an excel template 'MiniappDetails.xlsx' from the resource folder 'templates/reports'
-* and maps the MiniappDetails data onto the template and returns the generated excel file in the form of a byte array.
-* param MiniappDetails - List of MiniappDetails objects to be exported
-* @return byte[] - The generated excel file in the form of a byte array
-* @throws IOException - When the template file is not found or there is an error reading the file
-*/
-	@Override
-	public byte[] export(List&lt;MiniappDetails&gt; miniappDetails) throws IOException {
-<span class="nc" id="L75">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/MiniappDetails.xlsx&quot;);</span>
-<span class="nc" id="L76">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
-<span class="nc" id="L77">		int rowCount = 1;</span>
-<span class="nc" id="L78">		return setTableData(miniappDetails,xssfWorkbook, rowCount);</span>
-	}
-
-/**
- * This method is responsible for setting the data of an Excel document, using a template and a list of MiniappDetails objects.
- * The data is written to the template starting at the specified row number.
- * 
- * @param MiniappDetails a List of MiniappDetails objects, representing the data that will be written to the Excel document
- * @param templatePath an XSSFWorkbook object, representing the template Excel document that the data will be written to
- * @param rowCount an int, representing the starting row number where data will be written in the Excel document
- * @return a byte array of the Excel document after the data has been written to it.
- * @throws IOException if there is an issue reading or writing to the Excel document
- */
-/**This method appears to take in three parameters:
-A List of MiniappDetails objects, representing the data that will be written to the Excel document.
-An XSSFWorkbook object, representing the template Excel document that the data will be written to.
-An int, representing the starting row number where data will be written in the Excel document.
-The method has a return type of byte array, which is the Excel document after the data has been written to it. The method also throws an IOException, which would be thrown if there is an issue reading or writing to the Excel document.
-The method starts by creating some maps to hold data that will be used later:
-tableColumn: a map that will hold the columns of the Excel table.
-identityColumnMapping: a map that will hold the mapping of columns
-templateHeaders: a map that will hold the headers of the excel template
-then it calls ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders); to get the values for the maps created.
-Then it creates an instance of ExcelWriter which will write the data to the workbook, it set the active sheet to the first sheet of the workbook and check if MiniappDetails list is not empty.
-It then iterates over the list of MiniappDetails objects and for each MiniappDetails, it creates a new row in the Excel document at the specified row number.
-It also retrieves the list of columns for the &quot;MiniappDetails&quot; entity from the tableColumn map, and iterates over the columns.
-For each column, it attempts to retrieve the value for that column from the current MiniappDetails object using the ExcelUtils.invokeGetter method, passing in the current MiniappDetails object, the column name and the identityColumnMapping.
-The value returned by this method is then set as the value of the cell in the current row and column.
-If an introspection exception occur it will print the stacktrace of the exception
-After all the data is written to the Excel document, the method returns the Excel document as a byte array using excelWriter.toByteArray() and log &quot;going to return file&quot;
-* */
-
-	private byte[] setTableData(List&lt;MiniappDetails&gt;miniappDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
-<span class="nc" id="L111">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
-<span class="nc" id="L112">		String entity=ENTITY_NAME;</span>
-<span class="nc" id="L113">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
-<span class="nc" id="L114">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L115">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
-<span class="nc" id="L116">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
-<span class="nc" id="L117">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
-<span class="nc" id="L118">			excelWriter.getWorkbook().setActiveSheet(0);</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(miniappDetails)) {</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">			for (MiniappDetails miniappDetailsDetails : miniappDetails) {</span>
-<span class="nc" id="L121">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
-<span class="nc" id="L122">				int index = 0;</span>
-<span class="nc" id="L123">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
-<span class="nc bnc" id="L124" title="All 2 branches missed."> 			for(String column:columns) {</span>
-<span class="nc bnc" id="L125" title="All 2 branches missed.">				if(column!=null) {   </span>
-				try {
-<span class="nc" id="L127">					row.setCellValue(index, ExcelUtils.invokeGetter(miniappDetailsDetails,column,identityColumnMapping).toString());</span>
-<span class="nc" id="L128">				}catch (IntrospectionException e) {</span>
-<span class="nc" id="L129">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L130">                }</span>
-              }
-<span class="nc" id="L132">             	 ++index;</span>
-<span class="nc" id="L133">             }</span>
-<span class="nc" id="L134">            	rowCount++;</span>
-<span class="nc" id="L135">            }</span>
-        }
-<span class="nc" id="L137">		log.info(&quot;going to return file&quot;);</span>
-<span class="nc" id="L138">        return excelWriter.toByteArray();</span>
-	  }
-	}
-
-/**
- * This method is responsible for importing data from an Excel file, specifically data related to MiniappDetails objects.
- * The method takes in a MultipartFile object, which represents the Excel file containing the data.
- * The method then validates the template headers in the Excel file and if they are valid, it saves the data to the database.
- *
- * @param excelFile a MultipartFile object representing the Excel file containing the data
- * @return a string indicating whether the data import was successful or not.
- * @throws IOException if there is an issue reading from the Excel file
- * @throws InstantiationException when there is issue with instantiation
- * @throws ClassNotFoundException when the class not found
- */
-
-	@Override
-	public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
-<span class="nc" id="L156">		List&lt;MiniappDetails&gt; miniappDetailss =new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L157">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
-<span class="nc" id="L158">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
-<span class="nc" id="L159">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
-<span class="nc" id="L160">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L161">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L162">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
-<span class="nc" id="L163">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
-<span class="nc" id="L164">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L165">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
-<span class="nc" id="L166">      	boolean validateTableTemplateHeader =</span>
-<span class="nc" id="L167">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
-<span class="nc bnc" id="L168" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
-<span class="nc" id="L169">        	log.info(&quot;columns and headers are validated&quot;);</span>
-<span class="nc" id="L170">        	miniappDetailss = saveData(workBook, columnsMapping, columnNames);</span>
-      	}
-    	else {
-<span class="nc" id="L173">      		log.info(&quot;columns and headers invalide&quot;);</span>
-      	}
-<span class="nc bnc" id="L175" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(miniappDetailss)) {</span>
-<span class="nc" id="L176">		miniappDetailsRepository.saveAll(miniappDetailss);</span>
-<span class="nc" id="L177">		return APIConstants.SUCCESS_JSON;</span>
-	}
-<span class="nc" id="L179">		return APIConstants.FAILURE_JSON;</span>
-	}
-
-/**
- * This method is responsible for saving data to the database, specifically data related to MiniappDetails objects.
- * The method takes in an Excel object, which represents the sheet containing the data, a mapping of columns from the excel sheet to the MiniappDetails class, and a list of column names.
- * The method uses the iterator for the sheet to read data row by row, create new MiniappDetails objects, and set the properties of the MiniappDetails objects using the column mapping and column names.
- * The method returns a list of MiniappDetails objects that have been saved to the database.
- * @param sheet an Excel object representing the sheet containing the data
- * @param columnMapping a map representing the mapping of columns from the excel sheet to the MiniappDetails class
- * @param columnNames a list of column names of the excel sheet
- * @return a list of MiniappDetails objects that have been saved to the database
- */
-
-	public List&lt;MiniappDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
-<span class="nc" id="L194">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
-<span class="nc" id="L195">		List&lt;MiniappDetails&gt; miniappDetailss = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L196">		rowIterator.next();</span>
-<span class="nc bnc" id="L197" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
-<span class="nc" id="L198">			ExcelRow excelRow = rowIterator.next();</span>
-<span class="nc" id="L199">          	MiniappDetails miniappDetails = new MiniappDetails();</span>
-<span class="nc" id="L200">            int index = -1;</span>
-<span class="nc bnc" id="L201" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
-        	try {
-<span class="nc" id="L203">          		ExcelUtils.invokeSetter(miniappDetails, columnName, excelRow.getString(++index));</span>
-<span class="nc" id="L204">                } catch (InstantiationException e) {</span>
-<span class="nc" id="L205">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
-<span class="nc" id="L206">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L207">        } catch (ClassNotFoundException e) {</span>
-<span class="nc" id="L208">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L209">		}</span>
-<span class="nc" id="L210">	}</span>
-<span class="nc" id="L211">	miniappDetailss.add(miniappDetails);</span>
-<span class="nc" id="L212"> 	}</span>
-<span class="nc" id="L213">		return miniappDetailss;</span>
-	}  
-	
-/**
-* This method is responsible for soft-deleting an MiniappDetails  record in the database.
-* The method takes in an int id which represents the id of the MiniappDetails  that needs to be soft-deleted.
-* It uses the id to find the MiniappDetails by calling the MiniappDetailsRepository.findById method.
-* If the MiniappDetails  is found, it sets the &quot;deleted&quot; field to true, save the MiniappDetails  in the repository, and saves it in the database
-* @param id an int representing the id of the MiniappDetails  that needs to be soft-deleted
-*/
-	
-	@Override
-	public void softDelete(int id) {
-<span class="nc" id="L226">		Optional&lt;MiniappDetails&gt; miniappDetails = miniappDetailsRepository.findById(id);</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">		if (miniappDetails.isPresent()) {</span>
-<span class="nc" id="L228">			MiniappDetails miniappDetails1 = miniappDetails.get();</span>
-<span class="nc" id="L229">			miniappDetails1.setDeleted(true);</span>
-<span class="nc" id="L230">		    miniappDetailsRepository.save(miniappDetails1);</span>
+	// @Autowired 
+	// private IDocumentRest documentRest;   
+    
+	@Autowired 
+	private OrganisationRoleRepository organisationRoleRepository; 
+    
+	@Autowired 
+	private MiniAppPermissionsRepository miniAppPermissionsRepository;
+    
+	/**
+	* This method is used to export the given list of MiniappDetails objects into an excel file.
+	* It reads an excel template 'MiniappDetails.xlsx' from the resource folder 'templates/reports'
+	* and maps the MiniappDetails data onto the template and returns the generated excel file in the form of a byte array.
+	* param MiniappDetails - List of MiniappDetails objects to be exported
+	* @return byte[] - The generated excel file in the form of a byte array
+	* @throws IOException - When the template file is not found or there is an error reading the file
+	*/
+		@Override
+		public byte[] export(List&lt;MiniappDetails&gt; miniappDetails) throws IOException {
+<span class="nc" id="L94">			InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/MiniappDetails.xlsx&quot;);</span>
+<span class="nc" id="L95">			XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
+<span class="nc" id="L96">			int rowCount = 1;</span>
+<span class="nc" id="L97">			return setTableData(miniappDetails,xssfWorkbook, rowCount);</span>
 		}
-<span class="nc" id="L232">	}</span>
-	
-/**
-* This method is responsible for soft-deleting multiple MiniappDetails records in the database in bulk.
-* The method takes in a List of integers, each representing the id of an MiniappDetails that needs to be soft-deleted.
-* It iterates through the list, calling the softDelete method for each id passed in the list.
-* @param list a List of integers representing the ids of the MiniappDetails that need to be soft-deleted
-*/
 
-	@Override
-	public void softBulkDelete(List&lt;Integer&gt; list) {
-<span class="nc bnc" id="L243" title="All 2 branches missed.">		if (list != null) {</span>
-<span class="nc bnc" id="L244" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
-<span class="nc" id="L245">				softDelete(list.get(i));</span>
+	/**
+	 * This method is responsible for setting the data of an Excel document, using a template and a list of MiniappDetails objects.
+	 * The data is written to the template starting at the specified row number.
+	 * 
+	 * @param MiniappDetails a List of MiniappDetails objects, representing the data that will be written to the Excel document
+	 * @param templatePath an XSSFWorkbook object, representing the template Excel document that the data will be written to
+	 * @param rowCount an int, representing the starting row number where data will be written in the Excel document
+	 * @return a byte array of the Excel document after the data has been written to it.
+	 * @throws IOException if there is an issue reading or writing to the Excel document
+	 */
+	/**This method appears to take in three parameters:
+	A List of MiniappDetails objects, representing the data that will be written to the Excel document.
+	An XSSFWorkbook object, representing the template Excel document that the data will be written to.
+	An int, representing the starting row number where data will be written in the Excel document.
+	The method has a return type of byte array, which is the Excel document after the data has been written to it. The method also throws an IOException, which would be thrown if there is an issue reading or writing to the Excel document.
+	The method starts by creating some maps to hold data that will be used later:
+	tableColumn: a map that will hold the columns of the Excel table.
+	identityColumnMapping: a map that will hold the mapping of columns
+	templateHeaders: a map that will hold the headers of the excel template
+	then it calls ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders); to get the values for the maps created.
+	Then it creates an instance of ExcelWriter which will write the data to the workbook, it set the active sheet to the first sheet of the workbook and check if MiniappDetails list is not empty.
+	It then iterates over the list of MiniappDetails objects and for each MiniappDetails, it creates a new row in the Excel document at the specified row number.
+	It also retrieves the list of columns for the &quot;MiniappDetails&quot; entity from the tableColumn map, and iterates over the columns.
+	For each column, it attempts to retrieve the value for that column from the current MiniappDetails object using the ExcelUtils.invokeGetter method, passing in the current MiniappDetails object, the column name and the identityColumnMapping.
+	The value returned by this method is then set as the value of the cell in the current row and column.
+	If an introspection exception occur it will print the stacktrace of the exception
+	After all the data is written to the Excel document, the method returns the Excel document as a byte array using excelWriter.toByteArray() and log &quot;going to return file&quot;
+	* */
+
+		private byte[] setTableData(List&lt;MiniappDetails&gt;miniappDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
+<span class="nc" id="L130">			Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
+<span class="nc" id="L131">			String entity=ENTITY_NAME;</span>
+<span class="nc" id="L132">			Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
+<span class="nc" id="L133">			Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L134">			ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
+<span class="nc" id="L135">			log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
+<span class="nc" id="L136">			try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
+<span class="nc" id="L137">				excelWriter.getWorkbook().setActiveSheet(0);</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">				if (CollectionUtils.isNotEmpty(miniappDetails)) {</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">				for (MiniappDetails miniappDetailsDetails : miniappDetails) {</span>
+<span class="nc" id="L140">					ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
+<span class="nc" id="L141">					int index = 0;</span>
+<span class="nc" id="L142">					List&lt;String&gt; columns = tableColumn.get(entity);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">				for(String column:columns) {</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">					if(column!=null) {   </span>
+					try {
+<span class="nc" id="L146">						row.setCellValue(index, ExcelUtils.invokeGetter(miniappDetailsDetails,column,identityColumnMapping).toString());</span>
+<span class="nc" id="L147">					}catch (IntrospectionException e) {</span>
+<span class="nc" id="L148">						log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L149">					}</span>
+				}
+<span class="nc" id="L151">					++index;</span>
+<span class="nc" id="L152">				}</span>
+<span class="nc" id="L153">					rowCount++;</span>
+<span class="nc" id="L154">				}</span>
 			}
+<span class="nc" id="L156">			log.info(&quot;going to return file&quot;);</span>
+<span class="nc" id="L157">			return excelWriter.toByteArray();</span>
 		}
-<span class="nc" id="L248">	}</span>
+		}
 
+	/**
+	 * This method is responsible for importing data from an Excel file, specifically data related to MiniappDetails objects.
+	 * The method takes in a MultipartFile object, which represents the Excel file containing the data.
+	 * The method then validates the template headers in the Excel file and if they are valid, it saves the data to the database.
+	 *
+	 * @param excelFile a MultipartFile object representing the Excel file containing the data
+	 * @return a string indicating whether the data import was successful or not.
+	 * @throws IOException if there is an issue reading from the Excel file
+	 * @throws InstantiationException when there is issue with instantiation
+	 * @throws ClassNotFoundException when the class not found
+	 */
 
- /**
- * @param miniappDetails The miniappDetails  object to create.
- * @return The created vendor object.
- */
+		@Override
+		public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
+<span class="nc" id="L175">			List&lt;MiniappDetails&gt; miniappDetailss =new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L176">			Excel workBook = new Excel(excelFile.getInputStream());</span>
+<span class="nc" id="L177">			Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
+<span class="nc" id="L178">			Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
+<span class="nc" id="L179">			Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L180">			List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L181">			ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
+<span class="nc" id="L182">			displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
+<span class="nc" id="L183">			List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L184">			columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
+<span class="nc" id="L185">			boolean validateTableTemplateHeader =</span>
+<span class="nc" id="L186">			ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
+<span class="nc bnc" id="L187" title="All 2 branches missed.">			if (validateTableTemplateHeader) {</span>
+<span class="nc" id="L188">				log.info(&quot;columns and headers are validated&quot;);</span>
+
+<span class="nc" id="L190">				miniappDetailss = saveData(workBook, columnsMapping, columnNames);</span>
+			}
+			else {
+<span class="nc" id="L193">				log.info(&quot;columns and headers invalide&quot;);</span>
+			}
+<span class="nc bnc" id="L195" title="All 2 branches missed.">		if (CollectionUtils.isNotEmpty(miniappDetailss)) {</span>
+<span class="nc" id="L196">			miniappDetailsRepository.saveAll(miniappDetailss);</span>
+<span class="nc" id="L197">			return APIConstants.SUCCESS_JSON;</span>
+		}
+<span class="nc" id="L199">			return APIConstants.FAILURE_JSON;</span>
+		}
+
+	/**
+	 * This method is responsible for saving data to the database, specifically data related to MiniappDetails objects.
+	 * The method takes in an Excel object, which represents the sheet containing the data, a mapping of columns from the excel sheet to the MiniappDetails class, and a list of column names.
+	 * The method uses the iterator for the sheet to read data row by row, create new MiniappDetails objects, and set the properties of the MiniappDetails objects using the column mapping and column names.
+	 * The method returns a list of MiniappDetails objects that have been saved to the database.
+	 * @param sheet an Excel object representing the sheet containing the data
+	 * @param columnMapping a map representing the mapping of columns from the excel sheet to the MiniappDetails class
+	 * @param columnNames a list of column names of the excel sheet
+	 * @return a list of MiniappDetails objects that have been saved to the database
+	 */
+
+		public List&lt;MiniappDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
+<span class="nc" id="L214">			Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L215">			List&lt;MiniappDetails&gt; miniappDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L216">			rowIterator.next();</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">			while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L218">				ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L219">				MiniappDetails miniappDetails = new MiniappDetails();</span>
+<span class="nc" id="L220">				int index = -1;</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">			for (String columnName : columnNames) {</span>
+				try {
+<span class="nc" id="L223">					ExcelUtils.invokeSetter(miniappDetails, columnName, excelRow.getString(++index));</span>
+<span class="nc" id="L224">					} catch (InstantiationException e) {</span>
+<span class="nc" id="L225">				log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
+<span class="nc" id="L226">				log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L227">			} catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L228">			log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L229">			}</span>
+<span class="nc" id="L230">		}</span>
+<span class="nc" id="L231">		miniappDetailss.add(miniappDetails);</span>
+<span class="nc" id="L232">		}</span>
+<span class="nc" id="L233">			return miniappDetailss;</span>
+		}
+		
+	/**
+	* This method is responsible for soft-deleting an MiniappDetails  record in the database.
+	* The method takes in an int id which represents the id of the MiniappDetails  that needs to be soft-deleted.
+	* It uses the id to find the MiniappDetails by calling the MiniappDetailsRepository.findById method.
+	* If the MiniappDetails  is found, it sets the &quot;deleted&quot; field to true, save the MiniappDetails  in the repository, and saves it in the database
+	* @param id an int representing the id of the MiniappDetails  that needs to be soft-deleted
+	*/
+		
+		@Override
+		public void softDelete(int id) {
+<span class="nc" id="L246">			Optional&lt;MiniappDetails&gt; miniappDetails = miniappDetailsRepository.findById(id);</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">			if (miniappDetails.isPresent()) { </span>
+				
+<span class="nc" id="L249">				MiniappDetails miniappDetails1 = miniappDetails.get();</span>
+<span class="nc" id="L250">				miniappDetails1.setDeleted(true);</span>
+<span class="nc" id="L251">				miniappDetailsRepository.save(miniappDetails1);</span>
+			}
+<span class="nc" id="L253">		}</span>
+		
+	/**
+	* This method is responsible for soft-deleting multiple MiniappDetails records in the database in bulk.
+	* The method takes in a List of integers, each representing the id of an MiniappDetails that needs to be soft-deleted.
+	* It iterates through the list, calling the softDelete method for each id passed in the list.
+	* @param list a List of integers representing the ids of the MiniappDetails that need to be soft-deleted
+	*/
+
+		@Override
+		public void softBulkDelete(List&lt;Integer&gt; list) {
+<span class="nc bnc" id="L264" title="All 2 branches missed.">			if (list != null) {</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">				for (int i = 0; i &lt; list.size(); i++) {</span>
+<span class="nc" id="L266">					softDelete(list.get(i));</span>
+				}
+			}
+<span class="nc" id="L269">		}</span>
+
+	/**
+	 * @param miniappDetails The miniappDetails  object to create.
+	 * @return The created vendor object.
+	 */ 
+	
+		@Override 
+		public MiniappDetails create(MiniappDetails miniappDetails) {  	 
+<span class="nc" id="L278">        System.out.println(&quot;you are here for create the miniappDetails&quot;);</span>
+    //below code generate unique key from each create 			
+<span class="nc" id="L280">		String uniqueKey = generateUniqueKey();</span>
+<span class="nc" id="L281">		miniappDetails.setApplicationKey(uniqueKey); </span>
+
+<span class="nc" id="L283">		String orgRolesAsString = miniappDetails.getOrgRole();  </span>
+<span class="nc" id="L284">		String permissionsAsString = miniappDetails.getPermissions(); </span>
+	//below code for setting Set of Incidents from String
+		
+		//if(incidentAsString instanceof String)
+<span class="nc bnc" id="L288" title="All 6 branches missed.">		if(orgRolesAsString != null  &amp;&amp; orgRolesAsString instanceof String &amp;&amp; !orgRolesAsString.isEmpty()){   </span>
+			try {    
+<span class="nc" id="L290">			List&lt;Integer&gt; orgRolesIntegerList = Arrays.stream(orgRolesAsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L291">			.map(Integer::parseInt)</span>
+<span class="nc" id="L292">			.collect(Collectors.toList());</span>
+<span class="nc" id="L293">			List&lt;OrganisationRole&gt; orgRoles = organisationRoleRepository.findAllById(orgRolesIntegerList);</span>
+<span class="nc" id="L294">			miniappDetails.setOrganisationRoles(new HashSet&lt;&gt;(orgRoles));</span>
+<span class="nc" id="L295">			} catch (NoFormatIDException e) {</span>
+<span class="nc" id="L296">			log.error(&quot; MiniappDetailsSeviceImpl  1 create problem object {}&quot;, orgRolesAsString);</span>
+<span class="nc" id="L297">			e.printStackTrace();</span>
+<span class="nc" id="L298">			}</span>
+			}      
+	//below code for setting Set of ApplicaitionDetails from String
+		
+	//if(applicationAsString instanceof String) 
+
+<span class="nc bnc" id="L304" title="All 6 branches missed.">	if(permissionsAsString != null  &amp;&amp; permissionsAsString instanceof String &amp;&amp; !permissionsAsString.isEmpty()){  </span>
+		try {    
+<span class="nc" id="L306">		List&lt;Integer&gt; permissionsIntegerList = Arrays.stream(permissionsAsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L307">		.map(Integer::parseInt)</span>
+<span class="nc" id="L308">		.collect(Collectors.toList());</span>
+<span class="nc" id="L309">		List&lt;MiniAppPermissions&gt; permissions = miniAppPermissionsRepository.findAllById(permissionsIntegerList);</span>
+<span class="nc" id="L310">		miniappDetails.setMiniAppPermissions(new HashSet&lt;&gt;(permissions));</span>
+<span class="nc" id="L311">		} catch (NoFormatIDException e) {</span>
+<span class="nc" id="L312">		log.error(&quot; MiniappDetailsSeviceImpl 2 create problem object {}&quot;, permissionsAsString);</span>
+<span class="nc" id="L313">		e.printStackTrace();</span>
+<span class="nc" id="L314">		 }</span>
+		}  
+<span class="nc" id="L316">			MiniappDetails miniappDetails2 =  miniappDetailsRepository.save(miniappDetails);</span>
+			try {  
+            // List&lt;Document&gt;  documents = documentRest.getDocumentAllVersions(null);
+<span class="nc" id="L319">			documentIntegrationService.createFolderForEntity(&quot;MINIAPP_DETAILS&quot;, miniappDetails2.getId());</span>
+<span class="nc" id="L320">			} catch (Exception e) {</span>
+<span class="nc" id="L321">			e.printStackTrace();</span>
+<span class="nc" id="L322">			log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
+<span class="nc" id="L323">			}   </span>
+<span class="nc" id="L324">			return miniappDetails2;</span>
+		}	 
+
 	@Override
-	public MiniappDetails create(MiniappDetails miniappDetails) {  
+	public MiniappDetails update(MiniappDetails entity) {         
+<span class="nc" id="L329">		System.out.println(&quot;you are here for update the miniappDetails&quot;);</span>
+<span class="nc" id="L330">		String orgRolesAsString = entity.getOrgRole();  </span>
+<span class="nc" id="L331">		String permissionsAsString = entity.getPermissions(); </span>
+	//below code for setting Set of Incidents from String
+		
+		//if(incidentAsString instanceof String)
+<span class="nc bnc" id="L335" title="All 6 branches missed.">		if(orgRolesAsString != null  &amp;&amp; orgRolesAsString instanceof String &amp;&amp; !orgRolesAsString.isEmpty()){   </span>
+			try {    
+<span class="nc" id="L337">			List&lt;Integer&gt; orgRolesIntegerList = Arrays.stream(orgRolesAsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L338">			.map(Integer::parseInt)</span>
+<span class="nc" id="L339">			.collect(Collectors.toList());</span>
+<span class="nc" id="L340">			List&lt;OrganisationRole&gt; orgRoles = organisationRoleRepository.findAllById(orgRolesIntegerList);</span>
+<span class="nc" id="L341">			entity.setOrganisationRoles(new HashSet&lt;&gt;(orgRoles));</span>
+<span class="nc" id="L342">			} catch (NoFormatIDException e) {</span>
+<span class="nc" id="L343">			log.error(&quot; MiniappDetailsSeviceImpl  1 create problem object {}&quot;, orgRolesAsString);</span>
+<span class="nc" id="L344">			e.printStackTrace();</span>
+<span class="nc" id="L345">			}</span>
+			}       
+	//below code for setting Set of ApplicaitionDetails from String
+		
+	//if(applicationAsString instanceof String) 
 
-<span class="nc" id="L258">		MiniappDetails miniappDetails2 =  miniappDetailsRepository.save(miniappDetails);</span>
-		try {
-<span class="nc" id="L260">		  documentIntegrationService.createFolderForEntity(&quot;MINIAPP_DETAILS&quot;, miniappDetails2.getId());</span>
-<span class="nc" id="L261">		} catch (Exception e) {</span>
-<span class="nc" id="L262">		  e.printStackTrace();</span>
-<span class="nc" id="L263">		  log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
-<span class="nc" id="L264">		}   </span>
+<span class="nc bnc" id="L351" title="All 6 branches missed.">	if(permissionsAsString != null  &amp;&amp; permissionsAsString instanceof String &amp;&amp; !permissionsAsString.isEmpty()){  </span>
+		try {    
+<span class="nc" id="L353">		List&lt;Integer&gt; permissionsIntegerList = Arrays.stream(permissionsAsString.split(&quot;,&quot;))</span>
+<span class="nc" id="L354">		.map(Integer::parseInt)</span>
+<span class="nc" id="L355">		.collect(Collectors.toList());</span>
+<span class="nc" id="L356">		List&lt;MiniAppPermissions&gt; permissions = miniAppPermissionsRepository.findAllById(permissionsIntegerList);</span>
+<span class="nc" id="L357">		entity.setMiniAppPermissions(new HashSet&lt;&gt;(permissions));</span>
+<span class="nc" id="L358">		} catch (NoFormatIDException e) {</span>
+<span class="nc" id="L359">		log.error(&quot; MiniappDetailsSeviceImpl 2 create problem object {}&quot;, permissionsAsString);</span>
+<span class="nc" id="L360">		e.printStackTrace();</span>
+<span class="nc" id="L361">		}</span>
+		} 
+		
+<span class="nc" id="L364">	return super.update(entity);</span>
+	}  
 
-<span class="nc" id="L266">		return miniappDetails2;</span>
+	private String generateUniqueKey() {
+        // You can use UUID or any other method to generate a unique key
+<span class="nc" id="L369">        return UUID.randomUUID().toString();</span>
+     }
 	}
-
-}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

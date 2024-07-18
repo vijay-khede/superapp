@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.Parameter;
+
+import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.model.SourceCodeDetails;
 import com.enttribe.superapp.util.APIConstants;
   
@@ -109,5 +111,19 @@ public interface SourceCodeDetailsController {
   @Operation(summary = "To download the template ",  security = { @SecurityRequirement(name = APIConstants.DEFAULT_SCHEME, scopes = { "ROLE_API_MINIAPPDETAILS_READ"}) })
   @ApiResponse(responseCode = APIConstants.SUCCESS_CODE, description = APIConstants.SUCCESS_CODE_MSG)
   @GetMapping(path = "downloadTemplate", produces=MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  ResponseEntity<byte[]> downloadTemplate(@RequestParam(name ="fileName", required = true) String fileName) throws IOException;
+  ResponseEntity<byte[]> downloadTemplate(@RequestParam(name ="fileName", required = true) String fileName) throws IOException; 
+
+  // @Operation(summary = "To get compile response by role ID", security = {@SecurityRequirement(name = APIConstants.DEFAULT_SCHEME, scopes = {"ROLE_API_MINIAPPDETAILS_READ"})})
+  //   @ApiResponse(responseCode = APIConstants.SUCCESS_CODE, description = APIConstants.SUCCESS_CODE_MSG)
+  //   @GetMapping(path = "compileCode/{id}") 
+  //   String getCompileCode(@PathVariable("id") int id);  
+
+  @Operation(summary = "To get compile response by role ID", security = {@SecurityRequirement(name = APIConstants.DEFAULT_SCHEME, scopes = {"ROLE_API_MINIAPPDETAILS_READ"})})
+  @ApiResponse(responseCode = APIConstants.SUCCESS_CODE, description = APIConstants.SUCCESS_CODE_MSG)
+  @GetMapping(path = "compileCode/{id}")
+  String getCompileCode(@PathVariable("id") int id,
+                        @RequestParam(value = "runUpgrade", required = false, defaultValue = "false") boolean runUpgrade,
+                        @RequestParam(value = "runOutdated", required = false, defaultValue = "false") boolean runOutdated, 
+                        @RequestParam(value = "buildInfoId", required = false) Integer buildInfoId)throws IOException, InterruptedException;
+
 }

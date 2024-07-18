@@ -21,12 +21,15 @@ import java.util.Date;
 import java.util.Set;
 
 // @Audited
-@JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
+
+@JsonIgnoreProperties(value = {
+    &quot;hibernateLazyInitializer&quot;, &quot;handler&quot;,&quot;miniAppDetails&quot;
+})
 @Entity 
-<span class="nc" id="L26">@Setter</span>
+<span class="nc" id="L29">@Setter</span>
 @Getter 
-<span class="nc" id="L28">@NoArgsConstructor </span>
-<span class="nc" id="L29">@AllArgsConstructor</span>
+<span class="nc" id="L31">@NoArgsConstructor </span>
+<span class="nc" id="L32">@AllArgsConstructor</span>
 @Table(name = &quot;MINIAPP_PERMISSIONS&quot;)
 @Filters({
     @Filter(name = &quot;idEqFilter&quot;, condition = &quot;ID = :id&quot;),
@@ -95,34 +98,34 @@ import java.util.Set;
     @FilterDef(name = &quot;lastModifierNEqFilter&quot;, parameters = @ParamDef(name = &quot;lastModifier&quot;, type = Integer.class)),
     @FilterDef(name = &quot;lastModifierInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifiers&quot;, type = Integer.class)),
     @FilterDef(name = &quot;lastModifierNInFilter&quot;, parameters = @ParamDef(name = &quot;lastModifiers&quot;, type = Integer.class))
-})
+}) 
 public class MiniAppPermissions extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = &quot;ID&quot;)
-<span class="nc" id="L104">    private Integer id;</span>
+<span class="nc" id="L107">    private Integer id;</span>
 
     @NotNull
     @Size(max = 50)
     @Column(name = &quot;NAME&quot;)
-<span class="nc" id="L109">    private String name;</span>
+<span class="nc" id="L112">    private String name;</span>
 
     @Size(max = 255)
     @Column(name = &quot;DESCRIPTION&quot;)
-<span class="nc" id="L113">    private String description;</span>
+<span class="nc" id="L116">    private String description;</span>
 
-<span class="nc" id="L115">    @NotNull</span>
+<span class="nc" id="L118">    @NotNull</span>
     @Column(name = &quot;DELETED&quot;)
-<span class="nc" id="L117">    private Boolean deleted = false;</span>
+<span class="nc" id="L120">    private Boolean deleted = false;</span>
 
     @Column(name = &quot;CUSTOMER_ID&quot;)
-<span class="nc" id="L120">    private Integer customerId;  </span>
+<span class="nc" id="L123">    private Integer customerId;  </span>
 
     @JsonIgnoreProperties({&quot;miniAppPermissions&quot;,&quot;miniAppDetails&quot;})
     @Basic   
     @ManyToMany(mappedBy = &quot;miniAppPermissions&quot;,fetch = FetchType.EAGER)
-<span class="nc" id="L125">    private Set&lt;MiniappDetails&gt; miniAppDetails; </span>
+<span class="nc" id="L128">    private Set&lt;MiniappDetails&gt; miniAppDetails; </span>
    
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

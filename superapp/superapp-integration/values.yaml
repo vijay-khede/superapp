@@ -1,0 +1,167 @@
+# Default values for ecommerce-utility.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+#~ sidecar:
+  #~ Name: melody-service
+  #~ image:
+   #~ repository: visionwaves/melody-service
+   #~ tag: 1.0.1
+   #~ pullPolicy: Always
+  #~ ports:
+   #~ containerPort: 9096
+image:
+#  registry: 192.170.10.40
+#  repository: {{ .Values.image.registry }}/bootnext/app-service
+  repository: registry.visionwaves.com/superapp-integration
+  tag: "1.4"
+  pullPolicy: Always
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "superapp-integration-service-sa"
+  imagePullSecrets:
+  - name: visionwaves-reg-cred   
+
+rollingUpdate:
+  maxSurge: 50%
+  maxUnavailable: 0%
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/path: /superapp-integration/actuator/prometheus
+  prometheus.io/scheme: http
+  prometheus.io/port: "9019"
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  port: 80
+  targetPort: 8081
+  type: ClusterIP
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+virtualService:
+  enabled: false
+  context: /superapp-integration
+  hosts: "*" 
+  gateways: fs-gateway
+
+# Resource limit availble on node
+resourcesLimits:
+  cpu: 500m
+  memory: 2G
+# Resoucr Requested for container
+requestsResources:
+  cpu: 500m
+  memory: 2G
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
+  targetMemoryUtilizationPercentage: 75
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+#Pod_Affinity:
+#   enabled: true
+ #  app_name: app-test
+ #  type: app 
+
+#READYNESS
+
+livenessProbe:
+  enable: false
+  path: /superapp-integration/rest/ping
+  initialDelaySeconds: 60
+  periodSeconds: 20
+  failureThreshold: 3
+  timeoutSeconds: 3
+
+readinessProbe:
+  enable: false
+  path: /superapp-integration/rest/ping
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 3
+
+ports:
+  containerPort: 8081
+
+
+## FOR VOLUME MOUNTS
+
+volumeMounts:
+  protectedPath: /protected
+  sharedPath: /data/report
+  hadoopPath: /usr/hdp/current/hadoop-client/conf
+  hbasePath: /usr/hdp/current/hbase-client/conf
+  appServerBuild: /opt/bootnext/fiberneo-build/
+
+##FOR VOLUMES
+nfs:
+   hostpath: false
+   asServer: false
+volumeName:
+  sharedDir1: shared-vol1
+  #sharedDir2: shared-vol2
+volumes:
+  nfsServerUrl: a023fe10a824e465190cdc133fcfbc1d-527767393.ap-south-1.elb.amazonaws.com
+  nfsServerPath: /cluster-nfs/protected
+  nfsProtectedPath: /cluster-nfs/protected
+
+
+## 
+configMap:
+  defaultMode: 0755
+## FOR ENV
+
+env:
+    mysqlUrl: "c7QmxuSAAKDJAWQc8bw00w==:K3b5WwGVKjKHUD3RK8qUYw==:HUOy4Lzwz36oMW6U7xiQeABv3T/bNizf1UijKsyfMVxe70CQJpifvLFBs1b7FmFOZBPypbuMkohfEUxi1UXEWMNiN6ADeubJFEaDPLXCrSk++zyhrJ3ZvVF4MgT33ftLgjIQI7o0jR72VQo81IB5RO5tb9bJjlqg8FkNTELqRprj0+L5jXZhzCoIo29cQhJkRFLpoMRso3tDIQ89OLQ2TY4O68y5je23iWZ+d8mLXPWG72xlqabaf72ZWU0zkgkizX0W74vCcYfT57fbfUUgOjrxTqGPMDhiApgUqO4s45Y="
+    minioUrl: "http://seaweedfs-s3.swf.svc.cluster.local:8333"
+    minioUser: "bootadmin"
+    minioPass: "bootadmin"
+
+collectServer:
+  register: false
+  postStartScript: "/protected/ops-script/postStart.sh"
+  preStopEnable: false
+  preStopScript: "/protected/ops-script/Pre-Stop.sh"

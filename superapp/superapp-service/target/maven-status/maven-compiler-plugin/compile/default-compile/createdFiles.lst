@@ -11,6 +11,7 @@ com/enttribe/superapp/service/BuildInfoService.class
 com/enttribe/superapp/service/impl/MiniappBuildDetailsServiceImpl.class
 com/enttribe/superapp/service/impl/UserSpaceServiceImpl.class
 com/enttribe/superapp/service/BuildLogInfoService.class
+com/enttribe/superapp/service/impl/QueueResponse.class
 com/enttribe/superapp/controller/impl/HostingDetailsControllerImpl.class
 com/enttribe/superapp/controller/impl/package-info.class
 com/enttribe/superapp/controller/impl/SourceCodeDetailsControllerImpl.class
@@ -46,6 +47,8 @@ com/enttribe/superapp/integration/service/impl/package-info.class
 com/enttribe/superapp/integration/service/impl/DocumentIntegrationServiceImpl.class
 com/enttribe/superapp/repository/BuildInfoRepository.class
 com/enttribe/superapp/controller/impl/MiniappBuildDetailsControllerImpl.class
+com/enttribe/superapp/service/impl/TriggerResponse.class
+com/enttribe/superapp/service/impl/QueueResponse$Executable.class
 com/enttribe/superapp/service/MiniAppPermissionsService.class
 com/enttribe/superapp/integration/service/package-info.class
 com/enttribe/superapp/repository/HostingDetailsRepository.class

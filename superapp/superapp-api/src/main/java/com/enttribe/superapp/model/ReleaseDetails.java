@@ -1,5 +1,4 @@
-package com.enttribe.superapp.model;
-
+package com.enttribe.superapp.model; 
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -14,21 +13,21 @@ import jakarta.validation.constraints.NotNull;
 @JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
 @Entity
 @Setter
-@Getter 
-@NoArgsConstructor 
+@Getter
+@NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "RELEASE_DETAILS")
+@Table(name = "RELEASE_DETAILS")    
 public class ReleaseDetails  extends BaseEntity { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RELEASE_ID", columnDefinition = "INT")
-    private Integer releaseId;
-
+    @Column(name = "ID", columnDefinition = "INT")
+    private Integer id;
+    
     @Size(max = 50)
     @Column(name = "ENVIRONMENT", length = 50)
     private String environment;
-
+ 
     @Size(max = 255)
     @Column(name = "HOST_PATH", length = 255)
     private String hostPath;
@@ -40,12 +39,27 @@ public class ReleaseDetails  extends BaseEntity {
     @Column(name = "RELEASE_NOTE", columnDefinition = "TEXT")
     private String releaseNote;
 
+    
+    @Column(name = "REMARK", columnDefinition = "TEXT")
+    private String remark;
+    
+    @Column(name = "PIPELINE_BUILD_ID", columnDefinition = "INT")
+    private Integer pipelineBuildId;
+    
+    @Size(max = 255)
+    @Column(name = "BUILD_URL", length = 255)
+    private String buildUrl;
+
+    @Size(max = 30)
+    @Column(name = "RELEASE_TYPE", length = 30)
+    private String releasetype;
+    
     @Column(name = "STATUS", columnDefinition = "ENUM('PENDING','RELEASED','ROLLED_BACK')")
     private String status = "PENDING";
 
     @Column(name = "RELEASE_DATE", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Date releaseDate;
-
+    
     @NotNull
     @Column(name = "DELETED", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
@@ -58,7 +72,10 @@ public class ReleaseDetails  extends BaseEntity {
     private MiniappDetails miniAppDetails;
  
     @NotNull
-    @ManyToOne 
+    @ManyToOne  
     @JoinColumn(name = "BUILD_NUMBER", referencedColumnName = "BUILD_NUMBER", columnDefinition = "INT")
-    private BuildInfo buildInfo;
+    private BuildInfo buildInfo; 
+
 }
+
+

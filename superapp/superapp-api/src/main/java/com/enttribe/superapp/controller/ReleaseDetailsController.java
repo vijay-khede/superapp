@@ -1,5 +1,8 @@
 package com.enttribe.superapp.controller;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import jakarta.validation.Valid; 
@@ -17,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.PathVariable;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameter; 
 import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.util.APIConstants;
 
@@ -115,7 +118,12 @@ public interface ReleaseDetailsController {
   @Operation(summary = "To get released mini-apps by role ID", security = {@SecurityRequirement(name = APIConstants.DEFAULT_SCHEME, scopes = {"ROLE_API_HOSTINGDETAILS_READ"})})
     @ApiResponse(responseCode = APIConstants.SUCCESS_CODE, description = APIConstants.SUCCESS_CODE_MSG)
     @GetMapping(path = "releasedByRole/{roleId}") 
-    List<ReleaseDetails> getReleasedByRole(@PathVariable("roleId") int roleId);
+    List<ReleaseDetails> getReleasedByRole(@PathVariable("roleId") int roleId); 
+
+    @Operation(summary = "To get pipeLine response by ID", security = {@SecurityRequirement(name = APIConstants.DEFAULT_SCHEME, scopes = {"ROLE_API_HOSTINGDETAILS_READ"})})
+    @ApiResponse(responseCode = APIConstants.SUCCESS_CODE, description = APIConstants.SUCCESS_CODE_MSG)
+    @GetMapping(path = "triggerPipeLine/{id}")
+    ReleaseDetails getTriggerPipeLine(@PathVariable("id") int id) throws IOException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException ;
   
 }
 

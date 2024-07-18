@@ -1,8 +1,12 @@
 package com.enttribe.superapp.service.generic;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -18,9 +22,15 @@ import com.enttribe.product.security.spring.userdetails.CustomerInfo;
 import com.enttribe.core.generic.utils.ApplicationContextProvider;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.enttribe.superapp.model.MiniAppPermissions;
+import com.enttribe.superapp.model.MiniappDetails;
+import com.enttribe.superapp.model.OrganisationRole;
+import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.repository.generic.GenericRepository;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
+
+import org.apache.poi.hpsf.NoFormatIDException;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -74,7 +84,7 @@ public abstract class AbstractService<T> implements GenericService<T> {
  * @return The updated entity with any changes made by the repository (such as auto-generated fields)
  */
  	@Override
-	public T update(T entity) {
+	public T update(T entity) {  
   	   return repository.saveAndFlush(entity);
 	}
 
@@ -199,6 +209,11 @@ public abstract class AbstractService<T> implements GenericService<T> {
 		criteria.where(predicate);
 		criteria.select(entityManager.getCriteriaBuilder().countDistinct(root));
 		return entityManager.createQuery(criteria).getSingleResult();
-	}
+	} 
+
+
+
+
+	
 
 }

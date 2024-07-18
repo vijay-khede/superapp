@@ -94,10 +94,11 @@ public class BuildLogInfo extends BaseEntity {
     @Column(name="ID")
     private Integer id;
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = "BUILD_NUMBER", referencedColumnName = "BUILD_NUMBER")
-    private BuildInfo buildInfo;
+    // @NotNull 
+    // @OneToOne(cascade = CascadeType.ALL)  
+    // @JsonIgnoreProperties({"buildLogInfo"})
+    // @JoinColumn(name = "BUILD_NUMBER", referencedColumnName = "BUILD_NUMBER")
+    // private BuildInfo buildInfo;    
 
     @Column(name="LOG")
     private String log;

@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Optional;
 import com.enttribe.commons.io.excel.ExcelWriter;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.checkerframework.checker.units.qual.m;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.enttribe.commons.spring.rest.ResponseBuilder;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -20,9 +25,24 @@ import com.enttribe.product.audit.utils.Auditable;
 import org.hibernate.envers.Audited;
 import lombok.extern.slf4j.Slf4j;
 import com.enttribe.superapp.controller.SourceCodeDetailsController;
+import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.model.SourceCodeDetails;
 import com.enttribe.superapp.service.SourceCodeDetailsService;
-import com.enttribe.platform.customannotation.annotation.GenericAnnotation;
+import com.enttribe.platform.customannotation.annotation.GenericAnnotation; 
+
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController; 
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.io.IOException;
+
 /**
 *
 This class represents the implementation of the SourceCodeDetailsController interface. It is annotated with
@@ -132,5 +152,18 @@ public class SourceCodeDetailsControllerImpl implements SourceCodeDetailsControl
 	public String auditHistory(int id, Integer limit, Integer skip) {
 		return sourceCodeDetailsService.auditHistory(id,limit,skip);
 	}
+
+	//   @Override
+    //   public String getCompileCode(@PathVariable("id") int id) {
+    //      return sourceCodeDetailsService.complileCode(id);
+    // } 
+
+	@Override
+     public String getCompileCode(@PathVariable("id") int id,
+                             @RequestParam(value = "runUpgrade", required = false, defaultValue = "false") boolean runUpgrade,
+                             @RequestParam(value = "runOutdated", required = false, defaultValue = "false") boolean runOutdated, 
+							 @RequestParam(value = "buildInfoId", required = false) Integer buildInfoId)throws IOException, InterruptedException { 
+              return sourceCodeDetailsService.complileCode(id, runUpgrade, runOutdated,buildInfoId);
+}
 
 }

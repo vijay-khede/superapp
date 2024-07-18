@@ -199,6 +199,72 @@ spec:
           volumeMounts:
           - name: {{ .Values.volumeName.sharedDir1 }}
             mountPath: {{ .Values.volumeMounts.protectedPath }}
-
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: [ "sh","-c", "/home/developer/entrypoint.sh"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.containerPort }}
+              protocol: TCP
+          {{- if .Values.readinessProbe.enable }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.readinessProbe.path }}
+              port: {{ .Values.ports.containerPort }}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.livenessProbe.enable }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.livenessProbe.path }}
+              port: {{ .Values.ports.containerPort }}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          resources:
+            limits:
+              cpu: {{ .Values.resourcesLimits.cpu }}
+              memory: {{ .Values.resourcesLimits.memory }}
+            requests:
+              cpu: {{ .Values.requestsResources.cpu }}
+              memory: {{ .Values.requestsResources.memory }}
+           
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+          env:
+          - name: MINIO_URL
+            value: {{ .Values.env.minioUrl}}
+          - name: MINIO_USER
+            value: {{ .Values.env.minioUser}}
+          - name: MINIO_PASS
+            value: {{ .Values.env.minioPass}}
+          {{- if .Values.collectServer.register }}
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash","{{ .Values.collectServer.postStartScript }}"]
+            {{- if .Values.collectServer.preStopEnable }}
+            preStop:
+              exec:
+                command: ["/bin/bash","{{ .Values.collectServer.preStopScript }}"]
+            {{- end }}
+          {{- end }}
       volumes:
       - name: shared-vol1

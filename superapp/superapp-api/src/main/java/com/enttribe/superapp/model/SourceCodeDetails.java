@@ -149,11 +149,15 @@ public class SourceCodeDetails extends BaseEntity {
     private String sourceCodePath;
 
     @Size(max = 255)
+    @Column(name = "SOURCE_CODE_MINIO_PATH", length = 255)
+    private String sourceCodeMinioPath;
+
+    @Size(max = 255)
     @Column(name = "SOURCE_CODE_URL", length = 255)
     private String sourceCodeUrl;
 
     @Basic
-    @Column(name = "STATUS", columnDefinition = "ENUM('NEW','PASS','FAIL')")
+    @Column(name = "STATUS", columnDefinition = "ENUM('NEW','PASS','FAIL','EXTRACT_CODE','INSTALL_DEPENDENCIES','BUILD','COMPILED')")
     private String status; 
 
     @Size(max = 15)

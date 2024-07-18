@@ -2,18 +2,31 @@
 
 import org.springframework.stereotype.Service;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.poi.hpsf.NoFormatIDException;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import com.enttribe.commons.io.excel.Excel;
 import com.enttribe.commons.io.excel.ExcelRow;
 import com.enttribe.commons.io.excel.ExcelWriter;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.enttribe.core.generic.utils.ConfigUtil;
+import com.enttribe.orchestrator.dto.MessageIntegrationWrapper;
+import com.enttribe.orchestrator.dto.MessageIntegrationWrapper.Event;
+import com.enttribe.orchestrator.utility.controller.WorkflowActionsController;
 
 import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,342 +35,721 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.enttribe.superapp.repository.ReleaseDetailsRepository;
+import com.enttribe.superapp.integration.service.DocumentIntegrationService;
+import com.enttribe.superapp.model.MiniAppPermissions;
+import com.enttribe.superapp.model.MiniappDetails;
+import com.enttribe.superapp.model.OrganisationRole;
 import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.repository.generic.GenericRepository;
 import com.enttribe.superapp.service.ReleaseDetailsService;
 import com.enttribe.superapp.service.generic.AbstractService;
 import com.enttribe.superapp.util.APIConstants;
 import com.enttribe.superapp.util.report.ExcelUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.NameValuePair;
+import org.apache.http.util.EntityUtils;
+
+import org.apache.http.ssl.SSLContexts;
+import javax.net.ssl.*; 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 /**
-*
-This is a class named &quot;ReleaseDetailsServiceImpl&quot; which is located in the package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an implementation of the &quot;ReleaseDetailsService&quot; interface and it extends the &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD operations for entities. This class is annotated with @Service, indicating that it is a Spring Service bean.
-This class is using Lombok's @Slf4j annotation which will automatically generate an Slf4j based logger instance, so it is using the Slf4j API for logging.
-The class has a constructor which takes a single parameter of GenericRepository ReleaseDetails and is used to call the superclass's constructor.
-This class have one public method public byte[] export(List of ReleaseDetails  ReleaseDetails) for exporting the ReleaseDetails data into excel file by reading the template and mapping the ReleaseDetails details into it.
-It's using Apache POI library for reading and writing excel files, and has methods for parsing the json files for column names and identities , and it also used 'ExcelUtils' for handling the excel operations.
-It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils' and 'APIConstants' from 'com.enttribe.superapp.util'
-*
-* */
+ *
+ * This is a class named &quot;ReleaseDetailsServiceImpl&quot; which is located in the
+ * package &quot; com.enttribe.superapp.service.impl&quot;, It appears to be an
+ * implementation of the &quot;ReleaseDetailsService&quot; interface and it extends the
+ * &quot;AbstractService&quot; class, which seems to be a generic class for handling CRUD
+ * operations for entities. This class is annotated with @Service, indicating
+ * that it is a Spring Service bean.
+ * This class is using Lombok's @Slf4j annotation which will automatically
+ * generate an Slf4j based logger instance, so it is using the Slf4j API for
+ * logging.
+ * The class has a constructor which takes a single parameter of
+ * GenericRepository ReleaseDetails and is used to call the superclass's
+ * constructor.
+ * This class have one public method public byte[] export(List of ReleaseDetails
+ * ReleaseDetails) for exporting the ReleaseDetails data into excel file by
+ * reading the template and mapping the ReleaseDetails details into it.
+ * It's using Apache POI library for reading and writing excel files, and has
+ * methods for parsing the json files for column names and identities , and it
+ * also used 'ExcelUtils' for handling the excel operations.
+ * It also uses 'ApplicationContextProvider' from
+ * 'com.enttribe.core.generic.utils' and 'APIConstants' from
+ * 'com.enttribe.superapp.util'
+ *
+ */
 
 @Service
-<span class="nc" id="L44">@Slf4j</span>
+<span class="nc" id="L97">@Slf4j</span>
 public class ReleaseDetailsServiceImpl extends AbstractService&lt;ReleaseDetails&gt; implements ReleaseDetailsService {
 
-/**
-* @param repository The GenericRepository used to perform CRUD operations for ReleaseDetails entities.
-*/
+	/**
+	 * @param repository The GenericRepository used to perform CRUD operations for
+	 *                   ReleaseDetails entities.
+	 */
 	public ReleaseDetailsServiceImpl(GenericRepository&lt;ReleaseDetails&gt; repository) {
-<span class="nc" id="L51">		super(repository,ReleaseDetails.class);</span>
-<span class="nc" id="L52">	}</span>
-	
-	private static final String ENTITY_NAME = &quot;ReleaseDetails&quot;; 
-	
+<span class="nc" id="L105">		super(repository, ReleaseDetails.class);</span>
+<span class="nc" id="L106">	}</span>
+
+	private static final String ENTITY_NAME = &quot;ReleaseDetails&quot;;
+
 	@Autowired
 	private ReleaseDetailsRepository releaseDetailsRepository;
-	
-/**
-* This method is used to export the given list of ReleaseDetails objects into an excel file.
-* It reads an excel template 'ReleaseDetails.xlsx' from the resource folder 'templates/reports'
-* and maps the ReleaseDetails data onto the template and returns the generated excel file in the form of a byte array.
-* param ReleaseDetails - List of ReleaseDetails objects to be exported
-* @return byte[] - The generated excel file in the form of a byte array
-* @throws IOException - When the template file is not found or there is an error reading the file
-*/
+
+	/**
+	 * This method is used to export the given list of ReleaseDetails objects into
+	 * an excel file.
+	 * It reads an excel template 'ReleaseDetails.xlsx' from the resource folder
+	 * 'templates/reports'
+	 * and maps the ReleaseDetails data onto the template and returns the generated
+	 * excel file in the form of a byte array.
+	 * param ReleaseDetails - List of ReleaseDetails objects to be exported
+	 * 
+	 * @return byte[] - The generated excel file in the form of a byte array
+	 * @throws IOException - When the template file is not found or there is an
+	 *                     error reading the file
+	 */ 
+     
 	@Override
 	public byte[] export(List&lt;ReleaseDetails&gt; releaseDetails) throws IOException {
-<span class="nc" id="L69">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/ReleaseDetails.xlsx&quot;);</span>
-<span class="nc" id="L70">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
-<span class="nc" id="L71">		int rowCount = 1;</span>
-<span class="nc" id="L72">		return setTableData(releaseDetails,xssfWorkbook, rowCount);</span>
+<span class="nc" id="L129">		InputStream resourceAsStream = this.getClass().getClassLoader()</span>
+<span class="nc" id="L130">				.getResourceAsStream(&quot;templates/reports/ReleaseDetails.xlsx&quot;);</span>
+<span class="nc" id="L131">		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream);</span>
+<span class="nc" id="L132">		int rowCount = 1;</span>
+<span class="nc" id="L133">		return setTableData(releaseDetails, xssfWorkbook, rowCount);</span>
 	}
 
-/**
- * This method is responsible for setting the data of an Excel document, using a template and a list of ReleaseDetails objects.
- * The data is written to the template starting at the specified row number.
- * 
- * @param ReleaseDetails a List of ReleaseDetails objects, representing the data that will be written to the Excel document
- * @param templatePath an XSSFWorkbook object, representing the template Excel document that the data will be written to
- * @param rowCount an int, representing the starting row number where data will be written in the Excel document
- * @return a byte array of the Excel document after the data has been written to it.
- * @throws IOException if there is an issue reading or writing to the Excel document
- */ 
+	/**
+	 * This method is responsible for setting the data of an Excel document, using a
+	 * template and a list of ReleaseDetails objects.
+	 * The data is written to the template starting at the specified row number.
+	 * 
+	 * @param ReleaseDetails a List of ReleaseDetails objects, representing the data
+	 *                       that will be written to the Excel document
+	 * @param templatePath   an XSSFWorkbook object, representing the template Excel
+	 *                       document that the data will be written to
+	 * @param rowCount       an int, representing the starting row number where data
+	 *                       will be written in the Excel document
+	 * @return a byte array of the Excel document after the data has been written to
+	 *         it.
+	 * @throws IOException if there is an issue reading or writing to the Excel
+	 *                     document
+	 */
 
-/**This method appears to take in three parameters:
-A List of ReleaseDetails objects, representing the data that will be written to the Excel document.
-An XSSFWorkbook object, representing the template Excel document that the data will be written to.
-An int, representing the starting row number where data will be written in the Excel document.
-The method has a return type of byte array, which is the Excel document after the data has been written to it. The method also throws an IOException, which would be thrown if there is an issue reading or writing to the Excel document.
-The method starts by creating some maps to hold data that will be used later:
-tableColumn: a map that will hold the columns of the Excel table.
-identityColumnMapping: a map that will hold the mapping of columns
-templateHeaders: a map that will hold the headers of the excel template
-then it calls ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders); to get the values for the maps created.
-Then it creates an instance of ExcelWriter which will write the data to the workbook, it set the active sheet to the first sheet of the workbook and check if ReleaseDetails list is not empty.
-It then iterates over the list of ReleaseDetails objects and for each ReleaseDetails, it creates a new row in the Excel document at the specified row number.
-It also retrieves the list of columns for the &quot;ReleaseDetails&quot; entity from the tableColumn map, and iterates over the columns.
-For each column, it attempts to retrieve the value for that column from the current ReleaseDetails object using the ExcelUtils.invokeGetter method, passing in the current ReleaseDetails object, the column name and the identityColumnMapping.
-The value returned by this method is then set as the value of the cell in the current row and column.
-If an introspection exception occur it will print the stacktrace of the exception
-After all the data is written to the Excel document, the method returns the Excel document as a byte array using excelWriter.toByteArray() and log &quot;going to return file&quot;
-* */
+	/**
+	 * This method appears to take in three parameters:
+	 * A List of ReleaseDetails objects, representing the data that will be written
+	 * to the Excel document.
+	 * An XSSFWorkbook object, representing the template Excel document that the
+	 * data will be written to.
+	 * An int, representing the starting row number where data will be written in
+	 * the Excel document.
+	 * The method has a return type of byte array, which is the Excel document after
+	 * the data has been written to it. The method also throws an IOException, which
+	 * would be thrown if there is an issue reading or writing to the Excel
+	 * document.
+	 * The method starts by creating some maps to hold data that will be used later:
+	 * tableColumn: a map that will hold the columns of the Excel table.
+	 * identityColumnMapping: a map that will hold the mapping of columns
+	 * templateHeaders: a map that will hold the headers of the excel template
+	 * then it calls
+	 * ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);
+	 * to get the values for the maps created.
+	 * Then it creates an instance of ExcelWriter which will write the data to the
+	 * workbook, it set the active sheet to the first sheet of the workbook and
+	 * check if ReleaseDetails list is not empty.
+	 * It then iterates over the list of ReleaseDetails objects and for each
+	 * ReleaseDetails, it creates a new row in the Excel document at the specified
+	 * row number.
+	 * It also retrieves the list of columns for the &quot;ReleaseDetails&quot; entity from
+	 * the tableColumn map, and iterates over the columns.
+	 * For each column, it attempts to retrieve the value for that column from the
+	 * current ReleaseDetails object using the ExcelUtils.invokeGetter method,
+	 * passing in the current ReleaseDetails object, the column name and the
+	 * identityColumnMapping.
+	 * The value returned by this method is then set as the value of the cell in the
+	 * current row and column.
+	 * If an introspection exception occur it will print the stacktrace of the
+	 * exception
+	 * After all the data is written to the Excel document, the method returns the
+	 * Excel document as a byte array using excelWriter.toByteArray() and log &quot;going
+	 * to return file&quot;
+	 */	
 
-	private byte[] setTableData(List&lt;ReleaseDetails&gt;releaseDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
-<span class="nc" id="L106">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
-<span class="nc" id="L107">		String entity=ENTITY_NAME;</span>
-<span class="nc" id="L108">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
-<span class="nc" id="L109">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L110">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
-<span class="nc" id="L111">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
-<span class="nc" id="L112">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
-<span class="nc" id="L113">			excelWriter.getWorkbook().setActiveSheet(0);</span>
-<span class="nc bnc" id="L114" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(releaseDetails)) {</span>
-<span class="nc bnc" id="L115" title="All 2 branches missed.">			for (ReleaseDetails releaseDetailsDetails : releaseDetails) {</span>
-<span class="nc" id="L116">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
-<span class="nc" id="L117">				int index = 0;</span>
-<span class="nc" id="L118">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
-<span class="nc bnc" id="L119" title="All 2 branches missed."> 			for(String column:columns) {</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">				if(column!=null) {   </span>
-				try {
-<span class="nc" id="L122">					row.setCellValue(index, ExcelUtils.invokeGetter(releaseDetailsDetails,column,identityColumnMapping).toString());</span>
-<span class="nc" id="L123">				}catch (IntrospectionException e) {</span>
-<span class="nc" id="L124">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L125">                }</span>
-              }
-<span class="nc" id="L127">             	 ++index;</span>
-<span class="nc" id="L128">             }</span>
-<span class="nc" id="L129">            	rowCount++;</span>
-<span class="nc" id="L130">            }</span>
-        }
-<span class="nc" id="L132">		log.info(&quot;going to return file&quot;);</span>
-<span class="nc" id="L133">        return excelWriter.toByteArray();</span>
-	  }
+	private byte[] setTableData(List&lt;ReleaseDetails&gt; releaseDetails, XSSFWorkbook templatePath, int rowCount)
+			throws IOException {
+<span class="nc" id="L195">		Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L196">		String entity = ENTITY_NAME;</span>
+<span class="nc" id="L197">		Map&lt;String, String&gt; identityColumnMapping = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L198">		Map&lt;String, List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L199">		ExcelUtils.parseMappeddJson(tableColumn, identityColumnMapping, templateHeaders);</span>
+<span class="nc" id="L200">		log.info(&quot;table column map is :{}&quot;, tableColumn);</span>
+<span class="nc" id="L201">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
+<span class="nc" id="L202">			excelWriter.getWorkbook().setActiveSheet(0);</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(releaseDetails)) {</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">				for (ReleaseDetails releaseDetailsDetails : releaseDetails) {</span>
+<span class="nc" id="L205">					ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
+<span class="nc" id="L206">					int index = 0;</span>
+<span class="nc" id="L207">					List&lt;String&gt; columns = tableColumn.get(entity);</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">					for (String column : columns) {</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">						if (column != null) {</span>
+							try {
+<span class="nc" id="L211">								row.setCellValue(index, ExcelUtils</span>
+<span class="nc" id="L212">										.invokeGetter(releaseDetailsDetails, column, identityColumnMapping).toString());</span>
+<span class="nc" id="L213">							} catch (IntrospectionException e) {</span>
+<span class="nc" id="L214">								log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L215">							}</span>
+						}
+<span class="nc" id="L217">						++index;</span>
+<span class="nc" id="L218">					}</span>
+<span class="nc" id="L219">					rowCount++;</span>
+<span class="nc" id="L220">				}</span>
+			}
+<span class="nc" id="L222">			log.info(&quot;going to return file&quot;);</span>
+<span class="nc" id="L223">			return excelWriter.toByteArray();</span>
+		}
 	}
 
-/**
- * This method is responsible for importing data from an Excel file, specifically data related to ReleaseDetails objects.
- * The method takes in a MultipartFile object, which represents the Excel file containing the data.
- * The method then validates the template headers in the Excel file and if they are valid, it saves the data to the database.
- *
- * @param excelFile a MultipartFile object representing the Excel file containing the data
- * @return a string indicating whether the data import was successful or not.
- * @throws IOException if there is an issue reading from the Excel file
- * @throws InstantiationException when there is issue with instantiation
- * @throws ClassNotFoundException when the class not found
- */
- 
+	/**
+	 * This method is responsible for importing data from an Excel file,
+	 * specifically data related to ReleaseDetails objects.
+	 * The method takes in a MultipartFile object, which represents the Excel file
+	 * containing the data.
+	 * The method then validates the template headers in the Excel file and if they
+	 * are valid, it saves the data to the database.
+	 *
+	 * @param excelFile a MultipartFile object representing the Excel file
+	 *                  containing the data
+	 * @return a string indicating whether the data import was successful or not.
+	 * @throws IOException            if there is an issue reading from the Excel
+	 *                                file
+	 * @throws InstantiationException when there is issue with instantiation
+	 * @throws ClassNotFoundException when the class not found
+	 */
+
 	@Override
-	public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
-<span class="nc" id="L151">		List&lt;ReleaseDetails&gt; releaseDetailss =new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L152">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
-<span class="nc" id="L153">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
-<span class="nc" id="L154">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
-<span class="nc" id="L155">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L156">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L157">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
-<span class="nc" id="L158">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
-<span class="nc" id="L159">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L160">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
-<span class="nc" id="L161">      	boolean validateTableTemplateHeader =</span>
-<span class="nc" id="L162">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
-<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
-<span class="nc" id="L164">        	log.info(&quot;columns and headers are validated&quot;);</span>
-<span class="nc" id="L165">        	releaseDetailss = saveData(workBook, columnsMapping, columnNames);</span>
-      	}
-    	else {
-<span class="nc" id="L168">      		log.info(&quot;columns and headers invalide&quot;);</span>
-      	}
-<span class="nc bnc" id="L170" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(releaseDetailss)) {</span>
-<span class="nc" id="L171">		releaseDetailsRepository.saveAll(releaseDetailss);</span>
-<span class="nc" id="L172">		return APIConstants.SUCCESS_JSON;</span>
-	}
-<span class="nc" id="L174">		return APIConstants.FAILURE_JSON;</span>
+	public String importData(MultipartFile excelFile)
+			throws IOException, InstantiationException, ClassNotFoundException {
+<span class="nc" id="L247">		List&lt;ReleaseDetails&gt; releaseDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L248">		Excel workBook = new Excel(excelFile.getInputStream());</span>
+<span class="nc" id="L249">		Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
+<span class="nc" id="L250">		Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
+<span class="nc" id="L251">		Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L252">		List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L253">		ExcelUtils.parseMappeddJson(tableColumn, columnsMapping, templateHeadres);</span>
+<span class="nc" id="L254">		displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
+<span class="nc" id="L255">		List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L256">		columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
+<span class="nc" id="L257">		boolean validateTableTemplateHeader = ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating</span>
+																												// Columns
+																											// and
+																												// Headers
+<span class="nc bnc" id="L261" title="All 2 branches missed.">		if (validateTableTemplateHeader) {</span>
+<span class="nc" id="L262">			log.info(&quot;columns and headers are validated&quot;);</span>
+<span class="nc" id="L263">			releaseDetailss = saveData(workBook, columnsMapping, columnNames);</span>
+		} else {
+<span class="nc" id="L265">			log.info(&quot;columns and headers invalide&quot;);</span>
+		}
+<span class="nc bnc" id="L267" title="All 2 branches missed.">		if (CollectionUtils.isNotEmpty(releaseDetailss)) {</span>
+<span class="nc" id="L268">			releaseDetailsRepository.saveAll(releaseDetailss);</span>
+<span class="nc" id="L269">			return APIConstants.SUCCESS_JSON;</span>
+		}
+<span class="nc" id="L271">		return APIConstants.FAILURE_JSON;</span>
 	}
 
-/**
- * This method is responsible for saving data to the database, specifically data related to ReleaseDetails objects.
- * The method takes in an Excel object, which represents the sheet containing the data, a mapping of columns from the excel sheet to the ReleaseDetails class, and a list of column names.
- * The method uses the iterator for the sheet to read data row by row, create new ReleaseDetails objects, and set the properties of the ReleaseDetails objects using the column mapping and column names.
- * The method returns a list of ReleaseDetails objects that have been saved to the database.
- * @param sheet an Excel object representing the sheet containing the data
- * @param columnMapping a map representing the mapping of columns from the excel sheet to the ReleaseDetails class
- * @param columnNames a list of column names of the excel sheet
- * @return a list of ReleaseDetails objects that have been saved to the database
- */
+	/**
+	 * This method is responsible for saving data to the database, specifically data
+	 * related to ReleaseDetails objects.
+	 * The method takes in an Excel object, which represents the sheet containing
+	 * the data, a mapping of columns from the excel sheet to the ReleaseDetails
+	 * class, and a list of column names.
+	 * The method uses the iterator for the sheet to read data row by row, create
+	 * new ReleaseDetails objects, and set the properties of the ReleaseDetails
+	 * objects using the column mapping and column names.
+	 * The method returns a list of ReleaseDetails objects that have been saved to
+	 * the database.
+	 * 
+	 * @param sheet         an Excel object representing the sheet containing the
+	 *                      data
+	 * @param columnMapping a map representing the mapping of columns from the excel
+	 *                      sheet to the ReleaseDetails class
+	 * @param columnNames   a list of column names of the excel sheet
+	 * @return a list of ReleaseDetails objects that have been saved to the database
+	 */
 
 	public List&lt;ReleaseDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
-<span class="nc" id="L189">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
-<span class="nc" id="L190">		List&lt;ReleaseDetails&gt; releaseDetailss = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L191">		rowIterator.next();</span>
-<span class="nc bnc" id="L192" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
-<span class="nc" id="L193">			ExcelRow excelRow = rowIterator.next();</span>
-<span class="nc" id="L194">          	ReleaseDetails releaseDetails = new ReleaseDetails();</span>
-<span class="nc" id="L195">            int index = -1;</span>
-<span class="nc bnc" id="L196" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
-        	try {
-<span class="nc" id="L198">          		ExcelUtils.invokeSetter(releaseDetails, columnName, excelRow.getString(++index));</span>
-<span class="nc" id="L199">                } catch (InstantiationException e) {</span>
-<span class="nc" id="L200">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
-<span class="nc" id="L201">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L202">        } catch (ClassNotFoundException e) {</span>
-<span class="nc" id="L203">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L204">		}</span>
-<span class="nc" id="L205">	}</span>
-<span class="nc" id="L206">	releaseDetailss.add(releaseDetails);</span>
-<span class="nc" id="L207"> 	}</span>
-<span class="nc" id="L208">		return releaseDetailss;</span>
+<span class="nc" id="L295">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L296">		List&lt;ReleaseDetails&gt; releaseDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L297">		rowIterator.next();</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L299">			ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L300">			ReleaseDetails releaseDetails = new ReleaseDetails();</span>
+<span class="nc" id="L301">			int index = -1;</span>
+<span class="nc bnc" id="L302" title="All 2 branches missed.">			for (String columnName : columnNames) {</span>
+				try {
+<span class="nc" id="L304">					ExcelUtils.invokeSetter(releaseDetails, columnName, excelRow.getString(++index));</span>
+<span class="nc" id="L305">				} catch (InstantiationException e) {</span>
+<span class="nc" id="L306">					log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
+<span class="nc" id="L307">					log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L308">				} catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L309">					log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L310">				}</span>
+<span class="nc" id="L311">			}</span>
+<span class="nc" id="L312">			releaseDetailss.add(releaseDetails);</span>
+<span class="nc" id="L313">		}</span>
+<span class="nc" id="L314">		return releaseDetailss;</span>
 	}
-/**
-* This method is responsible for soft-deleting an ReleaseDetails  record in the database.
-* The method takes in an int id which represents the id of the ReleaseDetails  that needs to be soft-deleted.
-* It uses the id to find the ReleaseDetails by calling the ReleaseDetailsRepository.findById method.
-* If the ReleaseDetails  is found, it sets the &quot;deleted&quot; field to true, save the ReleaseDetails  in the repository, and saves it in the database
-* @param id an int representing the id of the ReleaseDetails  that needs to be soft-deleted
-*/
-	
+
+	/**
+	 * This method is responsible for soft-deleting an ReleaseDetails record in the
+	 * database.
+	 * The method takes in an int id which represents the id of the ReleaseDetails
+	 * that needs to be soft-deleted.
+	 * It uses the id to find the ReleaseDetails by calling the
+	 * ReleaseDetailsRepository.findById method.
+	 * If the ReleaseDetails is found, it sets the &quot;deleted&quot; field to true, save the
+	 * ReleaseDetails in the repository, and saves it in the database
+	 * 
+	 * @param id an int representing the id of the ReleaseDetails that needs to be
+	 *           soft-deleted
+	 */
+
 	@Override
 	public void softDelete(int id) {
-<span class="nc" id="L220">		Optional&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findById(id);</span>
-<span class="nc bnc" id="L221" title="All 2 branches missed.">		if (releaseDetails.isPresent()) {</span>
-<span class="nc" id="L222">			ReleaseDetails releaseDetails1 = releaseDetails.get();</span>
-<span class="nc" id="L223">			releaseDetails1.setDeleted(true);</span>
-<span class="nc" id="L224">		    releaseDetailsRepository.save(releaseDetails1);</span>
+<span class="nc" id="L333">		Optional&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findById(id);</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">		if (releaseDetails.isPresent()) {</span>
+<span class="nc" id="L335">			ReleaseDetails releaseDetails1 = releaseDetails.get();</span>
+<span class="nc" id="L336">			releaseDetails1.setDeleted(true);</span>
+<span class="nc" id="L337">			releaseDetailsRepository.save(releaseDetails1);</span>
 		}
-<span class="nc" id="L226">	}</span>
-	
-/**
-* This method is responsible for soft-deleting multiple ReleaseDetails records in the database in bulk.
-* The method takes in a List of integers, each representing the id of an ReleaseDetails that needs to be soft-deleted.
-* It iterates through the list, calling the softDelete method for each id passed in the list.
-* @param list a List of integers representing the ids of the ReleaseDetails that need to be soft-deleted
-*/
+<span class="nc" id="L339">	}</span>
+
+	/**
+	 * This method is responsible for soft-deleting multiple ReleaseDetails records
+	 * in the database in bulk.
+	 * The method takes in a List of integers, each representing the id of an
+	 * ReleaseDetails that needs to be soft-deleted.
+	 * It iterates through the list, calling the softDelete method for each id
+	 * passed in the list.
+	 * 
+	 * @param list a List of integers representing the ids of the ReleaseDetails
+	 *             that need to be soft-deleted
+	 */
 
 	@Override
 	public void softBulkDelete(List&lt;Integer&gt; list) {
-<span class="nc bnc" id="L237" title="All 2 branches missed.">		if (list != null) {</span>
-<span class="nc bnc" id="L238" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
-<span class="nc" id="L239">				softDelete(list.get(i));</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">		if (list != null) {</span>
+<span class="nc bnc" id="L356" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
+<span class="nc" id="L357">				softDelete(list.get(i));</span>
 			}
 		}
-<span class="nc" id="L242">	}</span>
+<span class="nc" id="L360">	}</span>
 
- /**
- * @param releaseDetails The releaseDetails  object to create.
- * @return The created vendor object.
- */
+	/**
+	 * @param releaseDetails The releaseDetails object to create.
+	 * @return The created vendor object.
+	 */
 	@Override
-	public ReleaseDetails create(ReleaseDetails releaseDetails) {	 
-<span class="nc" id="L250">		return releaseDetailsRepository.save(releaseDetails);</span>
+	public ReleaseDetails create(ReleaseDetails releaseDetails) {   
+<span class="nc" id="L368">		String hostPath = &quot;https://dev.visionwaves.com/miniapp/&quot; + releaseDetails.getMiniAppDetails().getName() + &quot;/&quot;;</span>
+<span class="nc" id="L369">		releaseDetails.setHostPath(hostPath);</span>
+<span class="nc" id="L370">		return releaseDetailsRepository.save(releaseDetails);</span>
 	}
-  
+
 	/**
 	 * @param roleId
-	 * @return List of entities that match the given query.	
+	 * @return List of entities that match the given query.
 	 */
-// 	@Override
-//    public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) { 
-// 	System.out.print(&quot;columns and headers are validated 1111&quot; + roleId);
-// 	log.info(&quot;columns and headers are validated&quot;); 
+	// @Override
+	// public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
+	// System.out.print(&quot;columns and headers are validated 1111&quot; + roleId);
+	// log.info(&quot;columns and headers are validated&quot;);
 
-//     // Retrieve all ReleaseDetails from the repository
-//     // Filter ReleaseDetails based on the roleId
-// 	List&lt;ReleaseDetails&gt; filteredReleaseDetails = new ArrayList&lt;ReleaseDetails&gt;(); 
+	// // Retrieve all ReleaseDetails from the repository
+	// // Filter ReleaseDetails based on the roleId
+	// List&lt;ReleaseDetails&gt; filteredReleaseDetails = new
+	// ArrayList&lt;ReleaseDetails&gt;();
 
-// 	try {
-// 		List&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findAll();    
+	// try {
+	// List&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findAll();
 
-// 		System.out.print(&quot;columns and headers are validated 222&quot; + releaseDetails.toString()); 
-// 		filteredReleaseDetails = releaseDetails.stream()
-// 		        .filter(releaseDetail -&gt; {
-// 		            MiniappDetails miniappDetails = releaseDetail.getMiniAppDetails(); 
-// 					System.out.println(&quot;this is the miniappDetails &quot; + miniappDetails.getId());
-// 		            Set&lt;com.enttribe.superapp.model.OrganisationRole&gt; organisationRoles = miniappDetails.getOrganisationRoles(); 
-// 					System.out.println(&quot;miniappDetails roles &quot;+ organisationRoles.size()); 
-// 		            // Check if any OrganisationRole matches the roleId
-// 		            return organisationRoles.stream()
-// 		                    .anyMatch(organisationRole -&gt; organisationRole.getOrganisationRoleId() == roleId);
-// 		        }) 
+	// System.out.print(&quot;columns and headers are validated 222&quot; +
+	// releaseDetails.toString());
+	// filteredReleaseDetails = releaseDetails.stream()
+	// .filter(releaseDetail -&gt; {
+	// MiniappDetails miniappDetails = releaseDetail.getMiniAppDetails();
+	// System.out.println(&quot;this is the miniappDetails &quot; + miniappDetails.getId());
+	// Set&lt;com.enttribe.superapp.model.OrganisationRole&gt; organisationRoles =
+	// miniappDetails.getOrganisationRoles();
+	// System.out.println(&quot;miniappDetails roles &quot;+ organisationRoles.size());
+	// // Check if any OrganisationRole matches the roleId
+	// return organisationRoles.stream()
+	// .anyMatch(organisationRole -&gt; organisationRole.getOrganisationRoleId() ==
+	// roleId);
+	// })
 
-// 		        .collect(Collectors.toList());  
-// 				System.out.print(&quot;columns and headers are validated 3333&quot; + filteredReleaseDetails.toString());
+	// .collect(Collectors.toList());
+	// System.out.print(&quot;columns and headers are validated 3333&quot; +
+	// filteredReleaseDetails.toString());
 
-// 	} catch (Exception e) {
-// 		System.out.println(&quot;error you encountering &quot; + e);
-// 		// TODO Auto-generated catch block
-// 		e.printStackTrace();
-// 	}  
-			
-   			
+	// } catch (Exception e) {
+	// System.out.println(&quot;error you encountering &quot; + e);
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
 
-//     return filteredReleaseDetails; 
-// }
-
-
-
-    // @Override
-    // public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) { 
-	// 	 List&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findAll();   
-	// 	 List&lt;ReleaseDetails&gt; releaseDetails2 = new ArrayList&lt;ReleaseDetails&gt;();
-	// 	 for (ReleaseDetails releaseDetail : releaseDetails) {   
-	// 		MiniappDetails miniappDetails = releaseDetail.getMiniAppDetails(); 
-	// 		Set&lt;com.enttribe.superapp.model.OrganisationRole&gt; organisationRoles = miniappDetails.getOrganisationRoles(); 
-	// 		System.out.println(&quot;miniappDetailsroles &quot; + organisationRoles.size() + &quot; miniappDetails id&quot; + miniappDetails.getId()); 
-
-	// 		for (com.enttribe.superapp.model.OrganisationRole organisationRole : organisationRoles) {  
-	// 			System.out.println(&quot;organisationRole id &quot; + organisationRole.getOrganisationRoleId() + &quot; roleId id&quot; + roleId); 
-    //                    if(organisationRole.getOrganisationRoleId() == roleId) {
-	// 					releaseDetails2.add(releaseDetail);
-	// 				   }
-	// 		   }  // Example of what you might do with each ReleaseDetails object
-	// 	}
-		
-    //     return releaseDetails2;
-    // } 
+	// return filteredReleaseDetails;
+	// }
 
 	// @Override
-    // public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
-    //     return releaseDetailsRepository.findAll().stream()
-    //             .filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))
-    //             .filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
-    //                     .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
-    //             .collect(Collectors.toList());
-    // } 
- 
+	// public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
+	// List&lt;ReleaseDetails&gt; releaseDetails = releaseDetailsRepository.findAll();
+	// List&lt;ReleaseDetails&gt; releaseDetails2 = new ArrayList&lt;ReleaseDetails&gt;();
+	// for (ReleaseDetails releaseDetail : releaseDetails) {
+	// MiniappDetails miniappDetails = releaseDetail.getMiniAppDetails();
+	// Set&lt;com.enttribe.superapp.model.OrganisationRole&gt; organisationRoles =
+	// miniappDetails.getOrganisationRoles();
+	// System.out.println(&quot;miniappDetailsroles &quot; + organisationRoles.size() + &quot;
+	// miniappDetails id&quot; + miniappDetails.getId());
+
+	// for (com.enttribe.superapp.model.OrganisationRole organisationRole :
+	// organisationRoles) {
+	// System.out.println(&quot;organisationRole id &quot; +
+	// organisationRole.getOrganisationRoleId() + &quot; roleId id&quot; + roleId);
+	// if(organisationRole.getOrganisationRoleId() == roleId) {
+	// releaseDetails2.add(releaseDetail);
+	// }
+	// } // Example of what you might do with each ReleaseDetails object
+	// }
+
+	// return releaseDetails2;
+	// }
+
 	// @Override
-    // public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {  
+	// public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
+	// return releaseDetailsRepository.findAll().stream()
+	// .filter(releaseDetail -&gt;
+	// &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))
+	// .filter(releaseDetail -&gt;
+	// releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
+	// .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
+	// .collect(Collectors.toList());
+	// }
 
-    //     return releaseDetailsRepository.findAll().stream()
-    //             .filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))
-    //             .filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
-    //                     .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
-    //             .collect(Collectors.toList()); 
+	// @Override
+	// public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
 
-    // }  
+	// return releaseDetailsRepository.findAll().stream()
+	// .filter(releaseDetail -&gt;
+	// &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))
+	// .filter(releaseDetail -&gt;
+	// releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
+	// .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
+	// .collect(Collectors.toList());
+	// }
+
+	// @Override
+	// public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
+
+	// 	try {
+	// 		List&lt;ReleaseDetails&gt; list = releaseDetailsRepository.findAll().stream()
+	// 				.filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))
+	// 				.filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
+	// 						.anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
+	// 				.collect(Collectors.toList());
+	// 	} catch (Exception e) {
+	// 		System.out.println(&quot;the error you encountering 1 &quot; + e.toString());
+	// 		// TODO Auto-generated catch block
+	// 		e.printStackTrace();
+	// 	}    
+	
+	// 	return releaseDetailsRepository.findAll().stream()
+	// 			.filter(releaseDetail -&gt; (&quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()) &amp;&amp; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getMiniAppDetails().getWorkflowStage())))
+	// 			.filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()
+	// 					.anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))
+	// 			.collect(Collectors.toList());
+
+	// } 
 
 
 	@Override
-    public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {  
-
-		try {
-<span class="nc" id="L342">			List&lt;ReleaseDetails&gt; list =  releaseDetailsRepository.findAll().stream()</span>
-<span class="nc" id="L343">			.filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))</span>
-<span class="nc" id="L344">			.filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()</span>
-<span class="nc bnc" id="L345" title="All 2 branches missed.">					.anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))</span>
-<span class="nc" id="L346">			.collect(Collectors.toList());</span>
-<span class="nc" id="L347">		} catch (Exception e) { </span>
-<span class="nc" id="L348">			System.out.println(&quot;the error you encountering 1 &quot; + e.toString());  </span>
-			// TODO Auto-generated catch block
-<span class="nc" id="L350">			e.printStackTrace();</span>
-<span class="nc" id="L351">		}  </span>
-
-<span class="nc" id="L353">        return releaseDetailsRepository.findAll().stream()</span>
-<span class="nc" id="L354">                .filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()))</span>
-<span class="nc" id="L355">                .filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()</span>
-<span class="nc bnc" id="L356" title="All 2 branches missed.">                        .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))</span>
-<span class="nc" id="L357">                .collect(Collectors.toList()); </span>
-
-    } 
-
+public List&lt;ReleaseDetails&gt; findReleasedByRole(int roleId) {
+<span class="nc" id="L491">    List&lt;ReleaseDetails&gt; list = new ArrayList&lt;&gt;();</span>
+    try {
+<span class="nc" id="L493">        list = releaseDetailsRepository.findAll().stream()</span>
+<span class="nc bnc" id="L494" title="All 2 branches missed.">                .filter(releaseDetail -&gt; &quot;released&quot;.equalsIgnoreCase(releaseDetail.getStatus()) &amp;&amp; </span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">                        &quot;released&quot;.equalsIgnoreCase(releaseDetail.getMiniAppDetails().getWorkflowStage()))</span>
+<span class="nc" id="L496">                .filter(releaseDetail -&gt; releaseDetail.getMiniAppDetails().getOrganisationRoles().stream()</span>
+<span class="nc bnc" id="L497" title="All 2 branches missed.">                        .anyMatch(role -&gt; role.getOrganisationRoleId() == roleId))</span>
+<span class="nc" id="L498">                .collect(Collectors.toList());</span>
+<span class="nc" id="L499">    } catch (Exception e) {</span>
+<span class="nc" id="L500">        System.out.println(&quot;the error you are encountering: &quot; + e.toString());</span>
+<span class="nc" id="L501">        e.printStackTrace();</span>
+<span class="nc" id="L502">    } </span>
+<span class="nc" id="L503">    return list;</span>
 }
 
+
+
+	@Override
+public ReleaseDetails triggerPipeLine(int id) throws IOException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException {  
+<span class="nc" id="L510">    String JENKINS_TOKEN = ConfigUtil.getConfigProp(APIConstants.JENKINS_TOKEN); </span>
+<span class="nc" id="L511">    String JENKINS_USER = ConfigUtil.getConfigProp(APIConstants.JENKINS_USER); </span>
+<span class="nc" id="L512">    String JENKINS_URL = ConfigUtil.getConfigProp(APIConstants.JENKINS_URL); </span>
+<span class="nc" id="L513">    String DOCKER_REGISTRY = ConfigUtil.getConfigProp(APIConstants.DOCKER_REGISTRY); </span>
+<span class="nc" id="L514">    String K8S_NAME_SPACE = ConfigUtil.getConfigProp(APIConstants.K8S_NAME_SPACE); </span>
+<span class="nc" id="L515">    String JENKINS_CRUMB = ConfigUtil.getConfigProp(APIConstants.JENKINS_CRUMB); </span>
+    // String JENKINS_COOKIE = ConfigUtil.getConfigProp(APIConstants.JENKINS_COOKIE); // Get the cookie from config
+<span class="nc" id="L517">    String JENKINS_AUTH = &quot;Basic &quot; + Base64.getEncoder().encodeToString((JENKINS_USER + &quot;:&quot; + JENKINS_TOKEN).getBytes());</span>
+<span class="nc" id="L518">	String auth = JENKINS_USER + &quot;:&quot; + JENKINS_TOKEN;</span>
+<span class="nc" id="L519">	byte[] encodedAuth = org.apache.commons.codec.binary.Base64.encodeBase64(auth.getBytes());</span>
+<span class="nc" id="L520">	String authHeader = &quot;Basic &quot; + new String(encodedAuth);</span>
+
+<span class="nc" id="L522">    log.info(&quot;JENKINS_TOKEN : &quot; + JENKINS_TOKEN); </span>
+<span class="nc" id="L523">    log.info(&quot;JENKINS_USER : &quot; + JENKINS_USER);</span>
+<span class="nc" id="L524">    log.info(&quot;JENKINS_URL : &quot; + JENKINS_URL);</span>
+<span class="nc" id="L525">    log.info(&quot;DOCKER_REGISTRY : &quot; + DOCKER_REGISTRY);</span>
+<span class="nc" id="L526">    log.info(&quot;K8S_NAME_SPACE : &quot; + K8S_NAME_SPACE);</span>
+<span class="nc" id="L527">    log.info(&quot;JENKINS_CRUMB : &quot; + JENKINS_CRUMB); </span>
+<span class="nc" id="L528">	log.info(&quot;JENKINS_AUTH :&quot; + JENKINS_AUTH);</span>
+    // log.info(&quot;JENKINS_COOKIE : &quot; + JENKINS_COOKIE); // Log the cookie value
+
+<span class="nc" id="L531">    ReleaseDetails releaseDetails = releaseDetailsRepository.findById(id).get();</span>
+<span class="nc" id="L532">    String BUILD_NUMBER = &quot;&quot;+releaseDetails.getBuildInfo().getBuildNumber(); </span>
+<span class="nc" id="L533">	String MINI_APP_DETAILS_ID = &quot;&quot;+releaseDetails.getMiniAppDetails().getId();  </span>
+<span class="nc" id="L534">	String APP_NAME = releaseDetails.getMiniAppDetails().getName();  </span>
+<span class="nc" id="L535">    SSLContext sslContext = SSLContexts.custom()</span>
+<span class="nc" id="L536">            .loadTrustMaterial((chain, authType) -&gt; true)</span>
+<span class="nc" id="L537">            .build();</span>
+
+<span class="nc" id="L539">    BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();</span>
+<span class="nc" id="L540">    credsProvider.setCredentials(</span>
+            AuthScope.ANY,
+            new UsernamePasswordCredentials(JENKINS_USER, JENKINS_TOKEN));
+
+<span class="nc" id="L544">    CloseableHttpClient httpClient = HttpClients.custom()</span>
+<span class="nc" id="L545">            .setSSLContext(sslContext)</span>
+<span class="nc" id="L546">            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)</span>
+<span class="nc" id="L547">            .setDefaultCredentialsProvider(credsProvider)</span>
+<span class="nc" id="L548">            .build();</span>
+
+    try {
+<span class="nc" id="L551">        HttpPost postRequest = new HttpPost(JENKINS_URL + &quot;/jenkins/job/SuperApp/buildWithParameters&quot;);</span>
+      
+        // Set headers              
+<span class="nc" id="L554">        postRequest.setHeader(&quot;Jenkins-Crumb&quot;, JENKINS_CRUMB);</span>
+<span class="nc" id="L555">        postRequest.setHeader(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);</span>
+        // postRequest.setHeader(&quot;Authorization&quot;, JENKINS_AUTH);  
+<span class="nc" id="L557">		postRequest.setHeader(&quot;Authorization&quot;, authHeader);</span>
+<span class="nc" id="L558">		postRequest.setHeader(&quot;Cookie&quot;, &quot;JSESSIONID.1dae7fc7=node0xwrxc09mqe4dk2k5d6nkr6wo193036.node0&quot;); </span>
+        // postRequest.setHeader(&quot;Cookie&quot;, JENKINS_COOKIE);
+<span class="nc" id="L560">        log.info(&quot;JENKINS_CRUMB this is the result: &quot; + JENKINS_CRUMB); </span>
+        
+        // Set form datas
+<span class="nc" id="L563">        List&lt;NameValuePair&gt; params = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L564">        params.add(new BasicNameValuePair(&quot;APPLICATION_NAME&quot;, APP_NAME));</span>
+<span class="nc" id="L565">        params.add(new BasicNameValuePair(&quot;DOCKER_REGISTRY&quot;, DOCKER_REGISTRY));</span>
+<span class="nc" id="L566">        params.add(new BasicNameValuePair(&quot;IMAGE_TAG&quot;, releaseDetails.getVersion()));</span>
+<span class="nc" id="L567">        params.add(new BasicNameValuePair(&quot;K8S_NAME_SPACE&quot;, K8S_NAME_SPACE)); </span>
+<span class="nc" id="L568">		params.add(new BasicNameValuePair(&quot;ID&quot;, &quot;&quot; + id));</span>
+<span class="nc" id="L569">		params.add(new BasicNameValuePair(&quot;MINI_APP_DETAILS_ID&quot;, MINI_APP_DETAILS_ID)); </span>
+<span class="nc" id="L570">		params.add(new BasicNameValuePair(&quot;BUILD_NUMBER&quot;, BUILD_NUMBER));</span>
+<span class="nc" id="L571">        postRequest.setEntity(new UrlEncodedFormEntity(params));</span>
+
+<span class="nc" id="L573">        log.info(&quot;Complete params: &quot; + params.toString());</span>
+
+<span class="nc" id="L575">        try (CloseableHttpResponse response = httpClient.execute(postRequest)) {</span>
+<span class="nc" id="L576">            log.info(&quot;Response of this trigger: &quot; + response.toString() + response.getStatusLine().getStatusCode());</span>
+            
+<span class="nc bnc" id="L578" title="All 2 branches missed.">            if (response.getStatusLine().getStatusCode() != 201) {</span>
+<span class="nc" id="L579">                String responseBody = EntityUtils.toString(response.getEntity());  </span>
+
+<span class="nc" id="L581">                log.error(&quot;Error response body: &quot; + responseBody);</span>
+<span class="nc" id="L582">                throw new IOException(&quot;Failed to trigger Jenkins pipeline. Response: &quot; + responseBody);</span>
+            }
+
+<span class="nc" id="L585">            String queueItemUrl = response.getFirstHeader(&quot;Location&quot;).getValue();</span>
+<span class="nc" id="L586">            log.info(&quot;Queue item URL: &quot; + queueItemUrl);</span>
+<span class="nc bnc" id="L587" title="All 4 branches missed.">            if (queueItemUrl == null || queueItemUrl.isEmpty()) {</span>
+<span class="nc" id="L588">                throw new IOException(&quot;Failed to retrieve Jenkins queue item URL&quot;);</span>
+            }
+
+<span class="nc" id="L591">            int buildId = pollQueueForBuildId(httpClient, queueItemUrl,authHeader,JENKINS_CRUMB); </span>
+<span class="nc" id="L592">			releaseDetails.setPipelineBuildId(buildId); </span>
+			
+<span class="nc" id="L594">            log.info(&quot;Build ID: &quot; + buildId); </span>
+
+<span class="nc" id="L596">            ResponseEntity.ok(new TriggerResponse(buildId)).toString();  </span>
+<span class="nc" id="L597">			return update(releaseDetails);</span>
+        }
+    } finally {
+<span class="nc bnc" id="L600" title="All 2 branches missed.">        if (httpClient != null) {</span>
+<span class="nc" id="L601">            httpClient.close();</span>
+        }
+    }
+} 
+
+@Autowired
+	private DocumentIntegrationService documentIntegrationService; 
+
+private int pollQueueForBuildId(CloseableHttpClient httpClient, String queueItemUrl,String authHeader,String JENKINS_CRUMB)
+        throws IOException, InterruptedException {
+    while (true) {
+<span class="nc" id="L612">		log.info(&quot;pollQueueForBuildId 1111&quot;  + queueItemUrl );</span>
+<span class="nc" id="L613">        HttpGet getRequest = new HttpGet(queueItemUrl + &quot;api/json&quot;);   </span>
+<span class="nc" id="L614">		getRequest.setHeader(&quot;Jenkins-Crumb&quot;, JENKINS_CRUMB);</span>
+<span class="nc" id="L615">        getRequest.setHeader(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;);</span>
+        // postRequest.setHeader(&quot;Authorization&quot;, JENKINS_AUTH);  
+<span class="nc" id="L617">		getRequest.setHeader(&quot;Authorization&quot;, authHeader);</span>
+<span class="nc" id="L618">		getRequest.setHeader(&quot;Cookie&quot;, &quot;JSESSIONID.1dae7fc7=node0xwrxc09mqe4dk2k5d6nkr6wo193036.node0&quot;); </span>
+<span class="nc" id="L619">		log.info(&quot;pollQueueForBuildId 2222&quot; + getRequest);</span>
+<span class="nc" id="L620">        try (CloseableHttpResponse queueResponse = httpClient.execute(getRequest)) {</span>
+<span class="nc" id="L621">			log.info(&quot;pollQueueForBuildId 3333&quot; + queueResponse.toString()); </span>
+<span class="nc" id="L622">            String queueResponseString = EntityUtils.toString(queueResponse.getEntity()); </span>
+<span class="nc" id="L623">			log.info(&quot;pollQueueForBuildId 4444&quot; +  queueResponseString);</span>
+			
+            try {
+<span class="nc" id="L626">				QueueResponse queueData = new ObjectMapper().readValue(queueResponseString, QueueResponse.class); </span>
+<span class="nc" id="L627">				log.info(&quot;pollQueueForBuildId 5555&quot; +  queueData);</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">				if (queueData.getExecutable() != null) {</span>
+<span class="nc" id="L629">				    return queueData.getExecutable().getNumber();</span>
+				}
+<span class="nc" id="L631">			} catch (JsonMappingException e) {</span>
+<span class="nc" id="L632">				log.info(&quot;JsonMappingException 1&quot; + e);</span>
+				// TODO Auto-generated catch block
+<span class="nc" id="L634">				e.printStackTrace();</span>
+<span class="nc" id="L635">			} catch (JsonProcessingException e) { </span>
+<span class="nc" id="L636">				log.info(&quot;JsonMappingException 2&quot; + e);</span>
+				// TODO Auto-generated catch block
+<span class="nc" id="L638">				e.printStackTrace();</span>
+			} 
+<span class="nc" id="L640">			catch (Exception e) { </span>
+<span class="nc" id="L641">				log.info(&quot;JsonMappingException 3&quot; + e);</span>
+				// TODO Auto-generated catch block
+<span class="nc" id="L643">				e.printStackTrace();</span>
+<span class="nc" id="L644">			}</span>
+<span class="nc bnc" id="L645" title="All 2 branches missed.">        }</span>
+
+<span class="nc" id="L647">        Thread.sleep(2000); // Poll every 2 seconds</span>
+<span class="nc" id="L648">    }</span>
+ }
+
+
+	
+
+    @Override
+	public ReleaseDetails update(ReleaseDetails entity) {
+<span class="nc" id="L656">		 MiniappDetails miniappDetails  = entity.getMiniAppDetails();</span>
+<span class="nc" id="L657">		 log.info(&quot;update 1111&quot; + entity.getStatus());</span>
+<span class="nc bnc" id="L658" title="All 4 branches missed.">		   if(!entity.getStatus().equalsIgnoreCase(&quot;PENDING&quot;) &amp;&amp; entity.getStatus().equalsIgnoreCase(&quot;FAILED&quot;)){</span>
+<span class="nc" id="L659">			MessageIntegrationWrapper messageIntegrationWrapper = new MessageIntegrationWrapper()/*ApplicationContextProvider.getApplicationContext().getBean(MessageIntegrationWrapper.class)*/; </span>
+<span class="nc" id="L660">			 messageIntegrationWrapper.setApplication(APIConstants.APPNAME);</span>
+<span class="nc" id="L661">             messageIntegrationWrapper.setEventType(Event.MESSAGE);</span>
+<span class="nc" id="L662">             messageIntegrationWrapper.setMessage(&quot;releasemessage&quot;);</span>
+<span class="nc" id="L663">             messageIntegrationWrapper.setProcessInstanceId(miniappDetails.getProcessInstanceId());</span>
+<span class="nc" id="L664">			 Map&lt;String, Object&gt; variable = new  HashMap&lt;&gt;();</span>
+<span class="nc" id="L665">			 variable.put(&quot;status&quot;, &quot;Failure&quot;);</span>
+<span class="nc" id="L666">             messageIntegrationWrapper.setVariables(variable);	</span>
+<span class="nc" id="L667">			documentIntegrationService.submitMessageEventRequest(messageIntegrationWrapper,miniappDetails.getProcessInstanceId());</span>
+<span class="nc bnc" id="L668" title="All 4 branches missed.">		   } else if(!entity.getStatus().equalsIgnoreCase(&quot;PENDING&quot;) &amp;&amp; entity.getStatus().equalsIgnoreCase(&quot;RELEASED&quot;)){</span>
+<span class="nc" id="L669">			MessageIntegrationWrapper messageIntegrationWrapper = new MessageIntegrationWrapper()/*ApplicationContextProvider.getApplicationContext().getBean(MessageIntegrationWrapper.class) */; </span>
+<span class="nc" id="L670">			messageIntegrationWrapper.setApplication(APIConstants.APPNAME);</span>
+<span class="nc" id="L671">			messageIntegrationWrapper.setEventType(Event.MESSAGE);</span>
+<span class="nc" id="L672">			messageIntegrationWrapper.setMessage(&quot;releasemessage&quot;);</span>
+<span class="nc" id="L673">			messageIntegrationWrapper.setProcessInstanceId(miniappDetails.getProcessInstanceId());</span>
+<span class="nc" id="L674">			Map&lt;String, Object&gt; variable = new  HashMap&lt;&gt;();</span>
+<span class="nc" id="L675">			variable.put(&quot;status&quot;, &quot;Success&quot;);</span>
+<span class="nc" id="L676">			messageIntegrationWrapper.setVariables(variable);</span>
+<span class="nc" id="L677">		    documentIntegrationService.submitMessageEventRequest(messageIntegrationWrapper,miniappDetails.getProcessInstanceId());  </span>
+		   } 
+<span class="nc" id="L679">		return super.update(entity);</span>
+	}  
+
+} 
+
+
+
+
+
+
+
+class TriggerResponse {
+	private final int id;
+	
+<span class="nc" id="L693">	public TriggerResponse(int id) {</span>
+<span class="nc" id="L694">		this.id = id;</span>
+<span class="nc" id="L695">	}</span>
+	
+	@Override
+	public int hashCode() {
+<span class="nc" id="L699">		final int prime = 31;</span>
+<span class="nc" id="L700">		int result = 1;</span>
+<span class="nc" id="L701">		result = prime * result + id;</span>
+<span class="nc" id="L702">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L707" title="All 2 branches missed.">		if (this == obj)</span>
+<span class="nc" id="L708">			return true;</span>
+<span class="nc bnc" id="L709" title="All 2 branches missed.">		if (obj == null)</span>
+<span class="nc" id="L710">			return false;</span>
+<span class="nc bnc" id="L711" title="All 2 branches missed.">		if (getClass() != obj.getClass())</span>
+<span class="nc" id="L712">			return false;</span>
+<span class="nc" id="L713">		TriggerResponse other = (TriggerResponse) obj;</span>
+<span class="nc bnc" id="L714" title="All 2 branches missed.">		if (id != other.id)</span>
+<span class="nc" id="L715">			return false;</span>
+<span class="nc" id="L716">		return true;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L721">		return &quot;TriggerResponse [id=&quot; + id + &quot;]&quot;;</span>
+	}
+
+	public int getId() {
+<span class="nc" id="L725">		return id;</span>
+	}
+	} 
+	
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+<span class="nc" id="L731"> class QueueResponse {</span>
+    private Executable executable;
+    
+    public Executable getExecutable() {
+<span class="nc" id="L735">        return executable;</span>
+    }
+    
+    public void setExecutable(Executable executable) {
+<span class="nc" id="L739">        this.executable = executable;</span>
+<span class="nc" id="L740">    }</span>
+    
+    @JsonIgnoreProperties(ignoreUnknown = true)
+<span class="nc" id="L743">    static class Executable {</span>
+        private int number;
+    
+        public int getNumber() {
+<span class="nc" id="L747">            return number;</span>
+        }
+    
+        public void setNumber(int number) {
+<span class="nc" id="L751">            this.number = number;</span>
+<span class="nc" id="L752">        }</span>
+    }
+}
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

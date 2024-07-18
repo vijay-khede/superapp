@@ -1,14 +1,21 @@
 
 package com.enttribe.superapp.integration.service.impl; 
  
+import org.apache.openjpa.kernel.FillStrategy.Map;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
  
 import com.google.gson.Gson;
 import com.enttribe.core.generic.exceptions.application.BusinessException;
+import com.enttribe.core.generic.utils.ApplicationContextProvider;
 import com.enttribe.document.rest.IDocumentStreamRest;
 import com.enttribe.document.wrapper.UploadWrapper;
+import com.enttribe.orchestrator.camunda.controller.IInboundIntegrationController;
+import com.enttribe.orchestrator.dto.MessageIntegrationWrapper;
+import com.enttribe.orchestrator.dto.MessageIntegrationWrapper.Event;
+import com.enttribe.orchestrator.utility.controller.WorkflowActionsController;
+import com.enttribe.orchestrator.utility.service.IWorkflowActionsService;
 import com.enttribe.superapp.integration.service.DocumentIntegrationService;
 import com.enttribe.superapp.util.APIConstants;
 import com.enttribe.document.rest.IDocumentIntegrationRest;
@@ -42,7 +49,12 @@ public class DocumentIntegrationServiceImpl implements DocumentIntegrationServic
     private IDocumentIntegrationRest documentIntegrationRest;
         
     @Autowired
-    private IDocumentRest documentRest;
+    private IDocumentRest documentRest; 
+
+    @Autowired
+    private IInboundIntegrationController inboundIntegrationController;
+
+    
     
     public static final String ENTITY_STRING = "ENTITY";
  
@@ -143,7 +155,7 @@ public class DocumentIntegrationServiceImpl implements DocumentIntegrationServic
             } catch (Exception ex) {
               throw new BusinessException(ex.getMessage());
             }
-    }
+    } 
  
     @Override
     public List getMyDocuments(Integer parentId, Integer upperLimit, Integer lowerLimit, String modifiedTimeType,
@@ -187,9 +199,8 @@ public class DocumentIntegrationServiceImpl implements DocumentIntegrationServic
                       subFolderWrapper.setReferenceType(APIConstants.APPLICATIONNAME);
                       subFolderWrapper.setReferenceValue(appName);
                       setCommonParameter(subFolderWrapper);
-                      subFolderWrapper.setIsRoot(true
-                      );
-                      appSubFolder=    documentIntegrationRest.createFolder(subFolderWrapper);
+                      subFolderWrapper.setIsRoot(true);
+                      appSubFolder = documentIntegrationRest.createFolder(subFolderWrapper);
                }
                
                 subFolderWrapper=new SubFolderWrapper();
@@ -211,8 +222,7 @@ public class DocumentIntegrationServiceImpl implements DocumentIntegrationServic
                   SubFolder childFolderCreated = new SubFolder();
                   childFolderCreated =documentIntegrationRest.createFolder(subFolderWrapper);
                   log.info("childFolderCreated last obj : {} ",childFolderCreated);
-          }
-         
+          } 
         } catch (Exception ex) {
           log.info("error @class DocumentIntegrationServiceImpl @method createFolder exception : ", ex);
         }
@@ -223,5 +233,13 @@ public class DocumentIntegrationServiceImpl implements DocumentIntegrationServic
         subfolderWrapper.setIsRoot(false);
         subfolderWrapper.setIsProcessDocument(true);
       }
+
+      public void submitMessageEventRequest(MessageIntegrationWrapper messageIntegrationWrapper,String processInstanceId){
+        inboundIntegrationController.receiveIntegrationRequest(messageIntegrationWrapper);
+        ApplicationContextProvider.getApplicationContext().getBean(MessageIntegrationWrapper.class);
+        WorkflowActionsController workflowActionsController = ApplicationContextProvider.getApplicationContext().getBean(WorkflowActionsController.class);
+        workflowActionsController.notifyActions(processInstanceId);
+      } 
+
 }
  

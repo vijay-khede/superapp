@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ReleaseDetails.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">ReleaseDetails.java</span></div><h1>ReleaseDetails.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model;
-
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>ReleaseDetails.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">superapp-app</a> &gt; <a href="../index.html" class="el_bundle">superapp-api</a> &gt; <a href="index.source.html" class="el_package">com.enttribe.superapp.model</a> &gt; <span class="el_source">ReleaseDetails.java</span></div><h1>ReleaseDetails.java</h1><pre class="source lang-java linenums">package com.enttribe.superapp.model; 
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -13,53 +12,71 @@ import jakarta.validation.constraints.NotNull;
 
 @JsonIgnoreProperties(value = { &quot;hibernateLazyInitializer&quot;, &quot;handler&quot; })
 @Entity
-<span class="nc" id="L16">@Setter</span>
-@Getter 
-<span class="nc" id="L18">@NoArgsConstructor </span>
-<span class="nc" id="L19">@AllArgsConstructor</span>
-@Table(name = &quot;RELEASE_DETAILS&quot;)
+<span class="nc" id="L15">@Setter</span>
+@Getter
+<span class="nc" id="L17">@NoArgsConstructor</span>
+<span class="nc" id="L18">@AllArgsConstructor</span>
+@Table(name = &quot;RELEASE_DETAILS&quot;)    
 public class ReleaseDetails  extends BaseEntity { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = &quot;RELEASE_ID&quot;, columnDefinition = &quot;INT&quot;)
-<span class="nc" id="L26">    private Integer releaseId;</span>
-
+    @Column(name = &quot;ID&quot;, columnDefinition = &quot;INT&quot;)
+<span class="nc" id="L25">    private Integer id;</span>
+    
     @Size(max = 50)
     @Column(name = &quot;ENVIRONMENT&quot;, length = 50)
-<span class="nc" id="L30">    private String environment;</span>
-
+<span class="nc" id="L29">    private String environment;</span>
+ 
     @Size(max = 255)
     @Column(name = &quot;HOST_PATH&quot;, length = 255)
-<span class="nc" id="L34">    private String hostPath;</span>
+<span class="nc" id="L33">    private String hostPath;</span>
     
     @Size(max = 15)
     @Column(name = &quot;VERSION&quot;, length = 15)
-<span class="nc" id="L38">    private String version;</span>
+<span class="nc" id="L37">    private String version;</span>
 
     @Column(name = &quot;RELEASE_NOTE&quot;, columnDefinition = &quot;TEXT&quot;)
-<span class="nc" id="L41">    private String releaseNote;</span>
+<span class="nc" id="L40">    private String releaseNote;</span>
 
-<span class="nc" id="L43">    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;ENUM('PENDING','RELEASED','ROLLED_BACK')&quot;)</span>
-<span class="nc" id="L44">    private String status = &quot;PENDING&quot;;</span>
+    
+    @Column(name = &quot;REMARK&quot;, columnDefinition = &quot;TEXT&quot;)
+<span class="nc" id="L44">    private String remark;</span>
+    
+    @Column(name = &quot;PIPELINE_BUILD_ID&quot;, columnDefinition = &quot;INT&quot;)
+<span class="nc" id="L47">    private Integer pipelineBuildId;</span>
+    
+    @Size(max = 255)
+    @Column(name = &quot;BUILD_URL&quot;, length = 255)
+<span class="nc" id="L51">    private String buildUrl;</span>
+
+    @Size(max = 30)
+    @Column(name = &quot;RELEASE_TYPE&quot;, length = 30)
+<span class="nc" id="L55">    private String releasetype;</span>
+    
+<span class="nc" id="L57">    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;ENUM('PENDING','RELEASED','ROLLED_BACK')&quot;)</span>
+<span class="nc" id="L58">    private String status = &quot;PENDING&quot;;</span>
 
     @Column(name = &quot;RELEASE_DATE&quot;, columnDefinition = &quot;TIMESTAMP DEFAULT CURRENT_TIMESTAMP&quot;)
-<span class="nc" id="L47">    private Date releaseDate;</span>
-
-<span class="nc" id="L49">    @NotNull</span>
+<span class="nc" id="L61">    private Date releaseDate;</span>
+    
+<span class="nc" id="L63">    @NotNull</span>
     @Column(name = &quot;DELETED&quot;, nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
-<span class="nc" id="L51">    private boolean deleted = false;</span>
+<span class="nc" id="L65">    private boolean deleted = false;</span>
 
     @Column(name = &quot;CUSTOMER_ID&quot;, columnDefinition = &quot;INT&quot;)
-<span class="nc" id="L54">    private Integer customerId;</span>
+<span class="nc" id="L68">    private Integer customerId;</span>
 
     @ManyToOne
     @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;)
-<span class="nc" id="L58">    private MiniappDetails miniAppDetails;</span>
+<span class="nc" id="L72">    private MiniappDetails miniAppDetails;</span>
  
     @NotNull
-    @ManyToOne 
+    @ManyToOne  
     @JoinColumn(name = &quot;BUILD_NUMBER&quot;, referencedColumnName = &quot;BUILD_NUMBER&quot;, columnDefinition = &quot;INT&quot;)
-<span class="nc" id="L63">    private BuildInfo buildInfo;</span>
+<span class="nc" id="L77">    private BuildInfo buildInfo; </span>
+
 }
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

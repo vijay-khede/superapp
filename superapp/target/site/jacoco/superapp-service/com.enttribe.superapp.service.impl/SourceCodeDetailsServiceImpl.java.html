@@ -4,21 +4,26 @@ import org.springframework.stereotype.Service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.enttribe.commons.io.excel.Excel;
 import com.enttribe.commons.io.excel.ExcelRow;
 import com.enttribe.commons.io.excel.ExcelWriter;
-import com.enttribe.commons.lang.StringUtils;
 import java.beans.IntrospectionException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Optional;
+
 import com.enttribe.superapp.repository.SourceCodeDetailsRepository;
 import com.enttribe.superapp.integration.service.DocumentIntegrationService;
 import com.enttribe.superapp.model.MiniappDetails;
@@ -28,8 +33,18 @@ import com.enttribe.superapp.service.SourceCodeDetailsService;
 import com.enttribe.superapp.service.generic.AbstractService;
 import com.enttribe.superapp.util.APIConstants;
 import com.enttribe.superapp.util.report.ExcelUtils;
-import com.enttribe.product.security.spring.userdetails.CustomerInfo;
-import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.enttribe.document.rest.IDocumentRest;  
+import com.enttribe.document.model.Document;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+
+
+
 
 /**
 *
@@ -43,7 +58,7 @@ It also uses 'ApplicationContextProvider' from 'com.enttribe.core.generic.utils'
 * */
 
 @Service
-<span class="nc" id="L46">@Slf4j</span>
+<span class="nc" id="L61">@Slf4j</span>
 public class SourceCodeDetailsServiceImpl extends AbstractService&lt;SourceCodeDetails&gt; implements SourceCodeDetailsService {
 
 /**
@@ -51,18 +66,22 @@ public class SourceCodeDetailsServiceImpl extends AbstractService&lt;SourceCodeD
 * @param repository The GenericRepository used to perform CRUD operations for SourceCodeDetails entities.
 */
 	public SourceCodeDetailsServiceImpl(GenericRepository&lt;SourceCodeDetails&gt; repository) {
-<span class="nc" id="L54">		super(repository,SourceCodeDetails.class);</span>
-<span class="nc" id="L55">	}</span>
+<span class="nc" id="L69">		super(repository,SourceCodeDetails.class);</span>
+<span class="nc" id="L70">	}</span>
 	
 	private static final String ENTITY_NAME = &quot;SourceCodeDetails&quot;; 
 	
 	@Autowired
 	private SourceCodeDetailsRepository sourceCodeDetailsRepository; 
 
-
    @Autowired
    private DocumentIntegrationService documentIntegrationService;
 	
+    @Autowired 
+	 private IDocumentRest documentRest; 
+
+	 @Autowired
+	 private RestTemplate restTemplate; 
 /**
 * This method is used to export the given list of SourceCodeDetails objects into an excel file.
 * It reads an excel template 'SourceCodeDetails.xlsx' from the resource folder 'templates/reports'
@@ -73,10 +92,10 @@ public class SourceCodeDetailsServiceImpl extends AbstractService&lt;SourceCodeD
 */
 	@Override
 	public byte[] export(List&lt;SourceCodeDetails&gt; sourceCodeDetails) throws IOException {
-<span class="nc" id="L76">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/SourceCodeDetails.xlsx&quot;);</span>
-<span class="nc" id="L77">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
-<span class="nc" id="L78">		int rowCount = 1;</span>
-<span class="nc" id="L79">		return setTableData(sourceCodeDetails,xssfWorkbook, rowCount);</span>
+<span class="nc" id="L95">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/SourceCodeDetails.xlsx&quot;);</span>
+<span class="nc" id="L96">	    XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream); </span>
+<span class="nc" id="L97">		int rowCount = 1;</span>
+<span class="nc" id="L98">		return setTableData(sourceCodeDetails,xssfWorkbook, rowCount);</span>
 	}
 
 /**
@@ -109,34 +128,34 @@ After all the data is written to the Excel document, the method returns the Exce
 * */
 
 	private byte[] setTableData(List&lt;SourceCodeDetails&gt;sourceCodeDetails, XSSFWorkbook templatePath, int rowCount)throws IOException {
-<span class="nc" id="L112">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
-<span class="nc" id="L113">		String entity=ENTITY_NAME;</span>
-<span class="nc" id="L114">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
-<span class="nc" id="L115">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L116">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
-<span class="nc" id="L117">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
-<span class="nc" id="L118">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
-<span class="nc" id="L119">			excelWriter.getWorkbook().setActiveSheet(0);</span>
-<span class="nc bnc" id="L120" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(sourceCodeDetails)) {</span>
-<span class="nc bnc" id="L121" title="All 2 branches missed.">			for (SourceCodeDetails sourceCodeDetailsDetails : sourceCodeDetails) {</span>
-<span class="nc" id="L122">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
-<span class="nc" id="L123">				int index = 0;</span>
-<span class="nc" id="L124">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
-<span class="nc bnc" id="L125" title="All 2 branches missed."> 			for(String column:columns) {</span>
-<span class="nc bnc" id="L126" title="All 2 branches missed.">				if(column!=null) {   </span>
+<span class="nc" id="L131">		Map&lt;String,List&lt;String&gt;&gt; tableColumn=new HashMap&lt;&gt;();</span>
+<span class="nc" id="L132">		String entity=ENTITY_NAME;</span>
+<span class="nc" id="L133">        Map&lt;String, String&gt; identityColumnMapping =new HashMap&lt;&gt;();</span>
+<span class="nc" id="L134">        Map&lt;String,List&lt;String&gt;&gt; templateHeaders = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L135">		ExcelUtils.parseMappeddJson(tableColumn,identityColumnMapping,templateHeaders);</span>
+<span class="nc" id="L136">		log.info(&quot;table column map is :{}&quot;,tableColumn);</span>
+<span class="nc" id="L137">		try (ExcelWriter excelWriter = new ExcelWriter(templatePath)) {</span>
+<span class="nc" id="L138">			excelWriter.getWorkbook().setActiveSheet(0);</span>
+<span class="nc bnc" id="L139" title="All 2 branches missed.">			if (CollectionUtils.isNotEmpty(sourceCodeDetails)) {</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">			for (SourceCodeDetails sourceCodeDetailsDetails : sourceCodeDetails) {</span>
+<span class="nc" id="L141">				ExcelRow row = excelWriter.getOrCreateRow(0, rowCount);</span>
+<span class="nc" id="L142">				int index = 0;</span>
+<span class="nc" id="L143">				List&lt;String&gt; columns = tableColumn.get(entity);</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed."> 			for(String column:columns) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">				if(column!=null) {   </span>
 				try {
-<span class="nc" id="L128">					row.setCellValue(index, ExcelUtils.invokeGetter(sourceCodeDetailsDetails,column,identityColumnMapping).toString());</span>
-<span class="nc" id="L129">				}catch (IntrospectionException e) {</span>
-<span class="nc" id="L130">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L131">                }</span>
+<span class="nc" id="L147">					row.setCellValue(index, ExcelUtils.invokeGetter(sourceCodeDetailsDetails,column,identityColumnMapping).toString());</span>
+<span class="nc" id="L148">				}catch (IntrospectionException e) {</span>
+<span class="nc" id="L149">                    log.error(&quot;IntrospectionException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L150">                }</span>
               }
-<span class="nc" id="L133">             	 ++index;</span>
-<span class="nc" id="L134">             }</span>
-<span class="nc" id="L135">            	rowCount++;</span>
-<span class="nc" id="L136">            }</span>
+<span class="nc" id="L152">             	 ++index;</span>
+<span class="nc" id="L153">             }</span>
+<span class="nc" id="L154">            	rowCount++;</span>
+<span class="nc" id="L155">            }</span>
         }
-<span class="nc" id="L138">		log.info(&quot;going to return file&quot;);</span>
-<span class="nc" id="L139">        return excelWriter.toByteArray();</span>
+<span class="nc" id="L157">		log.info(&quot;going to return file&quot;);</span>
+<span class="nc" id="L158">        return excelWriter.toByteArray();</span>
 	  }
 	}
 
@@ -154,30 +173,30 @@ After all the data is written to the Excel document, the method returns the Exce
 
 	@Override
 	public String importData(MultipartFile excelFile) throws IOException , InstantiationException, ClassNotFoundException {
-<span class="nc" id="L157">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss =new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L158">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
-<span class="nc" id="L159">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
-<span class="nc" id="L160">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
-<span class="nc" id="L161">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
-<span class="nc" id="L162">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L163">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
-<span class="nc" id="L164">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
-<span class="nc" id="L165">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L166">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
-<span class="nc" id="L167">      	boolean validateTableTemplateHeader =</span>
-<span class="nc" id="L168">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
-<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
-<span class="nc" id="L170">        	log.info(&quot;columns and headers are validated&quot;);</span>
-<span class="nc" id="L171">        	sourceCodeDetailss = saveData(workBook, columnsMapping, columnNames);</span>
+<span class="nc" id="L176">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss =new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L177">    	Excel workBook = new Excel(excelFile.getInputStream());</span>
+<span class="nc" id="L178">      	Map&lt;String, List&lt;String&gt;&gt; tableColumn = new HashMap&lt;&gt;(); // Table Name and list of Columns</span>
+<span class="nc" id="L179">      	Map&lt;String, String&gt; columnsMapping = new HashMap&lt;&gt;(); // Json Mapping DispalyName and Name</span>
+<span class="nc" id="L180">       	Map&lt;String, List&lt;String&gt;&gt; templateHeadres = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L181">        List&lt;String&gt; displayNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L182">      	ExcelUtils.parseMappeddJson(tableColumn, columnsMapping,templateHeadres);</span>
+<span class="nc" id="L183">        displayNames.addAll(templateHeadres.get(ENTITY_NAME));</span>
+<span class="nc" id="L184">      	List&lt;String&gt; columnNames = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L185">        columnNames.addAll(tableColumn.get(ENTITY_NAME));</span>
+<span class="nc" id="L186">      	boolean validateTableTemplateHeader =</span>
+<span class="nc" id="L187">        ExcelUtils.validateTableTemplateHeader(workBook, displayNames);// Validating Columns and Headers</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">        if (validateTableTemplateHeader) {</span>
+<span class="nc" id="L189">        	log.info(&quot;columns and headers are validated&quot;);</span>
+<span class="nc" id="L190">        	sourceCodeDetailss = saveData(workBook, columnsMapping, columnNames);</span>
       	}
     	else {
-<span class="nc" id="L174">      		log.info(&quot;columns and headers invalide&quot;);</span>
+<span class="nc" id="L193">      		log.info(&quot;columns and headers invalide&quot;);</span>
       	}
-<span class="nc bnc" id="L176" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(sourceCodeDetailss)) {</span>
-<span class="nc" id="L177">		sourceCodeDetailsRepository.saveAll(sourceCodeDetailss);</span>
-<span class="nc" id="L178">		return APIConstants.SUCCESS_JSON;</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">	if (CollectionUtils.isNotEmpty(sourceCodeDetailss)) {</span>
+<span class="nc" id="L196">		sourceCodeDetailsRepository.saveAll(sourceCodeDetailss);</span>
+<span class="nc" id="L197">		return APIConstants.SUCCESS_JSON;</span>
 	}
-<span class="nc" id="L180">		return APIConstants.FAILURE_JSON;</span>
+<span class="nc" id="L199">		return APIConstants.FAILURE_JSON;</span>
 	}
 
 /**
@@ -191,28 +210,29 @@ After all the data is written to the Excel document, the method returns the Exce
  * @return a list of SourceCodeDetails objects that have been saved to the database
  */
 
-	public List&lt;SourceCodeDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) {
-<span class="nc" id="L195">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
-<span class="nc" id="L196">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss = new ArrayList&lt;&gt;();</span>
-<span class="nc" id="L197">		rowIterator.next();</span>
-<span class="nc bnc" id="L198" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
-<span class="nc" id="L199">			ExcelRow excelRow = rowIterator.next();</span>
-<span class="nc" id="L200">          	SourceCodeDetails sourceCodeDetails = new SourceCodeDetails();</span>
-<span class="nc" id="L201">            int index = -1;</span>
-<span class="nc bnc" id="L202" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
+	public List&lt;SourceCodeDetails&gt; saveData(Excel sheet, Map&lt;String, String&gt; columnMapping, List&lt;String&gt; columnNames) { 
+<span class="nc" id="L214">		Iterator&lt;ExcelRow&gt; rowIterator = sheet.iterator();</span>
+<span class="nc" id="L215">		List&lt;SourceCodeDetails&gt; sourceCodeDetailss = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L216">		rowIterator.next();</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">		while (rowIterator.hasNext()) {</span>
+<span class="nc" id="L218">			ExcelRow excelRow = rowIterator.next();</span>
+<span class="nc" id="L219">          	SourceCodeDetails sourceCodeDetails = new SourceCodeDetails();</span>
+<span class="nc" id="L220">            int index = -1;</span>
+<span class="nc bnc" id="L221" title="All 2 branches missed.">      	for (String columnName : columnNames) {</span>
         	try {
-<span class="nc" id="L204">          		ExcelUtils.invokeSetter(sourceCodeDetails, columnName, excelRow.getString(++index));</span>
-<span class="nc" id="L205">                } catch (InstantiationException e) {</span>
-<span class="nc" id="L206">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
-<span class="nc" id="L207">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L208">        } catch (ClassNotFoundException e) {</span>
-<span class="nc" id="L209">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
-<span class="nc" id="L210">		}</span>
-<span class="nc" id="L211">	}</span>
-<span class="nc" id="L212">	sourceCodeDetailss.add(sourceCodeDetails);</span>
-<span class="nc" id="L213"> 	}</span>
-<span class="nc" id="L214">		return sourceCodeDetailss;</span>
-	}  
+<span class="nc" id="L223">          		ExcelUtils.invokeSetter(sourceCodeDetails, columnName, excelRow.getString(++index));</span>
+<span class="nc" id="L224">                } catch (InstantiationException e) {</span>
+<span class="nc" id="L225">          	log.error(&quot;failed while going to set the value :{}&quot;, excelRow.getString(++index));</span>
+<span class="nc" id="L226">          	log.error(&quot;InstantiationException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L227">        } catch (ClassNotFoundException e) {</span>
+<span class="nc" id="L228">        log.error(&quot;ClassNotFoundException occurred: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L229">		}</span>
+<span class="nc" id="L230">	}</span>
+<span class="nc" id="L231">	sourceCodeDetailss.add(sourceCodeDetails);</span>
+<span class="nc" id="L232"> 	}</span>
+<span class="nc" id="L233">		return sourceCodeDetailss;</span>
+	} 
+
 /**
 * This method is responsible for soft-deleting an SourceCodeDetails  record in the database.
 * The method takes in an int id which represents the id of the SourceCodeDetails  that needs to be soft-deleted.
@@ -223,13 +243,13 @@ After all the data is written to the Excel document, the method returns the Exce
 	
 	@Override
 	public void softDelete(int id) {
-<span class="nc" id="L226">		Optional&lt;SourceCodeDetails&gt; sourceCodeDetails = sourceCodeDetailsRepository.findById(id);</span>
-<span class="nc bnc" id="L227" title="All 2 branches missed.">		if (sourceCodeDetails.isPresent()) {</span>
-<span class="nc" id="L228">			SourceCodeDetails sourceCodeDetails1 = sourceCodeDetails.get();</span>
-<span class="nc" id="L229">			sourceCodeDetails1.setDeleted(true);</span>
-<span class="nc" id="L230">		    sourceCodeDetailsRepository.save(sourceCodeDetails1);</span>
+<span class="nc" id="L246">		Optional&lt;SourceCodeDetails&gt; sourceCodeDetails = sourceCodeDetailsRepository.findById(id);</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">		if (sourceCodeDetails.isPresent()) {</span>
+<span class="nc" id="L248">			SourceCodeDetails sourceCodeDetails1 = sourceCodeDetails.get();</span>
+<span class="nc" id="L249">			sourceCodeDetails1.setDeleted(true);</span>
+<span class="nc" id="L250">		    sourceCodeDetailsRepository.save(sourceCodeDetails1);</span>
 		}
-<span class="nc" id="L232">	}</span>
+<span class="nc" id="L252">	}</span>
 	
 /**
 * This method is responsible for soft-deleting multiple SourceCodeDetails records in the database in bulk.
@@ -240,28 +260,192 @@ After all the data is written to the Excel document, the method returns the Exce
 
 	@Override
 	public void softBulkDelete(List&lt;Integer&gt; list) {
-<span class="nc bnc" id="L243" title="All 2 branches missed.">		if (list != null) {</span>
-<span class="nc bnc" id="L244" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
-<span class="nc" id="L245">				softDelete(list.get(i));</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">		if (list != null) {</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">			for (int i = 0; i &lt; list.size(); i++) {</span>
+<span class="nc" id="L265">				softDelete(list.get(i));</span>
 			}
 		}
-<span class="nc" id="L248">	}</span>
+<span class="nc" id="L268">	}</span>
 
  /**
  * @param sourceCodeDetails The sourceCodeDetails  object to create.
  * @return The created vendor object.
  */ 
 	@Override
-	public SourceCodeDetails create(SourceCodeDetails sourceCodeDetails) {     
-<span class="nc" id="L256">        SourceCodeDetails sourceCodeDetails2 =  sourceCodeDetailsRepository.save(sourceCodeDetails); </span>
+	public SourceCodeDetails create(SourceCodeDetails sourceCodeDetails) { 
+<span class="nc" id="L276">		log.debug(&quot;you are here for update the sourceCodeDetails {}&quot; , sourceCodeDetails.getSourceCodePath());</span>
+        try {
+			// Extract the ID from SOURCE_CODE_PATH					
+<span class="nc" id="L279">			String sourceCodePath = sourceCodeDetails.getSourceCodePath();</span>
+<span class="nc" id="L280">			JsonNode sourceCodePathNode = new ObjectMapper().readTree(sourceCodePath);</span>
+<span class="nc" id="L281">			int documentId = sourceCodePathNode.get(&quot;ids&quot;).get(0).asInt();</span>
+<span class="nc" id="L282">			log.debug(&quot; create document id  1111&quot; +  documentId);</span>
+			// Call the API to get the list of document versions using the extracted document ID
+<span class="nc" id="L284">			List&lt;Document&gt; documents = documentRest.getDocumentAllVersions(documentId);</span>
+<span class="nc" id="L285">			log.debug(&quot; create documents ids d 2222&quot; + documents.size());	</span>
+			// Find the latest document version (assuming the list is sorted or the first element is the latest)
+<span class="nc bnc" id="L287" title="All 2 branches missed.">			if (!documents.isEmpty()) {</span>
+<span class="nc" id="L288">				Document latestDocument = documents.get(0);</span>
+				// Set the path to SOURCE_CODE_MINIO_PATH 
+<span class="nc" id="L290">				log.debug(&quot; create document path 3333&quot; + latestDocument.getPath());</span>
+<span class="nc" id="L291">				sourceCodeDetails.setSourceCodeMinioPath(latestDocument.getPath());</span>
+		
+<span class="nc" id="L293">			} else {</span>
+<span class="nc" id="L294">				throw new RuntimeException(&quot;No document versions found for ID: &quot; + documentId);</span>
+			}
+	
+			// Call the document integration service
+	
+<span class="nc" id="L299">		} catch (Exception e) {</span>
+<span class="nc" id="L300">			e.printStackTrace();</span>
+<span class="nc" id="L301">			log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
+<span class="nc" id="L302">		}</span>
+
+<span class="nc" id="L304">		log.debug(&quot; you are here for create sourceCodeDetails &quot; + sourceCodeDetails.getSourceCodePath());</span>
+<span class="nc" id="L305">        SourceCodeDetails sourceCodeDetails2 =  sourceCodeDetailsRepository.save(sourceCodeDetails);  </span>
 		try {
-<span class="nc" id="L258">		  documentIntegrationService.createFolderForEntity(&quot;SOURCE_CODE_DETAILS&quot;, sourceCodeDetails2.getId());</span>
-<span class="nc" id="L259">		} catch (Exception e) {</span>
-<span class="nc" id="L260">		  e.printStackTrace();</span>
-<span class="nc" id="L261">		  log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
-<span class="nc" id="L262">		}  </span>
-<span class="nc" id="L263">		return sourceCodeDetails2;</span>
-	}
+<span class="nc" id="L307">		  documentIntegrationService.createFolderForEntity(&quot;SOURCE_CODE_DETAILS&quot;, sourceCodeDetails2.getId());</span>
+<span class="nc" id="L308">		} catch (Exception e) {</span>
+<span class="nc" id="L309">		  e.printStackTrace();</span>
+<span class="nc" id="L310">		  log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
+<span class="nc" id="L311">		 }</span>
+<span class="nc" id="L312">		return sourceCodeDetails2;</span>
+	}   
+
+	@Override
+	public SourceCodeDetails update(SourceCodeDetails entity) {           
+<span class="nc" id="L317">		log.debug(&quot;you are here for update the sourceCodeDetails {}&quot; , entity.getSourceCodePath());</span>
+	//below code for setting Set of Incidents from  
+     try {
+        // Extract the ID from SOURCE_CODE_PATH					
+<span class="nc" id="L321">        String sourceCodePath = entity.getSourceCodePath();</span>
+<span class="nc" id="L322">        JsonNode sourceCodePathNode = new ObjectMapper().readTree(sourceCodePath);</span>
+<span class="nc" id="L323">        int documentId = sourceCodePathNode.get(&quot;ids&quot;).get(0).asInt();</span>
+<span class="nc" id="L324">		log.debug(&quot; document id  1111&quot; +  documentId);</span>
+        // Call the API to get the list of document versions using the extracted document ID
+<span class="nc" id="L326">        List&lt;Document&gt; documents = documentRest.getDocumentAllVersions(documentId);</span>
+<span class="nc" id="L327">        log.debug(&quot; documents ids d 2222&quot; + documents.size());</span>
+        // Find the latest document version (assuming the list is sorted or the first element is the latest)
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        if (!documents.isEmpty()) {</span>
+<span class="nc" id="L330">            Document latestDocument = documents.get(0);</span>
+            // Set the path to SOURCE_CODE_MINIO_PATH
+<span class="nc" id="L332">			log.debug(&quot;document path 3333&quot; + latestDocument.getPath());</span>
+<span class="nc" id="L333">            entity.setSourceCodeMinioPath(latestDocument.getPath());</span>
+    
+<span class="nc" id="L335">        } else {</span>
+<span class="nc" id="L336">            throw new RuntimeException(&quot;No document versions found for ID: &quot; + documentId);</span>
+        }
+
+        // Call the document integration service
+
+<span class="nc" id="L341">    } catch (Exception e) {</span>
+<span class="nc" id="L342">        e.printStackTrace();</span>
+<span class="nc" id="L343">        log.error(&quot;error in documentIntegrationService create  {}&quot;, e.getMessage());</span>
+<span class="nc" id="L344">    }</span>
+
+<span class="nc" id="L346">	return super.update(entity);</span>
+	}     
+
+
+
+public void executeScript(String scriptPath, SourceCodeDetails sourceCodeDetails, boolean runUpgrade, boolean runOutdated,String appName) {
+    try {
+        // Construct the command to execute the script with necessary parameters
+<span class="nc" id="L354">        StringBuilder command = new StringBuilder(scriptPath);</span>
+
+<span class="nc bnc" id="L356" title="All 2 branches missed.">        if (runUpgrade) {</span>
+<span class="nc" id="L357">            command.append(&quot; -u&quot;);</span>
+        }
+
+<span class="nc bnc" id="L360" title="All 2 branches missed.">        if (runOutdated) {</span>
+<span class="nc" id="L361">            command.append(&quot; -o&quot;);</span>
+        }
+
+<span class="nc" id="L364">        command.append(&quot; &quot;).append(sourceCodeDetails.getFlutterVersion())</span>
+<span class="nc" id="L365">               .append(&quot; &quot;).append(sourceCodeDetails.getSourceCodeMinioPath())</span>
+<span class="nc" id="L366">               .append(&quot; &quot;).append(appName);</span>
+
+		// command.append(&quot; &quot;).append(&quot;3.16.9&quot;)
+        //        .append(&quot; &quot;).append(&quot;/Users/bootnext-mac-31/Documents/sendbox/web_proj.zip&quot;)
+        //        .append(&quot; &quot;).append(&quot;minio/SuperApp/Apps/Test/build.zip&quot;);  
+
+<span class="nc" id="L372">       log.info(&quot;complete command &quot; + command.toString()); </span>
+        // Start the process without waiting for it to complete
+<span class="nc" id="L374">		Process process = Runtime.getRuntime().exec(command.toString());  </span>
+     
+<span class="nc" id="L376">	  new Thread(() -&gt; logStream(process.getInputStream(), &quot;OUTPUT&quot;)).start();</span>
+<span class="nc" id="L377">	  new Thread(() -&gt; logStream(process.getErrorStream(), &quot;ERROR&quot;)).start();</span>
+
+<span class="nc" id="L379">	  process.getOutputStream().close();</span>
+<span class="nc" id="L380">    } catch (Exception e) {</span>
+<span class="nc" id="L381">        e.printStackTrace();</span>
+<span class="nc" id="L382">    }</span>
+<span class="nc" id="L383">}  </span>
+
+
+private void logStream(InputStream stream, String type) {
+<span class="nc" id="L387">    try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {</span>
+        String line;
+<span class="nc bnc" id="L389" title="All 2 branches missed.">        while ((line = reader.readLine()) != null) {</span>
+<span class="nc" id="L390">            log.info(&quot;script logs : &quot; + type + &quot;: &quot; + line);</span>
+        }
+<span class="nc" id="L392">    } catch (Exception e) {</span>
+<span class="nc" id="L393">        e.printStackTrace();</span>
+<span class="nc" id="L394">    }</span>
+<span class="nc" id="L395">}</span>
+
+
+
+
+@Override
+    public String complileCode(int id, boolean runUpgrade, boolean runOutdated,int buildInfoId) {
+        try {
+            // Fetch SourceCodeDetails from repository
+<span class="nc" id="L404">            SourceCodeDetails sourceCodeDetails = sourceCodeDetailsRepository.findById(id).orElseThrow(() -&gt; new RuntimeException(&quot;Source code details not found for id: &quot; + id));</span>
+<span class="nc" id="L405">            MiniappDetails miniappDetails = sourceCodeDetails.getMiniAppDetails();</span>
+
+            // Prepare the payload
+<span class="nc" id="L408">            String payload = &quot;{\&quot;app_name\&quot;: \&quot;&quot; + miniappDetails.getName() + &quot;\&quot;, &quot; +</span>
+<span class="nc" id="L409">                              &quot;\&quot;flutter_version\&quot;: \&quot;&quot; + sourceCodeDetails.getFlutterVersion() + &quot;\&quot;, &quot; + </span>
+<span class="nc" id="L410">							  &quot;\&quot;source_code_path\&quot;: \&quot;&quot; + sourceCodeDetails.getSourceCodeMinioPath() + &quot;\&quot;, &quot; + </span>
+<span class="nc" id="L411">							  &quot;\&quot;mini_app_details_id\&quot;: &quot; + miniappDetails.getId() + &quot;, &quot; +</span>
+							  &quot;\&quot;build_number\&quot;: &quot; + buildInfoId + &quot;}&quot;;
+            
+            // Prepare the headers
+<span class="nc" id="L415">            HttpHeaders headers = new HttpHeaders();</span>
+<span class="nc" id="L416">            headers.setContentType(MediaType.APPLICATION_JSON);</span>
+<span class="nc" id="L417">            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));</span>
+<span class="nc" id="L418">			log.info(&quot;complileCode &quot; + payload.toString() + headers.toString());</span>
+            // Create the request entity
+<span class="nc" id="L420">            HttpEntity&lt;String&gt; requestEntity = new HttpEntity&lt;&gt;(payload, headers);</span>
+            
+            // Make the HTTP POST request
+<span class="nc" id="L423">            String url = &quot;http://superapp-integration-service:8000/run-build-script/?run_pub_outdated=&quot; + runOutdated + &quot;&amp;run_pub_upgrade=&quot; + runUpgrade;</span>
+<span class="nc" id="L424">            ResponseEntity&lt;String&gt; response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);</span>
+            
+            // Return response body
+<span class="nc" id="L427">            return response.getBody();</span>
+<span class="nc" id="L428">        } catch (Exception e) {</span>
+<span class="nc" id="L429">            e.printStackTrace();</span>
+<span class="nc" id="L430">            return &quot;Error: &quot; + e.getMessage();</span>
+        }
+    }      
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

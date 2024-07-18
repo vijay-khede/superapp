@@ -7,10 +7,11 @@ RUN apk add --no-cache bash
 
 RUN apk add ttf-dejavu
 
-Run fc-cache --force
+RUN fc-cache --force
 
 RUN addgroup -S visionwaves && adduser -S -G visionwaves visionwaves
-
+RUN apk add curl
+RUN curl -O https://dl.min.io/client/mc/release/linux-amd64/mc && chmod +x mc && mv mc /usr/local/bin/
 MAINTAINER visionwaves
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en

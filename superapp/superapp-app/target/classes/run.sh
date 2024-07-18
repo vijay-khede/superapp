@@ -13,7 +13,7 @@ echo $CMD
 LOG_FILE="$LOG_DIR/$NAME.log"
 STDERR_LOG="$LOG_DIR/$NAME.err"
 PID_FILE="$LOG_DIR/$NAME.pid"
-
+mc alias set minio $MINIO_URL $MINIO_USER $MINIO_PASS
 
 #make the log directory if it doesn't exist
 if [ ! -d "$LOG_DIR" ] ; then

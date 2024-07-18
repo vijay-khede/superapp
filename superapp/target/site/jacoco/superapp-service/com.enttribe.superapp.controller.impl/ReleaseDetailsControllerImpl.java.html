@@ -2,6 +2,9 @@
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import com.enttribe.commons.io.excel.ExcelWriter;
@@ -12,6 +15,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.enttribe.commons.spring.rest.ResponseBuilder;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,8 +56,8 @@ auditHistory(int id, Integer limit, Integer skip): return AuditHistory of Releas
 @Primary
 @RestController
 @RequestMapping(&quot;/ReleaseDetails&quot;)
-<span class="nc" id="L54">@Slf4j</span>
-<span class="nc" id="L55">public class ReleaseDetailsControllerImpl implements ReleaseDetailsController {</span>
+<span class="nc" id="L59">@Slf4j</span>
+<span class="nc" id="L60">public class ReleaseDetailsControllerImpl implements ReleaseDetailsController {</span>
 
 	@Autowired
 	private ReleaseDetailsService releaseDetailsService;
@@ -61,83 +66,88 @@ auditHistory(int id, Integer limit, Integer skip): return AuditHistory of Releas
 	@Override
 	@Auditable(actionType = ActionType.CREATE, actionName = &quot;CREATE&quot;)
 	public ReleaseDetails create(ReleaseDetails releaseDetails) {
-<span class="nc" id="L64">	return releaseDetailsService.create(releaseDetails);</span>
+<span class="nc" id="L69">	return releaseDetailsService.create(releaseDetails);</span>
 	}
 
 	@Override
 	public Long count(String filter) {
-<span class="nc" id="L69">		return releaseDetailsService.count(filter);</span>
+<span class="nc" id="L74">		return releaseDetailsService.count(filter);</span>
 	}
 
 	@Override
 	public List&lt;ReleaseDetails&gt; search(String filter, Integer offset, Integer size, String orderBy, String orderType) {
-<span class="nc" id="L74">		return releaseDetailsService.search(filter, offset, size, orderBy, orderType);</span>
+<span class="nc" id="L79">		return releaseDetailsService.search(filter, offset, size, orderBy, orderType);</span>
 	}
 
 	@Override
 	@Auditable(actionType = ActionType.UPDATE, actionName = &quot;UPDATE&quot;)
 	public ReleaseDetails update(ReleaseDetails releaseDetails) {
-<span class="nc" id="L80">		return releaseDetailsService.update(releaseDetails);</span>
+<span class="nc" id="L85">		return releaseDetailsService.update(releaseDetails);</span>
 	}
 
 	@Override
 	public Optional&lt;ReleaseDetails&gt; findById(Integer id) {
-<span class="nc" id="L85">		return releaseDetailsService.findById(id);</span>
+<span class="nc" id="L90">		return releaseDetailsService.findById(id);</span>
 	}
 
 	@Override
 	public List&lt;ReleaseDetails&gt; findAllById(List&lt;Integer&gt; id) {
-<span class="nc" id="L90">		return releaseDetailsService.findAllById(id);</span>
+<span class="nc" id="L95">		return releaseDetailsService.findAllById(id);</span>
 	}
 
 	@Override
 	@Auditable(actionType = ActionType.DELETE, actionName = &quot;DELETE&quot;)
 	public void deleteById(Integer id) {
-<span class="nc" id="L96">	releaseDetailsService.softDelete(id);</span>
-<span class="nc" id="L97">	}</span>
+<span class="nc" id="L101">	releaseDetailsService.softDelete(id);</span>
+<span class="nc" id="L102">	}</span>
   
 	@Override
 	@Auditable(actionType = ActionType.DELETE, actionName = &quot;DELETE&quot;)
 	public void bulkDelete(List&lt;Integer&gt; list) {
-<span class="nc" id="L102">	releaseDetailsService.softBulkDelete(list);</span>
-<span class="nc" id="L103">	}</span>
+<span class="nc" id="L107">	releaseDetailsService.softBulkDelete(list);</span>
+<span class="nc" id="L108">	}</span>
 
 	@Override
 	public String importData(MultipartFile excelFile) throws IOException,InstantiationException, ClassNotFoundException  {
-<span class="nc" id="L107">		return releaseDetailsService.importData(excelFile);</span>
+<span class="nc" id="L112">		return releaseDetailsService.importData(excelFile);</span>
 	}
 
 	@Override
 	public ResponseEntity&lt;byte[]&gt; export(String filter, Integer offset, Integer size, String orderBy, String orderType)  throws IOException {
-<span class="nc" id="L112">		log.info(&quot;going to get list&quot;) ;</span>
-<span class="nc" id="L113">		List&lt;ReleaseDetails&gt; result = releaseDetailsService.search(filter, 0, 10000000, orderBy, orderType);</span>
-<span class="nc" id="L114">		log.info(&quot;size of the list is :{},&quot;,result.size());</span>
-<span class="nc" id="L115">		byte[] workBook = releaseDetailsService.export(result);</span>
-<span class="nc" id="L116">		String fileName=&quot;ReleaseDetails.xlsx&quot;;</span>
-<span class="nc" id="L117">		return ResponseBuilder.toResponse(workBook, fileName);</span>
+<span class="nc" id="L117">		log.info(&quot;going to get list&quot;) ;</span>
+<span class="nc" id="L118">		List&lt;ReleaseDetails&gt; result = releaseDetailsService.search(filter, 0, 10000000, orderBy, orderType);</span>
+<span class="nc" id="L119">		log.info(&quot;size of the list is :{},&quot;,result.size());</span>
+<span class="nc" id="L120">		byte[] workBook = releaseDetailsService.export(result);</span>
+<span class="nc" id="L121">		String fileName=&quot;ReleaseDetails.xlsx&quot;;</span>
+<span class="nc" id="L122">		return ResponseBuilder.toResponse(workBook, fileName);</span>
 	}
   
 	@Override
 	public ResponseEntity downloadTemplate(String fileName) throws IOException {
-<span class="nc" id="L122">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/&quot;+fileName);</span>
-<span class="nc" id="L123">		log.info(&quot;resourceAsStream :{}&quot; ,resourceAsStream.available());</span>
-<span class="nc" id="L124">		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream);</span>
-<span class="nc" id="L125">		try (ExcelWriter excelWriter = new ExcelWriter(xssfWorkbook)) {</span>
-<span class="nc" id="L126">			byte[] workBook = excelWriter.toByteArray();</span>
-<span class="nc" id="L127">			return ResponseBuilder.toResponse(workBook, fileName);</span>
+<span class="nc" id="L127">		InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(&quot;templates/reports/&quot;+fileName);</span>
+<span class="nc" id="L128">		log.info(&quot;resourceAsStream :{}&quot; ,resourceAsStream.available());</span>
+<span class="nc" id="L129">		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(resourceAsStream);</span>
+<span class="nc" id="L130">		try (ExcelWriter excelWriter = new ExcelWriter(xssfWorkbook)) {</span>
+<span class="nc" id="L131">			byte[] workBook = excelWriter.toByteArray();</span>
+<span class="nc" id="L132">			return ResponseBuilder.toResponse(workBook, fileName);</span>
 		}
 	}
     
 	@Override
 	public String auditHistory(int id, Integer limit, Integer skip) {
-<span class="nc" id="L133">		return releaseDetailsService.auditHistory(id,limit,skip);</span>
+<span class="nc" id="L138">		return releaseDetailsService.auditHistory(id,limit,skip);</span>
 	} 
 
 	  @Override
       public List&lt;ReleaseDetails&gt; getReleasedByRole(@PathVariable(&quot;roleId&quot;) int roleId) {
-<span class="nc" id="L138">         return releaseDetailsService.findReleasedByRole(roleId);</span>
-    }
+<span class="nc" id="L143">         return releaseDetailsService.findReleasedByRole(roleId);</span>
+    } 
 
+	@Override
+     public ReleaseDetails getTriggerPipeLine(@PathVariable(&quot;id&quot;) int id) throws IOException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException { 
+<span class="nc" id="L148">              return releaseDetailsService.triggerPipeLine(id);</span>
+
+}  
 }
 
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

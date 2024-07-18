@@ -2,7 +2,11 @@ package com.enttribe.superapp.service;
 
 import java.io.IOException;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.enttribe.superapp.model.ReleaseDetails;
 import com.enttribe.superapp.model.SourceCodeDetails;
 import com.enttribe.superapp.service.generic.GenericService;
 
@@ -58,6 +62,7 @@ This method is used to soft delete an SourceCodeDetails identified by id.
 **/
 		void softDelete(int id);
 		
-		
-		void softBulkDelete(List<Integer> list);
+		void softBulkDelete(List<Integer> list); 
+
+		String complileCode(int id,boolean runUpgrade, boolean runOutdated,int buildInfoId) throws IOException, InterruptedException;
 }

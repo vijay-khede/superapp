@@ -95,6 +95,14 @@ The ORDER_TYPE property is a constant String value that represents the order typ
 		public static final String APPNAME = "SUPERAPP_APP_NAME";
         public static final String ENTITY = "ENTITY";
         public static final String APPLICATIONNAME = "APPLICATIONNAME";
+		public static final String SCRIPT_PATH = "SCRIPT_PATH"; 
+		public static final String K8S_NAME_SPACE = "K8S_NAME_SPACE";
+		public static final String JENKINS_CRUMB = "JENKINS_CRUMB";
+		public static final String DOCKER_REGISTRY = "DOCKER_REGISTRY";  
+		public static final String JENKINS_URL = "JENKINS_URL";  
+		public static final String JENKINS_USER = "JENKINS_USER";
+	    public static final String JENKINS_TOKEN ="JENKINS_TOKEN";
+
   
 }
   

@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import java.util.*;
 
 import com.enttribe.core.generic.utils.ApplicationContextProvider;
+import com.enttribe.orchestrator.utility.controller.WorkflowActionsController;
+import com.enttribe.orchestrator.utility.model.WorkflowActions;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -36,8 +38,8 @@ import org.hibernate.annotations.ParamDef;
 @FilterDefs(value = { @FilterDef(name = "miniappDetailsApplicationKeyNInFilter", parameters = { @ParamDef(name = "applicationKey", type = String.class) }), @FilterDef(name = "miniappDetailsApplicationKeyEqFilter", parameters = { @ParamDef(name = "applicationKey", type = String.class) }), @FilterDef(name = "miniappDetailsApplicationKeyNEqFilter", parameters = { @ParamDef(name = "applicationKey", type = String.class) }), @FilterDef(name = "miniappDetailsApplicationKeyInFilter", parameters = { @ParamDef(name = "applicationKey", type = String.class) }), @FilterDef(name = "miniappDetailsCustomerIdGtFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdNInFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdLtEqFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdLtFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdEqFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdNEqFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdInFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdBwFilter", parameters = { @ParamDef(name = "customerId_MIN", type = Integer.class), @ParamDef(name = "customerId_MAX", type = Integer.class) }), @FilterDef(name = "miniappDetailsCustomerIdGtEqFilter", parameters = { @ParamDef(name = "customerId", type = Integer.class) }), @FilterDef(name = "miniappDetailsDescriptionNInFilter", parameters = { @ParamDef(name = "description", type = String.class) }), @FilterDef(name = "miniappDetailsDescriptionEqFilter", parameters = { @ParamDef(name = "description", type = String.class) }), @FilterDef(name = "miniappDetailsDescriptionNEqFilter", parameters = { @ParamDef(name = "description", type = String.class) }), @FilterDef(name = "miniappDetailsDescriptionInFilter", parameters = { @ParamDef(name = "description", type = String.class) }), @FilterDef(name = "miniappDetailsIconUrlNInFilter", parameters = { @ParamDef(name = "iconUrl", type = String.class) }), @FilterDef(name = "miniappDetailsIconUrlEqFilter", parameters = { @ParamDef(name = "iconUrl", type = String.class) }), @FilterDef(name = "miniappDetailsIconUrlNEqFilter", parameters = { @ParamDef(name = "iconUrl", type = String.class) }), @FilterDef(name = "miniappDetailsIconUrlInFilter", parameters = { @ParamDef(name = "iconUrl", type = String.class) }), @FilterDef(name = "miniappDetailsIdGtFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdNInFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdLtEqFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdLtFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdEqFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdNEqFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdInFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdBwFilter", parameters = { @ParamDef(name = "id_MIN", type = Integer.class), @ParamDef(name = "id_MAX", type = Integer.class) }), @FilterDef(name = "miniappDetailsIdGtEqFilter", parameters = { @ParamDef(name = "id", type = Integer.class) }), 
 
 @FilterDef(name = "miniappDetailsNameNInFilter", parameters = { @ParamDef(name = "name", type = String.class) }), @FilterDef(name = "miniappDetailsNameEqFilter", parameters = { @ParamDef(name = "name", type = String.class) }), @FilterDef(name = "miniappDetailsNameNEqFilter", parameters = { @ParamDef(name = "name", type = String.class) }), @FilterDef(name = "miniappDetailsNameInFilter", parameters = { @ParamDef(name = "name", type = String.class) }), @FilterDef(name = "miniappDetailsTaggingNInFilter", parameters = { @ParamDef(name = "tagging", type = String.class) }), @FilterDef(name = "miniappDetailsTaggingEqFilter", parameters = { @ParamDef(name = "tagging", type = String.class) }), @FilterDef(name = "miniappDetailsTaggingNEqFilter", parameters = { @ParamDef(name = "tagging", type = String.class) }), @FilterDef(name = "miniappDetailsTaggingInFilter", parameters = { @ParamDef(name = "tagging", type = String.class) }), @FilterDef(name = "miniappDetailsVersionNInFilter", parameters = { @ParamDef(name = "version", type = String.class) }), @FilterDef(name = "miniappDetailsVersionEqFilter", parameters = { @ParamDef(name = "version", type = String.class) }), @FilterDef(name = "miniappDetailsVersionNEqFilter", parameters = { @ParamDef(name = "version", type = String.class) }), @FilterDef(name = "miniappDetailsVersionInFilter", parameters = { @ParamDef(name = "version", type = String.class) }) })
-public class MiniappDetails extends BaseEntity {  
-    @NotEmpty
+public class MiniappDetails extends BaseEntity {   
+
     @Size(max = 100)
     @Basic
     @Column(name = "APPLICATION_KEY", nullable = false, length = 100)
@@ -63,7 +65,7 @@ public class MiniappDetails extends BaseEntity {
     @Basic  
     @Column(name = "BUSINESS_FIELD",length = 100)
     private String busiessField;  
-
+   
     @Size(max = 100)
     @Basic 
     @Column(name = "SERVICE_SCENARIO",length = 100)
@@ -75,13 +77,22 @@ public class MiniappDetails extends BaseEntity {
 
     @Size(max = 255)
     @Basic
-    @Column(name = "ICON_URL")
-    private String iconUrl;  
+    @Column(name = "ICON_URL") 
+    private String iconUrl;    
+
+    @Basic
+    @Column(name = "PERMISSIONS")
+    private String permissions;
+
+
+    @Basic
+    @Column(name = "ORG_ROLE")
+    private String orgRole;
 
     // @Basic  
     // @Column(name = "ORG_ROLES")
     // private String orgRoles;
-
+    
     @Size(max = 255) 
     @Basic
     @Column(name = "ICON_PATH", length = 255)
@@ -91,27 +102,27 @@ public class MiniappDetails extends BaseEntity {
     @Id
     @Column(columnDefinition = "INT")
     private Integer id;
-
+    
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) 
     @OneToMany(targetEntity = com.enttribe.superapp.model.MiniappBuildDetails.class, mappedBy = "miniappDetails", cascade = CascadeType.MERGE)
     private Set<MiniappBuildDetails> miniappBuildDetails = new HashSet<MiniappBuildDetails>();
-
+    
     @NotEmpty
     @Size(max = 50)
     @Basic
     @Column(nullable = false, length = 50)
     private String name;
-
+    
     @Size(max = 30)
     @Basic
     @Column(length = 30)
     private String tagging;
-
+   
     @Size(max = 15)
     @Basic
     @Column(length = 15)
     private String version; 
-     
+    
     // @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     @JsonIgnoreProperties({"miniAppDetails"})
         @ManyToMany(fetch = FetchType.EAGER)
@@ -122,7 +133,7 @@ public class MiniappDetails extends BaseEntity {
                 @JoinColumn(name = "PERMISSION_ID" ,referencedColumnName = "id")
             })
             private Set<MiniAppPermissions> miniAppPermissions = new HashSet<>();   
-
+ 
             // @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
             @JsonIgnoreProperties({"miniappDetails"})
             @ManyToMany(fetch = FetchType.EAGER)
@@ -135,148 +146,17 @@ public class MiniappDetails extends BaseEntity {
 
                 private Set<OrganisationRole> organisationRoles = new HashSet<>();
 
-            // @Override
-            // public int hashCode() {
-            //     final int prime = 31;
-            //     int result = 1;
-            //     result = prime * result + ((applicationKey == null) ? 0 : applicationKey.hashCode());
-            //     result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-            //     result = prime * result + ((status == null) ? 0 : status.hashCode());
-            //     result = prime * result + (deleted ? 1231 : 1237);
-            //     result = prime * result + ((description == null) ? 0 : description.hashCode());
-            //     result = prime * result + ((busiessField == null) ? 0 : busiessField.hashCode());
-            //     result = prime * result + ((serviceScenario == null) ? 0 : serviceScenario.hashCode());
-            //     result = prime * result + ((hostingDetails == null) ? 0 : hostingDetails.hashCode());
-            //     result = prime * result + ((iconUrl == null) ? 0 : iconUrl.hashCode());
-            //     result = prime * result + ((iconPath == null) ? 0 : iconPath.hashCode());
-            //     result = prime * result + ((id == null) ? 0 : id.hashCode());
-            //     result = prime * result + ((miniappBuildDetails == null) ? 0 : miniappBuildDetails.hashCode());
-            //     result = prime * result + ((name == null) ? 0 : name.hashCode());
-            //     result = prime * result + ((tagging == null) ? 0 : tagging.hashCode());
-            //     result = prime * result + ((version == null) ? 0 : version.hashCode());
-            //     result = prime * result + ((miniAppPermissions == null) ? 0 : miniAppPermissions.hashCode());
-            //     result = prime * result + ((organisationRoles == null) ? 0 : organisationRoles.hashCode());
-            //     return result;
-            // }
+                @Basic
+                @Column(name = "WORKFLOW_STAGE", columnDefinition = "VARCHAR(100)")
+                private String workflowStage;
 
-            // @Override
-            // public boolean equals(Object obj) {
-            //     if (this == obj)
-            //         return true;
-            //     if (obj == null)
-            //         return false;
-            //     if (getClass() != obj.getClass())
-            //         return false;
-            //     MiniappDetails other = (MiniappDetails) obj;
-            //     if (applicationKey == null) {
-            //         if (other.applicationKey != null)
-            //             return false;
-            //     } else if (!applicationKey.equals(other.applicationKey))
-            //         return false;
-            //     if (customerId == null) {
-            //         if (other.customerId != null)
-            //             return false;
-            //     } else if (!customerId.equals(other.customerId))
-            //         return false;
-            //     if (status == null) {
-            //         if (other.status != null)
-            //             return false;
-            //     } else if (!status.equals(other.status))
-            //         return false;
-            //     if (deleted != other.deleted)
-            //         return false;
-            //     if (description == null) {
-            //         if (other.description != null)
-            //             return false;
-            //     } else if (!description.equals(other.description))
-            //         return false;
-            //     if (busiessField == null) {
-            //         if (other.busiessField != null)
-            //             return false;
-            //     } else if (!busiessField.equals(other.busiessField))
-            //         return false;
-            //     if (serviceScenario == null) {
-            //         if (other.serviceScenario != null)
-            //             return false;
-            //     } else if (!serviceScenario.equals(other.serviceScenario))
-            //         return false;
-            //     if (hostingDetails == null) {
-            //         if (other.hostingDetails != null)
-            //             return false;
-            //     } else if (!hostingDetails.equals(other.hostingDetails))
-            //         return false;
-            //     if (iconUrl == null) {
-            //         if (other.iconUrl != null)
-            //             return false;
-            //     } else if (!iconUrl.equals(other.iconUrl))
-            //         return false;
-            //     if (iconPath == null) {
-            //         if (other.iconPath != null)
-            //             return false;
-            //     } else if (!iconPath.equals(other.iconPath))
-            //         return false;
-            //     if (id == null) {
-            //         if (other.id != null)
-            //             return false;
-            //     } else if (!id.equals(other.id))
-            //         return false;
-            //     if (miniappBuildDetails == null) {
-            //         if (other.miniappBuildDetails != null)
-            //             return false;
-            //     } else if (!miniappBuildDetails.equals(other.miniappBuildDetails))
-            //         return false;
-            //     if (name == null) {
-            //         if (other.name != null)
-            //             return false;
-            //     } else if (!name.equals(other.name))
-            //         return false;
-            //     if (tagging == null) {
-            //         if (other.tagging != null)
-            //             return false;
-            //     } else if (!tagging.equals(other.tagging))
-            //         return false;
-            //     if (version == null) {
-            //         if (other.version != null)
-            //             return false;
-            //     } else if (!version.equals(other.version))
-            //         return false;
-            //     if (miniAppPermissions == null) {
-            //         if (other.miniAppPermissions != null)
-            //             return false;
-            //     } else if (!miniAppPermissions.equals(other.miniAppPermissions))
-            //         return false;
-            //     if (organisationRoles == null) {
-            //         if (other.organisationRoles != null)
-            //             return false;
-            //     } else if (!organisationRoles.equals(other.organisationRoles))
-            //         return false;
-            //     return true;
-            // }
+                @Column(name = "PROCESS_INSTANCE_ID")
+                private String processInstanceId;   
 
-            // @Override
-            // public String toString() {
-            //     return "MiniappDetails [applicationKey=" + applicationKey + ", customerId=" + customerId + ", status="
-            //             + status + ", deleted=" + deleted + ", description=" + description + ", busiessField="
-            //             + busiessField + ", serviceScenario=" + serviceScenario + ", hostingDetails=" + hostingDetails
-            //             + ", iconUrl=" + iconUrl + ", iconPath=" + iconPath + ", id=" + id + ", miniappBuildDetails="
-            //             + miniappBuildDetails + ", name=" + name + ", tagging=" + tagging + ", version=" + version
-            //             + ", miniAppPermissions=" + miniAppPermissions + ", organisationRoles=" + organisationRoles
-            //             + "]";
-            // }   
- 
-            //     @Basic
-            //     @Column(name = "WORKFLOW_STAGE", columnDefinition = "VARCHAR(100)")
-            //     private String workflowStage;
+                public List<WorkflowActions> getActions() {  
+                return ApplicationContextProvider.getApplicationContext()
+                .getBean(WorkflowActionsController.class)
+                .getWorkflowActions(id, "MiniappDetails"); 
+               }
 
-            //     @Column(name = "PROCESS_INSTANCE_ID")
-            //     private String processInstanceId;   
-
-            //     public List<WorkflowActions> getActions() {  
-            //     return ApplicationContextProvider.getApplicationContext()
-            //     .getBean(WorkflowActionsController.class)
-            //     .getWorkflowActions(id, "Contract"); 
-            //    }  
-
-            
-            
 }

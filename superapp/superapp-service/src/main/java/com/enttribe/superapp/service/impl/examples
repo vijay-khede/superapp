@@ -1,0 +1,308 @@
+
+	@Override
+	public String complileCode(int id, boolean runUpgrade, boolean runOutdated) {
+		log.info("complileCode " + runUpgrade + runOutdated);
+		try { 
+
+			SourceCodeDetails sourceCodeDetails = sourceCodeDetailsRepository.findById(id).orElse(null);
+			if (sourceCodeDetails == null) {
+				return "Error: Source code details not found";
+			}
+	
+			log.debug("sourceCodeDetails: " + sourceCodeDetails);
+	
+			// Define the script path
+			String scriptPath = ConfigUtil.getConfigProp(APIConstants.SCRIPT_PATH);
+	
+			// Create the parameters list
+			List<String> params = new ArrayList<>();
+	
+			if (runUpgrade) {
+				params.add("-u");
+			}
+	    
+			if (runOutdated) {
+				params.add("-o");
+			} 
+
+			// params.add(sourceCodeDetails.getFlutterVersion()); 
+			 params.add("3.16.9");
+			// params.add(sourceCodeDetails.getSourceCodeMinioPath()); 
+			params.add("minio/SuperApp/Apps/Test/web_proj.zip");
+			params.add("minio/SuperApp/Apps/Test/build.zip"); // Include build path if needed
+	
+			// Execute the script with the parameters
+			executeScript(scriptPath, params);
+	
+			// Return acknowledgment
+			return "Script invoked successfully.";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error: " + e.getMessage();
+		}
+	} 
+	
+	public void executeScript(String scriptPath, List<String> params) { 
+		log.info("executeScript this is the file path " + scriptPath + params);
+		List<String> command = new ArrayList<>();
+		command.add("sh");
+		command.add(scriptPath);
+		command.addAll(params);
+		log.info("executeScript 111111 " + command);
+		ProcessBuilder processBuilder = new ProcessBuilder(command);
+		processBuilder.redirectErrorStream(true);
+
+		try {
+			Process process = processBuilder.start(); 
+
+			int exitCode = process.waitFor();
+
+     if (exitCode == 0) {
+    // Script executed successfully
+        log.info("Script invoked successfully.");
+      } else {
+    // Script encountered an error
+    log.error("Script execution failed with exit code: " + exitCode);
+}
+			// Asynchronous execution: Do not wait for the process to complete
+			log.debug("Script invoked successfully.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+
+	@Override
+    public String complileCode(int id, boolean runUpgrade, boolean runOutdated) { 
+		log.info("complileCode " + runUpgrade + runOutdated);
+        try { 
+            SourceCodeDetails sourceCodeDetails = sourceCodeDetailsRepository.findById(id).orElse(null); 
+            if (sourceCodeDetails == null) {
+                return "Error: Source code details not found";
+            }
+
+            log.debug("sourceCodeDetails: " + sourceCodeDetails);
+
+            // Define the script path
+            String scriptPath = ConfigUtil.getConfigProp(APIConstants.SCRIPT_PATH);
+
+            // Create the parameters list
+            List<String> params = new ArrayList<>(); 
+
+            if (runUpgrade) {
+                params.add("-u");
+            } 
+
+            if (runOutdated) {
+                params.add("-o");
+            } 
+	
+            params.add(sourceCodeDetails.getFlutterVersion());
+            params.add(sourceCodeDetails.getSourceCodeMinioPath());
+            // Execute the script with the parameters
+            executeScript(scriptPath, params);
+                
+            // Return acknowledgment
+            return "Script invoked successfully.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    } 
+
+
+
+	public void executeScript(String scriptPath, List<String> params) {
+        List<String> command = new ArrayList<>();
+        command.add("sh");
+        command.add(scriptPath);
+        command.addAll(params);
+        log.info("scriptPath");
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true);
+		log.info("this is the complete path " + scriptPath + params);  
+
+        try {
+            Process process = processBuilder.start();
+            // Asynchronous execution: Do not wait for the process to complete
+            log.debug("Script invoked successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+	@Override
+    public String complileCode(int id) {
+		// String executeScript = "/Users/bootnext-mac-31/Documents/sendbox/build_in_sandbox.sh"; // Replace with your script path or command
+        // // Execute the script
+        // Map<String, String> result = executeScript(executeScript);
+        // // Return the response
+        // return result.get("response");
+		try { 
+			SourceCodeDetails sourceCodeDetails = sourceCodeDetailsRepository.findById(id).get(); 
+			log.debug("sourceCodeDetails ");
+            // Serialize the object to a JSON string
+            String jsonString = new ObjectMapper().writeValueAsString(sourceCodeDetails);
+            // Define the script path
+            
+            String scriptPath = ConfigUtil.getConfigProp(APIConstants.SCRIPT_PATH);
+			String executeScript =  scriptPath;
+            // Execute the script with the JSON string as an argument 
+			
+            Map<String, String> result = executeScript(executeScript + " '" + jsonString + "'");
+            return result.get("response"); 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }  
+
+	public Map<String, String> executeScript(String scriptPath) { 
+        Map<String, String> resultJson = new HashMap<>();
+        StringBuilder helmOutput = new StringBuilder();
+        Process process = null;
+
+        try {
+            // Execute the shell script
+            process = Runtime.getRuntime().exec('/Users/bootnext-mac-31/Documents/sendbox/build_in_sandbox.sh 3.16.9 /Users/bootnext-mac-31/Documents/sendbox/web_proj.zip minio/SuperApp/Apps/Test/build.zip');
+            // Wait for the process to complete
+            int exitCode = process.waitFor();
+
+            // If the exit code is 0, it means the script executed successfully
+            if (exitCode == 0) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        helmOutput.append(line).append("\n");
+                    }
+                } 
+                resultJson.put("result", "success");
+                resultJson.put("response", helmOutput.toString());
+            } else {
+                // If the exit code is not 0, there was an error in script execution
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        helmOutput.append(line).append("\n");
+                    }
+                }
+                resultJson.put("result", "failure");
+                resultJson.put("response", helmOutput.toString());
+            }
+        } catch (Exception e) {
+            // Handle any exceptions that occur during script execution
+            resultJson.put("result", "error");
+            resultJson.put("response", e.getMessage());
+        } finally {
+            if (process != null) {
+                process.destroy();
+            }
+        }
+        return resultJson;
+    }  
+  
+
+
+
+
+
+  private void callJenkinsPipelineForKafka(Resources vmResource, VMInstance vmInstance) {
+      String extIp = vmResource.getExternalIP();
+      HttpClient client = HttpClients.createDefault();
+      HttpPost postRequest = new HttpPost(JENKINS_URL);
+
+      // Set the necessary headers
+      postRequest.setHeader("Jenkins-Crumb", JENKINS_CRUMB);
+      postRequest.setHeader("Content-type", "application/x-www-form-urlencoded");
+
+      // Basic auth header
+      String auth = JENKINS_USER + ":" + JENKINS_TOKEN;
+      byte[] encodedAuth = org.apache.commons.codec.binary.Base64.encodeBase64(auth.getBytes());
+      String authHeader = "Basic " + new String(encodedAuth);
+      postRequest.setHeader("Authorization", authHeader);
+
+      // Prepare the data
+      String data = "param={\"USER\":\"shiv\",\"HOST\":\"" + extIp + "\"}";
+
+      try {
+          postRequest.setEntity(new StringEntity(data));
+          HttpResponse response = client.execute(postRequest);
+          System.out.println("Status Code :  "+response.getStatusLine().getStatusCode());
+
+
+    Header[] responseHeaders = response.getAllHeaders();
+
+    String locationHeaderValue = null;
+    for (Header header : responseHeaders) {
+       if (header.getName().equalsIgnoreCase("Location")) {
+          locationHeaderValue = header.getValue();
+          break;
+       }
+    }
+
+    if (locationHeaderValue != null)
+    {
+       System.out.println("Queue URL: " + locationHeaderValue);
+
+       while (true) {
+
+          HttpGet buildStatusRequest = new HttpGet(URI.create(locationHeaderValue + "api/json"));
+          buildStatusRequest.setHeader("Authorization", authHeader);
+
+          HttpResponse buildStatusResponse = client.execute(buildStatusRequest);
+          String responseBody = EntityUtils.toString(buildStatusResponse.getEntity());
+
+
+          JSONObject json = new JSONObject(responseBody);
+          JSONObject executable = json.optJSONObject("executable");
+
+          if (executable != null) {
+
+             String buildUrl1 = executable.getString("url");
+             System.out.println("Build URL: " + buildUrl1);
+
+             String[] buildUrlParts = buildUrl1.split("/");
+             String buildId = (buildUrlParts[buildUrlParts.length - 1]);
+             System.out.println("Triggered Build id : " + buildId);
+
+             String domain = "ae49d9cafb125433cbc8c890ed343431-11010897x23.ap-south-1.elb.amazonaws.com/jenkins";
+             String jobName = buildUrlParts[buildUrlParts.length - 2];
+
+             String buildUrl = String.format("http://%s/blue/organizations/jenkins/%s/detail/%s/%s/pipeline", domain, jobName, jobName, buildId);
+
+             int rowsUpdated = updateResourcesByExternalIP(buildId, buildUrl, extIp);
+             System.out.println("Rows Updated:"+rowsUpdated);
+
+
+             iResourceDao.updateResourceStatusByName(vmInstance.getInstanceName(),"Kafka running");
+          
+             break;
+             
+          }
+          else
+          {
+             System.out.println("Waiting for the build..!!");
+             Thread.sleep(1000);
+          }
+
+       }
+    }
+    else
+    {
+       System.out.println("Location header not found in the response.");
+    }
+
+
+          // Handle the response
+          String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+          System.out.println("Response: " + responseString);
+
+      } catch (IOException | InterruptedException e)
+{
+    e.printStackTrace();
+}
+  }

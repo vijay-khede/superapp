@@ -5,6 +5,7 @@ import com.enttribe.document.model.Document;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import com.enttribe.document.model.SubFolder;
+import com.enttribe.orchestrator.dto.MessageIntegrationWrapper;
  
  
 /**
@@ -73,7 +74,9 @@ public interface DocumentIntegrationService {
           */             
      SubFolder getSubFolderByReferenceValueAndType(String referenceType, String referenceValue);
  
-     void createFolderForEntity(String string, Integer id);
+     void createFolderForEntity(String string, Integer id); 
+
+      public void submitMessageEventRequest(MessageIntegrationWrapper messageIntegrationWrapper,String processInstanceId);
      
  
 }

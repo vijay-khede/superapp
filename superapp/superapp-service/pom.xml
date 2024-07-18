@@ -45,12 +45,12 @@
       <artifactId>superapp-api</artifactId>
       <version>1.0.0</version>
     </dependency>
-<!-- 
-<dependency>
-<groupId>com.enttribe.orchestrator</groupId>
-<artifactId>utility</artifactId>
-<version>3.0.1</version>
-</dependency>       -->
+
+    <dependency>
+       <groupId>com.enttribe.orchestrator</groupId>
+       <artifactId>utility</artifactId>
+       <version>3.0.1</version>
+      </dependency>      
 
 	<dependency>
 			<groupId>com.github.javaparser</groupId>

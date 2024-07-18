@@ -1,6 +1,9 @@
 package com.enttribe.superapp.service;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 import com.enttribe.superapp.model.ReleaseDetails;
@@ -58,8 +61,9 @@ This method is used to soft delete an ReleaseDetails identified by id.
 **/
 		void softDelete(int id);
 		
-		
 		void softBulkDelete(List<Integer> list); 
 
-		List<ReleaseDetails> findReleasedByRole(int roleId);
+		List<ReleaseDetails> findReleasedByRole(int roleId); 
+
+		ReleaseDetails triggerPipeLine(int id)  throws IOException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException;
 }

@@ -21,7 +21,10 @@ import java.util.Date;
 import java.util.Set;
 
 // @Audited
-@JsonIgnoreProperties(value = { "hibernateLazyInitializer", "handler" })
+
+@JsonIgnoreProperties(value = {
+    "hibernateLazyInitializer", "handler","miniAppDetails"
+})
 @Entity 
 @Setter
 @Getter 
@@ -95,7 +98,7 @@ import java.util.Set;
     @FilterDef(name = "lastModifierNEqFilter", parameters = @ParamDef(name = "lastModifier", type = Integer.class)),
     @FilterDef(name = "lastModifierInFilter", parameters = @ParamDef(name = "lastModifiers", type = Integer.class)),
     @FilterDef(name = "lastModifierNInFilter", parameters = @ParamDef(name = "lastModifiers", type = Integer.class))
-})
+}) 
 public class MiniAppPermissions extends BaseEntity {
 
     @Id

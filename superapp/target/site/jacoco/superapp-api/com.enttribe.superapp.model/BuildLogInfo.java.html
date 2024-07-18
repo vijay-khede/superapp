@@ -94,20 +94,21 @@ public class BuildLogInfo extends BaseEntity {
     @Column(name=&quot;ID&quot;)
 <span class="nc" id="L95">    private Integer id;</span>
 
-    @NotNull
-    @OneToOne
-    @JoinColumn(name = &quot;BUILD_NUMBER&quot;, referencedColumnName = &quot;BUILD_NUMBER&quot;)
-<span class="nc" id="L100">    private BuildInfo buildInfo;</span>
+    // @NotNull 
+    // @OneToOne(cascade = CascadeType.ALL)  
+    // @JsonIgnoreProperties({&quot;buildLogInfo&quot;})
+    // @JoinColumn(name = &quot;BUILD_NUMBER&quot;, referencedColumnName = &quot;BUILD_NUMBER&quot;)
+    // private BuildInfo buildInfo;    
 
     @Column(name=&quot;LOG&quot;)
-<span class="nc" id="L103">    private String log;</span>
+<span class="nc" id="L104">    private String log;</span>
 
     @NotNull
     @Column(name=&quot;DELETED&quot;,nullable = false, columnDefinition = &quot;TINYINT(1)&quot;)
-<span class="nc" id="L107">    private boolean deleted;</span>
+<span class="nc" id="L108">    private boolean deleted;</span>
 
     @Column(name = &quot;CUSTOMER_ID&quot;, columnDefinition = &quot;INT&quot;)
-<span class="nc" id="L110">    private Integer customerId;</span>
+<span class="nc" id="L111">    private Integer customerId;</span>
 
 
     

@@ -149,28 +149,32 @@ public class SourceCodeDetails extends BaseEntity {
 <span class="nc" id="L149">    private String sourceCodePath;</span>
 
     @Size(max = 255)
+    @Column(name = &quot;SOURCE_CODE_MINIO_PATH&quot;, length = 255)
+<span class="nc" id="L153">    private String sourceCodeMinioPath;</span>
+
+    @Size(max = 255)
     @Column(name = &quot;SOURCE_CODE_URL&quot;, length = 255)
-<span class="nc" id="L153">    private String sourceCodeUrl;</span>
+<span class="nc" id="L157">    private String sourceCodeUrl;</span>
 
     @Basic
-    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;ENUM('NEW','PASS','FAIL')&quot;)
-<span class="nc" id="L157">    private String status; </span>
+    @Column(name = &quot;STATUS&quot;, columnDefinition = &quot;ENUM('NEW','PASS','FAIL','EXTRACT_CODE','INSTALL_DEPENDENCIES','BUILD','COMPILED')&quot;)
+<span class="nc" id="L161">    private String status; </span>
 
     @Size(max = 15)
     @Column(name = &quot;VERSION&quot;, length = 15)
-<span class="nc" id="L161">    private String version;</span>
+<span class="nc" id="L165">    private String version;</span>
 
     @Size(max = 15)
     @Column(name = &quot;DART_VERSION&quot;, length = 15)
-<span class="nc" id="L165">    private String dartVersion;</span>
+<span class="nc" id="L169">    private String dartVersion;</span>
 
     @Size(max = 15)
     @Column(name = &quot;FLUTTER_VERSION&quot;, length = 15)
-<span class="nc" id="L169">    private String flutterVersion;</span>
+<span class="nc" id="L173">    private String flutterVersion;</span>
 
     @ManyToOne
     @JoinColumn(name = &quot;APP_ID&quot;, referencedColumnName = &quot;ID&quot;, nullable = false)
-<span class="nc" id="L173">    private MiniappDetails miniAppDetails; </span>
+<span class="nc" id="L177">    private MiniappDetails miniAppDetails; </span>
 
     
   

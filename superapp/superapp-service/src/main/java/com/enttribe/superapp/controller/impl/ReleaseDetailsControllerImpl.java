@@ -2,6 +2,9 @@ package com.enttribe.superapp.controller.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 import com.enttribe.commons.io.excel.ExcelWriter;
@@ -12,6 +15,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.enttribe.commons.spring.rest.ResponseBuilder;
 import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -136,7 +141,12 @@ public class ReleaseDetailsControllerImpl implements ReleaseDetailsController {
 	  @Override
       public List<ReleaseDetails> getReleasedByRole(@PathVariable("roleId") int roleId) {
          return releaseDetailsService.findReleasedByRole(roleId);
-    }
+    } 
 
+	@Override
+     public ReleaseDetails getTriggerPipeLine(@PathVariable("id") int id) throws IOException, InterruptedException, KeyManagementException, NoSuchAlgorithmException, KeyStoreException { 
+              return releaseDetailsService.triggerPipeLine(id);
+
+}  
 }
 
